@@ -9,6 +9,10 @@ class VotingGame : public CoalGame<ll> {
   VotingGame(int players, const vector<ll> &weights, long long int requiredSum) :
       CoalGame(players), weights(weights), requiredSum(requiredSum) {
   }
+  VotingGame(const vector<ll> &weights, long long int requiredSum):
+    VotingGame(weights.size(), weights, requiredSum) {
+
+  }
   // read from stdin
   VotingGame(istream & in);
   virtual ~VotingGame() {

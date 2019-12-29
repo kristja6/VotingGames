@@ -124,6 +124,16 @@ double logChoose(int n, int k) {
   return logFact(n) - logFact(n - k) - logFact(k);
 }
 
+void printMtx(const vector<vector<int>> &a) {
+  for (int i = 0; i < a.size(); ++i) {
+    for (int j = 0; j < a[i].size(); ++j) {
+      cout << a[i][j] << ' ';
+    }
+    cout << "\n";
+  }
+  cout << endl << endl;
+}
+
 LogSumMatrix::LogSumMatrix(size_t n, size_t m) : n(n), m(m), dif(vector<matrix>(2, matrix(n, vector<double>(m, -INF)))) {
 }
 

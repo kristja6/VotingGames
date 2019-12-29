@@ -3,17 +3,19 @@
 //
 #include "microarray_game.h"
 
-MicroarrayGame::MicroarrayGame(istream &in) {
-  int checks_cnt;
-  in >> players >> checks_cnt;
-  checks = vector<set<int>>(checks_cnt);
-  for (int i = 0; i < checks_cnt; ++i) {
-    int check_size;
-    in >> check_size;
-    for (int j = 0; j < check_size; ++j) {
-      int t;
-      in >> t;
-      checks[i].insert(t);
+MicroarrayGame::MicroarrayGame(istream &in, bool sparse) {
+  if (sparse) {
+    int checks_cnt;
+    in >> players >> checks_cnt;
+    checks = vector<set<int>>(checks_cnt);
+    for (int i = 0; i < checks_cnt; ++i) {
+      int check_size;
+      in >> check_size;
+      for (int j = 0; j < check_size; ++j) {
+        int t;
+        in >> t;
+        checks[i].insert(t);
+      }
     }
   }
 }

@@ -5,6 +5,52 @@
 
 using namespace Rcpp;
 
+// votingBanzhaf
+NumericVector votingBanzhaf(const NumericVector& weights, const long long int quota);
+RcppExport SEXP _CoopGame_votingBanzhaf(SEXP weightsSEXP, SEXP quotaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const long long int >::type quota(quotaSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingBanzhaf(weights, quota));
+    return rcpp_result_gen;
+END_RCPP
+}
+// votingShapley
+NumericVector votingShapley(const IntegerVector& weights, const long long int quota);
+RcppExport SEXP _CoopGame_votingShapley(SEXP weightsSEXP, SEXP quotaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const long long int >::type quota(quotaSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingShapley(weights, quota));
+    return rcpp_result_gen;
+END_RCPP
+}
+// microarrayBanzhaf
+NumericVector microarrayBanzhaf(const NumericMatrix& mtx);
+RcppExport SEXP _CoopGame_microarrayBanzhaf(SEXP mtxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mtx(mtxSEXP);
+    rcpp_result_gen = Rcpp::wrap(microarrayBanzhaf(mtx));
+    return rcpp_result_gen;
+END_RCPP
+}
+// microarrayShapley
+NumericVector microarrayShapley(const NumericMatrix& mtx);
+RcppExport SEXP _CoopGame_microarrayShapley(SEXP mtxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mtx(mtxSEXP);
+    rcpp_result_gen = Rcpp::wrap(microarrayShapley(mtx));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hello_world
 List rcpp_hello_world();
 RcppExport SEXP _CoopGame_rcpp_hello_world() {
@@ -17,6 +63,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_CoopGame_votingBanzhaf", (DL_FUNC) &_CoopGame_votingBanzhaf, 2},
+    {"_CoopGame_votingShapley", (DL_FUNC) &_CoopGame_votingShapley, 2},
+    {"_CoopGame_microarrayBanzhaf", (DL_FUNC) &_CoopGame_microarrayBanzhaf, 1},
+    {"_CoopGame_microarrayShapley", (DL_FUNC) &_CoopGame_microarrayShapley, 1},
     {"_CoopGame_rcpp_hello_world", (DL_FUNC) &_CoopGame_rcpp_hello_world, 0},
     {NULL, NULL, 0}
 };
