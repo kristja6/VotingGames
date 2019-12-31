@@ -30,6 +30,9 @@ void printMtx(const matrix &a);
 void printMtx(const vector<vector<int>> &a);
 void normalize(vector<double> &a, vector<double> &b);
 vector<int> inversePermutation(const vector<int> & p);
+double mean(const vector<double> & a);
+double sd(const vector<double> & a, double mean);
+double sd(const vector<double> & a);
 
 class LogSumMatrix {
   size_t n, m;

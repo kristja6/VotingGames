@@ -134,6 +134,19 @@ void printMtx(const vector<vector<int>> &a) {
   cout << endl << endl;
 }
 
+double mean(const vector<double> &a) {
+  return accumulate(a.begin(), a.end(), 0.0)/a.size();
+}
+
+double sd(const vector<double> &a, double mean) {
+  double sq_sum = inner_product(a.begin(), a.end(), a.begin(), 0.0);
+  return sqrt(sq_sum / a.size() - mean * mean);
+}
+
+double sd(const vector<double> &a) {
+  return sd(a, mean(a));
+}
+
 LogSumMatrix::LogSumMatrix(size_t n, size_t m) : n(n), m(m), dif(vector<matrix>(2, matrix(n, vector<double>(m, -INF)))) {
 }
 

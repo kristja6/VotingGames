@@ -17,6 +17,10 @@ microarrayShapley <- function(mtx) {
     .Call(`_CoopGame_microarrayShapley`, mtx)
 }
 
+expressionsToFeaturesStd <- function(special, control) {
+    .Call(`_CoopGame_expressionsToFeaturesStd`, special, control)
+}
+
 rcpp_hello_world <- function() {
     .Call(`_CoopGame_rcpp_hello_world`)
 }

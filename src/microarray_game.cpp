@@ -2,6 +2,7 @@
 // Created by maty on 08/12/19.
 //
 #include "microarray_game.h"
+#include "math.h"
 
 MicroarrayGame::MicroarrayGame(istream &in, bool sparse) {
   if (sparse) {
@@ -56,11 +57,11 @@ vector<double> MicroarrayGame::shapley() {
   vector<double> logSum(players, -INF);
 
   for (auto & check: checks) {
-    for (auto & p: check) {
+    for (auto & p: check)           {
       // sum over all sizes
       for (int ad = 0; ad <= players - check.size(); ++ ad) {
         double subsets = logChoose(players - check.size(), ad);
-        logInc(logSum[p], (subsets / log(2)) + logFact(check.size() - 1 + ad) + logFact(players - check.size() - ad));
+        logInc(logSum[p], subsets + logFact(check.size() + ad - 1) + logFact(players - check.size() - ad));
       }
     }
   }
@@ -69,4 +70,16 @@ vector<double> MicroarrayGame::shapley() {
   }
   normalizeShapleyLogSums(logSum);
   return logSum;
+}
+
+vector<vector<int>> MicroarrayGame::expressionsToFeaturesStd2Groups(const vector<vector<double>> & special, const vector<vector<double>> & control) {
+  vector<vector<int>> res = vector<vector<int>>(special.size(), vector<int>(special[0].size(), 0));
+  for (int i = 0; i < special[0].size(); ++i) {
+    double u = mean(control[i]);
+    double s = sd(control[i], u);
+    for (int j = 0; j < control[i].size(); ++j) {
+      if (fabs(special[i][j] - u) >= 2*s) res[i][j] = 1;
+    }
+  }
+  return res;
 }

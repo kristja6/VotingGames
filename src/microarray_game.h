@@ -8,6 +8,7 @@
 #include "coal_game.h"
 #include "math.h"
 
+
 class MicroarrayGame : public CoalGame<double> {
 public:
   // format of input:
@@ -32,6 +33,25 @@ public:
 
   vector<double> banzhaf();
   vector<double> shapley();
+
+  // assume group 0 is control and use the mean and sd of that. All groups 1 ... k are the studied groups
+  /*static vector<vector<vector<int>>> expressionsToFeaturesStd2Groups(const vector<vector<double>>> & mtx) {
+    vector<vector<vector<int>>> res(mtx.size() - 1);
+    for (int k = 1; k < mtx.size(); ++k) {
+      res[k-1] = vector<vector<int>>(mtx[k].size(), vector<int>(mtx[k][0].size(), 0));
+    }
+    for (int i = 0; i < mtx[0].size(); ++i) {
+      double u = mean(mtx[0][i]);
+      double s = sd(mtx[0][i], u);
+      for (int k = 1; k < mtx.size(); ++k) {
+        for (int j = 0; j < mtx[k][i].size(); ++j) {
+          if (fabs(mtx[k][i][j] - u) >= 2*s) res[k-1][i][j] = 1;
+        }
+      }
+    }
+    return res;
+  }*/
+  static vector<vector<int>> expressionsToFeaturesStd2Groups(const vector<vector<double>> &, const vector<vector<double>> &);
 private:
   vector<set<int>> checks;
 };
