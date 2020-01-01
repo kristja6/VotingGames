@@ -23,8 +23,8 @@ public:
   // 1 means that the player is required in the check
   MicroarrayGame(const vector<vector<int>> & mtx):
     CoalGame(mtx.size()), checks(vector<set<int>>(mtx[0].size())) {
-    for (int i = 0; i < mtx.size(); ++i) {
-      for (int j = 0; j < mtx[i].size(); ++j) {
+    for (size_t i = 0; i < mtx.size(); ++i) {
+      for (size_t j = 0; j < mtx[i].size(); ++j) {
         if (mtx[i][j] == 1) checks[j].insert(i);
       }
     }

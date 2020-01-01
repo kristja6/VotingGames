@@ -28,8 +28,8 @@ vector<vector<double>> matrixToVectorsDouble(const NumericMatrix & mtx) {
 
 NumericMatrix vectorsToMatrix(const vector<vector<int>> & mtx) {
   NumericMatrix res(mtx.size(), mtx[0].size());
-  for (int i= 0; i < mtx.size(); ++i) {
-    for (int j = 0; j < mtx[i].size(); ++j) {
+  for (size_t i= 0; i < mtx.size(); ++i) {
+    for (size_t j = 0; j < mtx[i].size(); ++j) {
       res[i + j*res.nrow()] = mtx[i][j];
     }
   }

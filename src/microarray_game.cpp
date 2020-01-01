@@ -59,8 +59,8 @@ vector<double> MicroarrayGame::shapley() {
   for (auto & check: checks) {
     for (auto & p: check)           {
       // sum over all sizes
-      for (int ad = 0; ad <= players - check.size(); ++ ad) {
-        double subsets = logChoose(players - check.size(), ad);
+      for (int ad = 0; ad <= players - (int)check.size(); ++ ad) {
+        double subsets = logChoose(players - (int)check.size(), ad);
         logInc(logSum[p], subsets + logFact(check.size() + ad - 1) + logFact(players - check.size() - ad));
       }
     }
@@ -74,10 +74,10 @@ vector<double> MicroarrayGame::shapley() {
 
 vector<vector<int>> MicroarrayGame::expressionsToFeaturesStd2Groups(const vector<vector<double>> & special, const vector<vector<double>> & control) {
   vector<vector<int>> res = vector<vector<int>>(special.size(), vector<int>(special[0].size(), 0));
-  for (int i = 0; i < special[0].size(); ++i) {
+  for (size_t i = 0; i < special[0].size(); ++i) {
     double u = mean(control[i]);
     double s = sd(control[i], u);
-    for (int j = 0; j < control[i].size(); ++j) {
+    for (size_t j = 0; j < control[i].size(); ++j) {
       if (fabs(special[i][j] - u) >= 2*s) res[i][j] = 1;
     }
   }
