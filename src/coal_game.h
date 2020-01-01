@@ -41,17 +41,16 @@ public:
     return sh;
   }
 
-  // TODO: make sure this is correct
   vector<double> banzhafMonteCarlo(ll iters) {
     vector<double> bz(players);
     vector<int> appears(players);
     double swingVotes = 0;
 
-    for (ll it = 0; it < iters; ++ it) {
+    for (ll it = 0; it < iters; ++it) {
       vector<int> s = random_subset(players);
       vector<int> cur = s;
-      for (int i = s.size() - 1; i >= 0; -- i) {
-        appears[s[i]] ++;
+      for (int i = s.size() - 1; i >= 0; --i) {
+        appears[s[i]]++;
         bz[s[i]] += v(cur);
         swingVotes += v(cur);
         swap(cur[i], cur.back());
@@ -62,13 +61,78 @@ public:
         cur.push_back(deleted);
       }
     }
-
     normalizeBanzhafSums(bz, iters, swingVotes);
     return bz;
   }
 
+  // ------------ Enumeration ------------------
+  vector<double> banzhafEnum() {
+    logSums = vector<double>(players, -INF);
+    vector<int> coal;
+    banzhafEnumRec(0, coal);
+    normalizeBanzhafLogSums(logSums);
+    return logSums;
+  }
+
+  void banzhafEnumRec(int player, vector<int> & coal) {
+    if (player == players) {
+      for (int i = (int)coal.size() - 1; i >= 0; --i) {
+        const int pl = coal[i];
+        logInc(logSums[pl], log(v(coal)));
+        swap(coal[i], coal.back());
+        coal.pop_back();
+        logDec(logSums[pl], log(v(coal)));
+        coal.push_back(pl);
+      }
+      sort(coal.begin(), coal.end());
+      return;
+    }
+    banzhafEnumRec(player + 1, coal);
+    coal.push_back(player);
+    banzhafEnumRec(player + 1, coal);
+    coal.pop_back();
+  }
+
+  vector<double> shapleyEnum() {
+    logSums = vector<double>(players, -INF);
+    vector<int> coal;
+    shapleyEnumRec(0, coal);
+    normalizeShapleyLogSums(logSums);
+    return logSums;
+  }
+
+  void shapleyEnumRec(int player, vector<int> & coal) {
+    if (player == players) {
+      const double withAll = log(v(coal));
+      for (int i = (int)coal.size() - 1; i >= 0; --i) {
+        const int pl = coal[i];
+        double incr = withAll;
+        swap(coal[i], coal.back());
+        coal.pop_back();
+        logDec(incr, log(v(coal)));
+        coal.push_back(pl);
+        logInc(logSums[pl], incr + logFact(coal.size() - 1) + logFact(players - coal.size()));
+      }
+      sort(coal.begin(), coal.end());
+      return;
+    }
+    shapleyEnumRec(player + 1, coal);
+    coal.push_back(player);
+    shapleyEnumRec(player + 1, coal);
+    coal.pop_back();
+  }
+
+
+
   void setBanzhafDenominator(int denom) {
     banzhafDenominator = denom;
+  }
+
+  vector<int> optimalCoalitionOfFixedSize(int size) {
+    vector<int> coal;
+    bestValue = numeric_limits<CoalValue>::min();
+    optimalCoalitionOfFixedSizeRec(players, 0, size, coal);
+    return bestCoal;
   }
 
 protected:
@@ -111,10 +175,31 @@ protected:
     if (!outputLog) logToNorm(sums);
   }
 
+  vector<int> bestCoal;
+  CoalValue bestValue;
+
+  void optimalCoalitionOfFixedSizeRec(int items, int start_item, int len, vector<int> & coal) { // TODO: continue here
+    if (!len) {
+      CoalValue curVal = v(coal);
+      if (curVal > bestValue) {
+        bestCoal = coal;
+        bestValue = curVal;
+      }
+      return;
+    }
+
+    for (int i = start_item; i < items; ++i) {
+      coal.push_back(i);
+      optimalCoalitionOfFixedSizeRec(items, i + 1, len - 1, coal);
+      coal.pop_back();
+    }
+  }
+
   bool outputLog = 0;
 
 private:
   function<CoalValue(const vector<int> & players)> vFunc;
+  vector<double> logSums;
 
 };
 

@@ -16,37 +16,25 @@ void example1() {
     else return 0;
   });
   //vector<double> res = game.shapleyMonteCarlo(100000);
-  vector<double> res = game.banzhafMonteCarlo(100000);
-  for (double r: res) cout << r << ' ';
-  cout << endl;
+  cout << "Banzhaf: " << endl;
+  printVec(game.banzhafMonteCarlo(100000));
+  cout << "Shapley: " << endl;
+  printVec(game.shapleyMonteCarlo(100000));
 }
 
 void example2() {
-  cout << "Slow DP" << endl;
+  cout << "DP" << endl;
   VotingGame game(5, vector<ll>{4, 8, 20, 32, 44}, 54);
-  vector<double> res = game.banzhafDpSlow();
-  for (double r: res) cout << r << ' ';
-  cout << endl;
+  cout << "Banzhaf: " << endl;
+  printVec(game.banzhafDpFast());
+  cout << "Shapley: " << endl;
+  printVec(game.shapleyDpFast());
 }
 
 void example3() {
-  cout << "BB" << endl;
-  VotingGame game(5, vector<ll>{4, 8, 20, 32, 44}, 54);
-  vector<double> res = game.banzhafBranchAndBound();
-  for (double r: res) cout << r << ' ';
-  cout << endl;
-}
-
-/*void example4() {
-  cout << "DP with slow merge" << endl;
-  VotingGame game(5, vector<ll>{4, 8, 20, 32, 44}, 54);
-  vector<double> res = game.banzhafDpFastSlowMerge();
-  for (double r: res) cout << r << ' ';
-  cout << endl;
-}*/
-
-/*void example3() {
-  CoalGame<int,int> game(5, vector<int>{4, 8, 20, 32, 44}, [] (const vector<int> & w, const vector<int> & players) {
+  cout << "Enumeration" << endl;
+  const vector<ll> w = vector<ll>{4, 8, 20, 32, 44};
+  CoalGame<int> game(5,  [w] (const vector<int> & players) {
     int sum = 0;
     for (int player : players) {
       sum += w[player];
@@ -54,12 +42,11 @@ void example3() {
     if (sum >= 54) return 1;
     else return 0;
   });
-  //vector<double> res = game.shapleyMonteCarlo(100000);
-  vector<double> res = game.banzhafMonteCarlo(100000);
-  for (double r: res) cout << r << ' ';
-  cout << endl;
-}*/
-
+  cout << "Banzhaf: " << endl;
+  printVec(game.banzhafEnum());
+  cout << "Shapley: " << endl;
+  printVec(game.shapleyEnum());
+}
 
 void measureSlowDP(VotingGame game) {
   cout << "Slow DP" << endl;
@@ -72,15 +59,6 @@ void measureSlowDP(VotingGame game) {
 void measureFastDP(VotingGame game) {
   cout << "Fast DP" << endl;
   //game.useFFT = true;
-  vector<double> res = game.banzhafDpFast();
-  for (double r: res) cout << r << ' ';
-  cout << endl;
-  cout << endl;
-}
-
-void measureDPBadMerge(VotingGame game) {
-  cout << "Bad merge DP" << endl;
-  //game.useFFT = false;
   vector<double> res = game.banzhafDpFast();
   for (double r: res) cout << r << ' ';
   cout << endl;
@@ -113,22 +91,40 @@ void measureMonteCarloShapley(VotingGame game) {
   printVec(res);
 }
 
+void measureBestCoalition(MicroarrayGame game) {
+  for (int i = 1; i < 3; ++i) {
+    vector<int> vec = game.optimalCoalitionOfFixedSize(i);
+    cout << game.v(vec) << endl;
+    printVec(vec);
+  }
+}
+
 void measureVoting() {
   VotingGame game(cin);
   //measureBB(game);
   //measureDPBadMerge(game);
   measureFastDP(game);
   measureSlowDP(game);
-  //measureMonteCarlo(game);
+  measureMonteCarlo(game);
   //measureFastShapley(game);
   //measureSlowShapley(game);
   //measureMonteCarloShapley(game);
+  for (int i = 1; i < 3; ++i) {
+    vector<int> vec = game.optimalCoalitionOfFixedSize(i);
+    cout << game.v(vec) << endl;
+    printVec(vec);
+  }
 }
 
 void measureMicroarray() {
   MicroarrayGame game(cin);
   printVec(game.banzhaf());
   printVec(game.shapley());
+  for (int i = 1; i < 3; ++i) {
+    vector<int> vec = game.optimalCoalitionOfFixedSize(i);
+    cout << game.v(vec) << endl;
+    printVec(vec);
+  }
 }
 
 void test1() {
@@ -150,38 +146,13 @@ void test1() {
 }
 
 int main() {
-  cout << "running" << endl;
-  //cout << fixed << setprecision(40) << endl;
-  //cout << fixed << endl;
-  /*cout << exp(logSub(log(10), log(12))) << endl;
-  return 0;*/
-
-  /*vector<double> a;
-  for (int i = 0; i < 5; ++i) {
-    a.push_back(10);
-  }
-  FFT fft;
-  auto res = fft.convolution(a, a);
-  for (auto i: res) cout << i << ' ';
-  cout << endl;
-  return 0;*/
-
-
   srand(time(0));
-  /*example1();
+
+  cout << "running" << endl;
+  cout << fixed << endl;
+  example1();
   example2();
   example3();
-  example4();
-  example5();*/
-  //measureVoting();
-  measureMicroarray();
-  /*vector<double> a = {1, 2, 3};
-  vector<double> b = {3, 4, 5};
-
-  FFT fft(a.size());
-  auto res = convolution.logConvolution(a, b);
-  for (auto i: res) cout << i << ' ';
-  cout << endl;*/
 
   return 0;
 }

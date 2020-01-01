@@ -27,9 +27,9 @@ class VotingGame : public CoalGame<ll> {
 
   // TIME: O(n^2*q), SPACE: O(nq)
   vector<double> shapleyDpFast();
+  ll v(const vector<int> & coalition) override;
 
 protected:
-  ll v(const vector<int> & coalition) override;
   vector<ll> weights;
   ll requiredSum;
 
