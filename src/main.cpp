@@ -150,9 +150,10 @@ int main() {
 
   cout << "running" << endl;
   cout << fixed << endl;
-  example1();
-  example2();
-  example3();
+  //example1();
+  //example2();
+  //example3();
+  measureMicroarray();
 
   return 0;
 }

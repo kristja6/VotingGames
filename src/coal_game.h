@@ -128,7 +128,7 @@ public:
     banzhafDenominator = denom;
   }
 
-  vector<int> optimalCoalitionOfFixedSize(int size) {
+  virtual vector<int> optimalCoalitionOfFixedSize(int size) {
     vector<int> coal;
     bestValue = numeric_limits<CoalValue>::min();
     optimalCoalitionOfFixedSizeRec(players, 0, size, coal);
@@ -178,7 +178,7 @@ protected:
   vector<int> bestCoal;
   CoalValue bestValue;
 
-  void optimalCoalitionOfFixedSizeRec(int items, int start_item, int len, vector<int> & coal) { // TODO: continue here
+  void optimalCoalitionOfFixedSizeRec(int items, int start_item, int len, vector<int> & coal) {
     if (!len) {
       CoalValue curVal = v(coal);
       if (curVal > bestValue) {

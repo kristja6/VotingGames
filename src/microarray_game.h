@@ -21,14 +21,7 @@ public:
   }
   // create from a boolean matrix, where each check is a column, each row a player.
   // 1 means that the player is required in the check
-  MicroarrayGame(const vector<vector<int>> & mtx):
-    CoalGame(mtx.size()), checks(vector<set<int>>(mtx[0].size())) {
-    for (size_t i = 0; i < mtx.size(); ++i) {
-      for (size_t j = 0; j < mtx[i].size(); ++j) {
-        if (mtx[i][j] == 1) checks[j].insert(i);
-      }
-    }
-  }
+  MicroarrayGame(const vector<vector<int>> & mtx);
   virtual double v(const vector<int> & coalition);
 
   vector<double> banzhaf();

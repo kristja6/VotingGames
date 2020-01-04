@@ -2,6 +2,7 @@
 #include <Rcpp.h>
 #include "voting_game.h"
 #include "microarray_game.h"
+#include "sum_of_voting.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -70,4 +71,17 @@ NumericVector microarrayShapley(const NumericMatrix & mtx) {
 NumericMatrix expressionsToFeaturesStd(const NumericMatrix & special, const NumericMatrix & control) {
   auto res = MicroarrayGame::expressionsToFeaturesStd2Groups(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
   return vectorsToMatrix(res);
+}
+
+NumericVector votingGameBanzhaf(const NumericMatrix & special, const NumericMatrix & control) {
+  SumOfVoting game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
+  auto res = game.banzhaf();
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+NumericVector microarrayStrongestCoalition(const NumericMatrix & mtx, const int size) {
+  MicroarrayGame game(matrixToVectorsInt(mtx));
+  auto res = game.optimalCoalitionOfFixedSize(size);
+  return NumericVector(res.begin(), res.end());
 }

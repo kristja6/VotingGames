@@ -21,6 +21,10 @@ expressionsToFeaturesStd <- function(special, control) {
     .Call(`_CoopGame_expressionsToFeaturesStd`, special, control)
 }
 
+microarrayStrongestCoalition <- function(mtx, size) {
+    .Call(`_CoopGame_microarrayStrongestCoalition`, mtx, size)
+}
+
 rcpp_hello_world <- function() {
     .Call(`_CoopGame_rcpp_hello_world`)
 }

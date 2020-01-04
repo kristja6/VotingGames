@@ -6,13 +6,13 @@
 class VotingGame : public CoalGame<ll> {
   using ll = long long;
   public:
-  VotingGame(int players, const vector<ll> &weights, long long int requiredSum) :
-      CoalGame(players), weights(weights), requiredSum(requiredSum) {
+  VotingGame(int players, const vector<ll> &weights, long long int quota) :
+      CoalGame(players), weights(weights), quota(quota) {
   }
-  VotingGame(const vector<ll> &weights, long long int requiredSum):
-    VotingGame(weights.size(), weights, requiredSum) {
+  VotingGame(const vector<ll> &weights, long long int quota):
+    VotingGame(weights.size(), weights, quota) {
+  }
 
-  }
   // read from stdin
   VotingGame(istream & in);
   virtual ~VotingGame() {
@@ -31,7 +31,7 @@ class VotingGame : public CoalGame<ll> {
 
 protected:
   vector<ll> weights;
-  ll requiredSum;
+  ll quota;
 
   // Banzhaf
   vector<double> emptyColumn();
