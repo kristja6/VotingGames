@@ -18,7 +18,10 @@ SumOfVoting::SumOfVoting(const matrix &special, const matrix &control) : CoalGam
     int sum = 0;
     for (int i = 0; i < genes; ++i) {
       sum += weights[i] = fabs(special[i][j] - u[i]);
+      cout << (int)fabs(special[i][j] - u[i]) << ' ';
     }
+    cout << endl;
+    cout << "sum: " << sum << endl;
     games.emplace_back(VotingGame(weights, sum/2));
   }
 }
@@ -34,7 +37,7 @@ ll SumOfVoting::v(const vector<int> &coal) {
 vector<double> SumOfVoting::banzhaf() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < games.size(); ++i) {
-    cout << i << ' ' << flush;
+    cout << i << ' ' << endl;
     auto cur = games[i].banzhafDpFast();
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];

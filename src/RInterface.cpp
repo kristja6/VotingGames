@@ -73,7 +73,8 @@ NumericMatrix expressionsToFeaturesStd(const NumericMatrix & special, const Nume
   return vectorsToMatrix(res);
 }
 
-NumericVector votingGameBanzhaf(const NumericMatrix & special, const NumericMatrix & control) {
+// [[Rcpp::export]]
+NumericVector genesVotingBanzhaf(const NumericMatrix & special, const NumericMatrix & control) {
   SumOfVoting game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());

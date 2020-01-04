@@ -21,6 +21,10 @@ expressionsToFeaturesStd <- function(special, control) {
     .Call(`_CoopGame_expressionsToFeaturesStd`, special, control)
 }
 
+genesVotingBanzhaf <- function(special, control) {
+    .Call(`_CoopGame_genesVotingBanzhaf`, special, control)
+}
+
 microarrayStrongestCoalition <- function(mtx, size) {
     .Call(`_CoopGame_microarrayStrongestCoalition`, mtx, size)
 }
