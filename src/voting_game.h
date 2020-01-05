@@ -29,9 +29,11 @@ class VotingGame : public CoalGame<ll> {
   vector<double> shapleyDpFast();
   ll v(const vector<int> & coalition) override;
 
-protected:
+  // todo: make protected
   vector<ll> weights;
   ll quota;
+
+protected:
 
   // Banzhaf
   vector<double> emptyColumn();

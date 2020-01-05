@@ -14,6 +14,7 @@ vector<double> VotingGame::emptyColumn() {
 }
 
 vector<double> VotingGame::addToColumn(vector<double> res, ll weight) {
+  if (!weight) return res;
   for (int i = quota - 1; i >= weight; -- i) {
     res[i] = logAdd(res[i], res[i - weight]);
   }
@@ -22,6 +23,7 @@ vector<double> VotingGame::addToColumn(vector<double> res, ll weight) {
 
 double VotingGame::countSwingsColumn(const vector<double> &a, ll weight) {
   double res = -INF;
+  if (!weight) return res;
   for (int i = max(0ll, quota - weight); i < quota; ++ i) {
     res = logAdd(res, a[i]);
   }
@@ -30,6 +32,7 @@ double VotingGame::countSwingsColumn(const vector<double> &a, ll weight) {
 
 double VotingGame::countSwingsColumn(const vector<double> &a, const vector<double> &b, ll weight) {
   double res = -INF;
+  if (!weight) return res;
   vector<double> prefixLogSum(quota);
   prefixLogSum[0] = b[0];
   for (int i = 1; i < quota; ++i) prefixLogSum[i] = logAdd(prefixLogSum[i - 1], b[i]);
@@ -85,6 +88,7 @@ VotingGame::VotingGame(istream &in) {
 
 vector<double> VotingGame::banzhafDpFast() {
   logSumsRec = vector<double>(players, -INF);
+  assert(players == weights.size());
   vector<double> right = emptyColumn();
   vector<double> left = emptyColumn();
   // prepare left
@@ -111,12 +115,14 @@ vector<double> VotingGame::banzhafBranchAndBound() {
 }
 
 void VotingGame::addToColumnInplace(vector<double> &a, ll weight) {
-  for (int i = a.size(); i >= weight; --i) {
+  if (!weight) return;
+  for (int i = a.size() - 1; i >= weight; --i) {
     logInc(a[i], a[i - weight]);
   }
 }
 
 void VotingGame::removeFromColumnInplace(vector<double> &a, ll weight) {
+  if (!weight) return;
   for (size_t i = weight; i < a.size(); ++i) {
     logDec(a[i], a[i - weight]);
   }

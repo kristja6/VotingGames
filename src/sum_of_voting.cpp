@@ -4,12 +4,11 @@
 
 #include "sum_of_voting.h"
 
-SumOfVoting::SumOfVoting(const matrix &special, const matrix &control) : CoalGame(special.back().size()) {
-  vector<vector<int>> res = vector<vector<int>>(special.size(), vector<int>(special[0].size(), 0));
+SumOfVoting::SumOfVoting(const matrix &special, const matrix &control) : CoalGame(special.size()) {
   const int genes = special.size();
   const int samples = special[0].size();
   vector<double> u(genes), s(genes);
-  for (int i = 0; i < samples; ++i) {
+  for (int i = 0; i < genes; ++i) {
     u[i] = mean(control[i]);
     s[i] = sd(control[i], u[i]);
   }
@@ -17,12 +16,13 @@ SumOfVoting::SumOfVoting(const matrix &special, const matrix &control) : CoalGam
     vector<ll> weights(genes);
     int sum = 0;
     for (int i = 0; i < genes; ++i) {
-      sum += weights[i] = fabs(special[i][j] - u[i]);
-      cout << (int)fabs(special[i][j] - u[i]) << ' ';
+      sum += weights[i] = round(fabs(special[i][j] - u[i]));
     }
-    cout << endl;
-    cout << "sum: " << sum << endl;
-    games.emplace_back(VotingGame(weights, sum/2));
+    if (sum) {
+      //VotingGame temp(weights, sum/2); // works quite nicely
+      VotingGame temp(weights, (sum*5)/4);
+      games.push_back(temp);
+    }
   }
 }
 
@@ -37,12 +37,14 @@ ll SumOfVoting::v(const vector<int> &coal) {
 vector<double> SumOfVoting::banzhaf() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < games.size(); ++i) {
-    cout << i << ' ' << endl;
+    cout << i << ' ' << flush;
     auto cur = games[i].banzhafDpFast();
+    //auto cur = vector<double>(players, 0);
+    //printVec(cur);
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];
     }
-    cout << endl;
   }
+  cout << endl;
   return res;
 }

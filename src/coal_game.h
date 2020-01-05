@@ -135,8 +135,9 @@ public:
     return bestCoal;
   }
 
-protected:
   int players;
+
+protected:
   int banzhafDenominator = BANZHAF_DENOM_WINNING;
 
   void normalizeBanzhafSums(vector<double> & sums, double subsets, double swingVotes) {

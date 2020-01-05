@@ -127,6 +127,10 @@ void measureMicroarray() {
   }
 }
 
+void measureSumOfVoting() {
+
+}
+
 void test1() {
   //cout << fixed << setprecision(12) << endl;
   vector<double> test;
@@ -150,10 +154,10 @@ int main() {
 
   cout << "running" << endl;
   cout << fixed << endl;
-  //example1();
-  //example2();
-  //example3();
-  measureMicroarray();
+  example1();
+  example2();
+  example3();
+  //measureMicroarray();
 
   return 0;
 }
