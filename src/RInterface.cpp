@@ -41,14 +41,14 @@ NumericMatrix vectorsToMatrix(const vector<vector<int>> & mtx) {
 NumericVector votingBanzhaf(const NumericVector & weights, const long long int quota) {
   vector<double> res;
   VotingGame game(vector<long long int>(weights.begin(), weights.end()), quota);
-  res = game.banzhafDpFast();
+  res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 NumericVector votingShapley(const IntegerVector & weights, const long long int quota) {
   VotingGame game(vector<long long int>(weights.begin(), weights.end()), quota);
-  auto res = game.shapleyDpFast();
+  auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
 }
 
@@ -78,6 +78,20 @@ NumericVector genesVotingBanzhaf(const NumericMatrix & special, const NumericMat
   SumOfVoting game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+NumericVector genesVotingShapley(const NumericMatrix & special, const NumericMatrix & control) {
+  SumOfVoting game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
+  auto res = game.shapley();
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+bool genesVotingPredict(const NumericMatrix & special, const NumericMatrix & control, const NumericVector & sample) {
+  SumOfVoting game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
+  vector<double> expr(sample.begin(), sample.end());
+  return game.predict(game.expressionsToCoalition(expr));
 }
 
 // [[Rcpp::export]]

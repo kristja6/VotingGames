@@ -26,9 +26,9 @@ void example2() {
   cout << "DP" << endl;
   VotingGame game(5, vector<ll>{4, 8, 20, 32, 44}, 54);
   cout << "Banzhaf: " << endl;
-  printVec(game.banzhafDpFast());
+  printVec(game.banzhaf());
   cout << "Shapley: " << endl;
-  printVec(game.shapleyDpFast());
+  printVec(game.shapley());
 }
 
 void example3() {
@@ -59,7 +59,7 @@ void measureSlowDP(VotingGame game) {
 void measureFastDP(VotingGame game) {
   cout << "Fast DP" << endl;
   //game.useFFT = true;
-  vector<double> res = game.banzhafDpFast();
+  vector<double> res = game.banzhaf();
   for (double r: res) cout << r << ' ';
   cout << endl;
   cout << endl;
@@ -82,7 +82,7 @@ void measureBB(VotingGame game) {
 }
 
 void measureFastShapley(VotingGame game) {
-  auto res = game.shapleyDpFast();
+  auto res = game.shapley();
   printVec(res);
 }
 

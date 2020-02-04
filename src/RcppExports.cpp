@@ -75,6 +75,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// genesVotingShapley
+NumericVector genesVotingShapley(const NumericMatrix& special, const NumericMatrix& control);
+RcppExport SEXP _CoopGame_genesVotingShapley(SEXP specialSEXP, SEXP controlSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type special(specialSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
+    rcpp_result_gen = Rcpp::wrap(genesVotingShapley(special, control));
+    return rcpp_result_gen;
+END_RCPP
+}
+// genesVotingPredict
+bool genesVotingPredict(const NumericMatrix& special, const NumericMatrix& control, const NumericVector& sample);
+RcppExport SEXP _CoopGame_genesVotingPredict(SEXP specialSEXP, SEXP controlSEXP, SEXP sampleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type special(specialSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type sample(sampleSEXP);
+    rcpp_result_gen = Rcpp::wrap(genesVotingPredict(special, control, sample));
+    return rcpp_result_gen;
+END_RCPP
+}
 // microarrayStrongestCoalition
 NumericVector microarrayStrongestCoalition(const NumericMatrix& mtx, const int size);
 RcppExport SEXP _CoopGame_microarrayStrongestCoalition(SEXP mtxSEXP, SEXP sizeSEXP) {
@@ -105,6 +130,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_CoopGame_microarrayShapley", (DL_FUNC) &_CoopGame_microarrayShapley, 1},
     {"_CoopGame_expressionsToFeaturesStd", (DL_FUNC) &_CoopGame_expressionsToFeaturesStd, 2},
     {"_CoopGame_genesVotingBanzhaf", (DL_FUNC) &_CoopGame_genesVotingBanzhaf, 2},
+    {"_CoopGame_genesVotingShapley", (DL_FUNC) &_CoopGame_genesVotingShapley, 2},
+    {"_CoopGame_genesVotingPredict", (DL_FUNC) &_CoopGame_genesVotingPredict, 3},
     {"_CoopGame_microarrayStrongestCoalition", (DL_FUNC) &_CoopGame_microarrayStrongestCoalition, 2},
     {"_CoopGame_rcpp_hello_world", (DL_FUNC) &_CoopGame_rcpp_hello_world, 0},
     {NULL, NULL, 0}

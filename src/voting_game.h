@@ -22,11 +22,11 @@ class VotingGame : public CoalGame<ll> {
   vector<double> banzhafDpSlow();
 
   // TIME: O(n*q) SPACE: O(n + q)
-  vector<double> banzhafDpFast();
+  vector<double> banzhaf() override;
   vector<double> banzhafBranchAndBound();
 
   // TIME: O(n^2*q), SPACE: O(nq)
-  vector<double> shapleyDpFast();
+  vector<double> shapley() override;
   ll v(const vector<int> & coalition) override;
 
   // todo: make protected

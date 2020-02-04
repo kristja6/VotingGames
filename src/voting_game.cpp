@@ -86,7 +86,7 @@ VotingGame::VotingGame(istream &in) {
   }
 }
 
-vector<double> VotingGame::banzhafDpFast() {
+vector<double> VotingGame::banzhaf() {
   logSumsRec = vector<double>(players, -INF);
   assert(players == weights.size());
   vector<double> right = emptyColumn();
@@ -128,7 +128,7 @@ void VotingGame::removeFromColumnInplace(vector<double> &a, ll weight) {
   }
 }
 
-vector<double> VotingGame::shapleyDpFast() {
+vector<double> VotingGame::shapley() {
   logSumsRec = vector<double>(players, -INF);
 
   matrix left = matrix(players, vector<double>(quota, -INF));

@@ -25,6 +25,16 @@ public:
     return vFunc(coalition);
   }
 
+  /* Default exact methods, to be overwritten by more efficient methods
+     in child classes */
+
+  virtual vector<double> shapley() {
+    return shapleyEnum();
+  }
+  virtual vector<double> banzhaf() {
+    return banzhafEnum();
+  }
+
   // ---------- Monte Carlo methods -----------
   vector<double> shapleyMonteCarlo(ll iters) {
     vector<double> sh(players);
@@ -121,8 +131,6 @@ public:
     shapleyEnumRec(player + 1, coal);
     coal.pop_back();
   }
-
-
 
   void setBanzhafDenominator(int denom) {
     banzhafDenominator = denom;

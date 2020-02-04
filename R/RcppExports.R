@@ -25,6 +25,14 @@ genesVotingBanzhaf <- function(special, control) {
     .Call(`_CoopGame_genesVotingBanzhaf`, special, control)
 }
 
+genesVotingShapley <- function(special, control) {
+    .Call(`_CoopGame_genesVotingShapley`, special, control)
+}
+
+genesVotingPredict <- function(special, control, sample) {
+    .Call(`_CoopGame_genesVotingPredict`, special, control, sample)
+}
+
 microarrayStrongestCoalition <- function(mtx, size) {
     .Call(`_CoopGame_microarrayStrongestCoalition`, mtx, size)
 }
