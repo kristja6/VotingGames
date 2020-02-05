@@ -35,6 +35,9 @@ double mean(const vector<double> & a);
 double sd(const vector<double> & a, double mean);
 double sd(const vector<double> & a);
 
+vector<int> random_perm(int);
+vector<int> random_subset(int n);
+
 class LogSumMatrix {
   size_t n, m;
   vector<matrix> dif; // differences along columns

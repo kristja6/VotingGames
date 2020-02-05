@@ -2,7 +2,6 @@
 #define __COAL_GAME_H__
 
 #include <bits/stdc++.h>
-#include "random.h"
 #include "math.h"
 //#define ll long long
 #define BANZHAF_DENOM_SUBSETS 0

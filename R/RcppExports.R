@@ -9,6 +9,10 @@ votingShapley <- function(weights, quota) {
     .Call(`_CoopGame_votingShapley`, weights, quota)
 }
 
+votingVal <- function(weights, quota, coal) {
+    .Call(`_CoopGame_votingVal`, weights, quota, coal)
+}
+
 microarrayBanzhaf <- function(mtx) {
     .Call(`_CoopGame_microarrayBanzhaf`, mtx)
 }
@@ -17,24 +21,28 @@ microarrayShapley <- function(mtx) {
     .Call(`_CoopGame_microarrayShapley`, mtx)
 }
 
+microarrayValue <- function(mtx, coal) {
+    .Call(`_CoopGame_microarrayValue`, mtx, coal)
+}
+
+microarrayStrongestCoalition <- function(mtx, size) {
+    .Call(`_CoopGame_microarrayStrongestCoalition`, mtx, size)
+}
+
 expressionsToFeaturesStd <- function(special, control) {
     .Call(`_CoopGame_expressionsToFeaturesStd`, special, control)
 }
 
-genesVotingBanzhaf <- function(special, control) {
+votingMicroarrayBanzhaf <- function(special, control) {
     .Call(`_CoopGame_genesVotingBanzhaf`, special, control)
 }
 
-genesVotingShapley <- function(special, control) {
+votingMicroarrayShapley <- function(special, control) {
     .Call(`_CoopGame_genesVotingShapley`, special, control)
 }
 
 genesVotingPredict <- function(special, control, sample) {
     .Call(`_CoopGame_genesVotingPredict`, special, control, sample)
-}
-
-microarrayStrongestCoalition <- function(mtx, size) {
-    .Call(`_CoopGame_microarrayStrongestCoalition`, mtx, size)
 }
 
 rcpp_hello_world <- function() {
