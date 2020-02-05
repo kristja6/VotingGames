@@ -34,15 +34,31 @@ expressionsToFeaturesStd <- function(special, control) {
 }
 
 votingMicroarrayBanzhaf <- function(special, control) {
-    .Call(`_CoopGame_genesVotingBanzhaf`, special, control)
+    .Call(`_CoopGame_votingMicroarrayBanzhaf`, special, control)
 }
 
 votingMicroarrayShapley <- function(special, control) {
-    .Call(`_CoopGame_genesVotingShapley`, special, control)
+    .Call(`_CoopGame_votingMicroarrayShapley`, special, control)
 }
 
-genesVotingPredict <- function(special, control, sample) {
-    .Call(`_CoopGame_genesVotingPredict`, special, control, sample)
+votingMicroarrayValue <- function(special, control, coal) {
+    .Call(`_CoopGame_votingMicroarrayValue`, special, control, coal)
+}
+
+votingMicroarrayPredict <- function(special, control, sample) {
+    .Call(`_CoopGame_votingMicroarrayPredict`, special, control, sample)
+}
+
+sumOfVotingBanzhaf <- function(weights, quotas) {
+    .Call(`_CoopGame_sumOfVotingBanzhaf`, weights, quotas)
+}
+
+sumOfVotingShapley <- function(weights, quotas) {
+    .Call(`_CoopGame_sumOfVotingShapley`, weights, quotas)
+}
+
+sumOfVotingValue <- function(weights, quotas, coal) {
+    .Call(`_CoopGame_sumOfVotingValue`, weights, quotas, coal)
 }
 
 rcpp_hello_world <- function() {

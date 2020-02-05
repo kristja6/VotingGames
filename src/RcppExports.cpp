@@ -65,13 +65,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // microarrayValue
-double microarrayValue(const NumericMatrix& mtx, const IntegerMatrix& coal);
+double microarrayValue(const NumericMatrix& mtx, const IntegerVector& coal);
 RcppExport SEXP _CoopGame_microarrayValue(SEXP mtxSEXP, SEXP coalSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type mtx(mtxSEXP);
-    Rcpp::traits::input_parameter< const IntegerMatrix& >::type coal(coalSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type coal(coalSEXP);
     rcpp_result_gen = Rcpp::wrap(microarrayValue(mtx, coal));
     return rcpp_result_gen;
 END_RCPP
@@ -101,8 +101,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // votingMicroarrayBanzhaf
-NumericVector votingMicroarrayBanzhaf(const NumericMatrix &special, const NumericMatrix &control);
-RcppExport SEXP _CoopGame_genesVotingBanzhaf(SEXP specialSEXP, SEXP controlSEXP) {
+NumericVector votingMicroarrayBanzhaf(const NumericMatrix& special, const NumericMatrix& control);
+RcppExport SEXP _CoopGame_votingMicroarrayBanzhaf(SEXP specialSEXP, SEXP controlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -113,8 +113,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // votingMicroarrayShapley
-NumericVector votingMicroarrayShapley(const NumericMatrix &special, const NumericMatrix &control);
-RcppExport SEXP _CoopGame_genesVotingShapley(SEXP specialSEXP, SEXP controlSEXP) {
+NumericVector votingMicroarrayShapley(const NumericMatrix& special, const NumericMatrix& control);
+RcppExport SEXP _CoopGame_votingMicroarrayShapley(SEXP specialSEXP, SEXP controlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -124,9 +124,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// genesVotingPredict
-bool votingMicroarrayPredict(const NumericMatrix &special, const NumericMatrix &control, const NumericVector &sample);
-RcppExport SEXP _CoopGame_genesVotingPredict(SEXP specialSEXP, SEXP controlSEXP, SEXP sampleSEXP) {
+// votingMicroarrayValue
+double votingMicroarrayValue(const NumericMatrix& special, const NumericMatrix& control, const IntegerVector& coal);
+RcppExport SEXP _CoopGame_votingMicroarrayValue(SEXP specialSEXP, SEXP controlSEXP, SEXP coalSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type special(specialSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type coal(coalSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingMicroarrayValue(special, control, coal));
+    return rcpp_result_gen;
+END_RCPP
+}
+// votingMicroarrayPredict
+bool votingMicroarrayPredict(const NumericMatrix& special, const NumericMatrix& control, const NumericVector& sample);
+RcppExport SEXP _CoopGame_votingMicroarrayPredict(SEXP specialSEXP, SEXP controlSEXP, SEXP sampleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -134,6 +147,43 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type sample(sampleSEXP);
     rcpp_result_gen = Rcpp::wrap(votingMicroarrayPredict(special, control, sample));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sumOfVotingBanzhaf
+NumericVector sumOfVotingBanzhaf(const NumericMatrix& weights, const NumericVector& quotas);
+RcppExport SEXP _CoopGame_sumOfVotingBanzhaf(SEXP weightsSEXP, SEXP quotasSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type quotas(quotasSEXP);
+    rcpp_result_gen = Rcpp::wrap(sumOfVotingBanzhaf(weights, quotas));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sumOfVotingShapley
+NumericVector sumOfVotingShapley(const NumericMatrix& weights, const NumericVector& quotas);
+RcppExport SEXP _CoopGame_sumOfVotingShapley(SEXP weightsSEXP, SEXP quotasSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type quotas(quotasSEXP);
+    rcpp_result_gen = Rcpp::wrap(sumOfVotingShapley(weights, quotas));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sumOfVotingValue
+double sumOfVotingValue(const NumericMatrix& weights, const NumericVector& quotas, const IntegerVector& coal);
+RcppExport SEXP _CoopGame_sumOfVotingValue(SEXP weightsSEXP, SEXP quotasSEXP, SEXP coalSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type quotas(quotasSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type coal(coalSEXP);
+    rcpp_result_gen = Rcpp::wrap(sumOfVotingValue(weights, quotas, coal));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -157,9 +207,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"_CoopGame_microarrayValue", (DL_FUNC) &_CoopGame_microarrayValue, 2},
     {"_CoopGame_microarrayStrongestCoalition", (DL_FUNC) &_CoopGame_microarrayStrongestCoalition, 2},
     {"_CoopGame_expressionsToFeaturesStd", (DL_FUNC) &_CoopGame_expressionsToFeaturesStd, 2},
-    {"_CoopGame_genesVotingBanzhaf", (DL_FUNC) &_CoopGame_genesVotingBanzhaf, 2},
-    {"_CoopGame_genesVotingShapley", (DL_FUNC) &_CoopGame_genesVotingShapley, 2},
-    {"_CoopGame_genesVotingPredict", (DL_FUNC) &_CoopGame_genesVotingPredict, 3},
+    {"_CoopGame_votingMicroarrayBanzhaf", (DL_FUNC) &_CoopGame_votingMicroarrayBanzhaf, 2},
+    {"_CoopGame_votingMicroarrayShapley", (DL_FUNC) &_CoopGame_votingMicroarrayShapley, 2},
+    {"_CoopGame_votingMicroarrayValue", (DL_FUNC) &_CoopGame_votingMicroarrayValue, 3},
+    {"_CoopGame_votingMicroarrayPredict", (DL_FUNC) &_CoopGame_votingMicroarrayPredict, 3},
+    {"_CoopGame_sumOfVotingBanzhaf", (DL_FUNC) &_CoopGame_sumOfVotingBanzhaf, 2},
+    {"_CoopGame_sumOfVotingShapley", (DL_FUNC) &_CoopGame_sumOfVotingShapley, 2},
+    {"_CoopGame_sumOfVotingValue", (DL_FUNC) &_CoopGame_sumOfVotingValue, 3},
     {"_CoopGame_rcpp_hello_world", (DL_FUNC) &_CoopGame_rcpp_hello_world, 0},
     {NULL, NULL, 0}
 };

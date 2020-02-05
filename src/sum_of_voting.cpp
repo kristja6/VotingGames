@@ -3,6 +3,7 @@
 //
 
 #include "sum_of_voting.h"
+#include "math.h"
 
 ll SumOfVoting::v(const vector<int> &coal) {
   ll res = 0;
@@ -28,7 +29,7 @@ vector<double> SumOfVoting::banzhaf() {
 vector<double> SumOfVoting::shapley() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < games.size(); ++i) {
-    cout << i << ' ' << flush;
+    cout << i << ' ' << flush; // TODO: probably remove in final version
     auto cur = games[i].shapley();
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];

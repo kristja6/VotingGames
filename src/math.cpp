@@ -74,6 +74,11 @@ void printVec(const vector<int> &a) {
   cout << endl << endl;
 }
 
+void printVec(const vector<long long int> &a) {
+  for (auto i: a) cout << i << ' ';
+  cout << endl << endl;
+}
+
 void normalize(vector<double> &a, vector<double> &b) {
   logToNorm(a);
   logToNorm(b);

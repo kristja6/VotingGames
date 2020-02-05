@@ -27,6 +27,7 @@ double logFact(int);
 double logChoose(int n, int k);
 void printVec(const vector<double> &a);
 void printVec(const vector<int> &a);
+void printVec(const vector<long long int> &a);
 void printMtx(const matrix &a);
 void printMtx(const vector<vector<int>> &a);
 void normalize(vector<double> &a, vector<double> &b);
