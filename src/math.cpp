@@ -20,6 +20,10 @@ double logSub(double u, double v) {
   else return u + log1p(-exp(v - u));
 }
 
+pair<double, double> logAdd(pair<double, double> u, pair<double, double> v) {
+  return {logAdd(u.first, v.first), logAdd(u.second, v.second)};
+}
+
 pair<vector<double>, double> logToPaddedNorm(const vector<double> &a) {
   const double top = 0;
   vector<double> res = a;
@@ -104,6 +108,10 @@ void printMtx(const matrix &a) {
 }
 
 double logInc(double &a, double b) {
+  return a = logAdd(a, b);
+}
+
+pair<double, double> logInc(pair<double, double> &a, pair<double, double> b) {
   return a = logAdd(a, b);
 }
 
@@ -209,4 +217,9 @@ vector<int> random_subset(int n) {
     if (rand()&2) res.push_back(i);
   }
   return res;
+}
+
+double extendedLogToNorm(pair<double, double> a) {
+  double val = logSub(max(a.first, a.second), min(a.first, a.second));
+  return exp(a.first > a.second ? -val : val);
 }

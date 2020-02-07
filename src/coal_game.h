@@ -131,6 +131,46 @@ public:
     coal.pop_back();
   }
 
+  // NOTE: currently normalized by the number of possible coalitions without inputSubset
+  double banzhafInteractionEnum(vector<int> inputSubset) {
+    set<int> forbidden(inputSubset.begin(), inputSubset.end());
+    vector<int> empty;
+    auto res = banzhafInteractionEnumRec1(0, forbidden, empty, inputSubset);
+    res.first -= (players - inputSubset.size()) / log(2);
+    res.second -= (players - inputSubset.size()) / log(2);
+    return extendedLogToNorm(res);
+  }
+
+  // interates over subsets of 2^players - input_subset
+  pair<double, double> banzhafInteractionEnumRec1(int player, const set<int> & forbidden, vector<int> & curSubset, const vector<int> & inputSubset) {
+    while (forbidden.count(player)) player ++;
+    if (player == players) {
+      return banzhafInteractionEnumRec2(0, curSubset, inputSubset);
+    }
+    pair<double, double> res = banzhafInteractionEnumRec1(player + 1, forbidden, curSubset, inputSubset);
+    curSubset.push_back(player);
+    logInc(res, banzhafInteractionEnumRec1(player + 1, forbidden, curSubset, inputSubset));
+    curSubset.pop_back();
+    return res;
+  }
+
+  // iterates over subsets of the input subset
+  // {negative part, positive part}
+  pair<double, double> banzhafInteractionEnumRec2(int player, vector<int> &curSubset, const vector<int> &subset, int added = 0) {
+    if (player == (int)subset.size()) {
+      pair<double, double> res = {-INF, log(v(curSubset))};
+      if ((subset.size() - added) % 2 == 1) swap(res.first, res.second);
+      return res;
+    }
+
+    pair<double, double> res = {-INF, -INF};
+    logInc(res, banzhafInteractionEnumRec2(player + 1, curSubset, subset, added));
+    curSubset.push_back(subset[player]);
+    logInc(res, banzhafInteractionEnumRec2(player + 1, curSubset, subset, added + 1));
+    curSubset.pop_back();
+    return res;
+  }
+
   void setBanzhafDenominator(int denom) {
     banzhafDenominator = denom;
   }
@@ -145,7 +185,8 @@ public:
   int players;
 
 protected:
-  int banzhafDenominator = BANZHAF_DENOM_WINNING;
+  int banzhafDenominator = BANZHAF_DENOM_WINNING; // TODO: use winning by defualt
+  //int banzhafDenominator = BANZHAF_DENOM_SUBSETS;
 
   void normalizeBanzhafSums(vector<double> & sums, double subsets, double swingVotes) {
     switch (banzhafDenominator) {

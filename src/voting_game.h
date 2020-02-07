@@ -27,6 +27,7 @@ class VotingGame : public CoalGame<ll> {
 
   // TIME: O(n^2*q), SPACE: O(nq)
   vector<double> shapley() override;
+  vector<double> shapleyHelp();
   ll v(const vector<int> & coalition) override;
 
   // todo: make protected
@@ -42,8 +43,10 @@ protected:
   void removeFromColumnInplace(vector<double> & a, ll weight);
   double countSwingsColumn(const vector<double> &a, ll weight);
   double countSwingsColumn(const vector<double> &a, const vector<double> &b, ll weight);
+  bool hasAnySwings(const vector<double> &a, const vector<double> &b, ll weight);
 
   void bbRec(ll sum, int idx, vector<bool> has, bool checkSum);
+  ll reduceDummyPlayers();
 
 private:
   vector<double> bbSums;

@@ -11,12 +11,7 @@ using namespace std;
 
 class SumOfVoting: public CoalGame<ll> {
 public:
-  SumOfVoting(const vector<vector<ll>> & weights, const vector<ll> & quotas): CoalGame(weights[0].size()) {
-    assert(weights.size() == quotas.size());
-    for (int i = 0; i < weights.size(); ++i) {
-      games.push_back(VotingGame(weights[i], quotas[i]));
-    }
-  }
+  SumOfVoting(const vector<vector<ll>> & weights, const vector<ll> & quotas);
   SumOfVoting(const vector<VotingGame> & games): CoalGame(games[0].players), games(games) {
   }
   SumOfVoting(int players): CoalGame(players) {

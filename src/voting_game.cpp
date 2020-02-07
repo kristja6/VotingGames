@@ -46,6 +46,22 @@ double VotingGame::countSwingsColumn(const vector<double> &a, const vector<doubl
   return res;
 }
 
+bool VotingGame::hasAnySwings(const vector<double> &a, const vector<double> &b, ll weight) {
+  if (!weight) return false;
+  vector<double> prefixLogSum(quota);
+  prefixLogSum[0] = b[0];
+  for (int i = 1; i < quota; ++i) prefixLogSum[i] = logAdd(prefixLogSum[i - 1], b[i]);
+  for (int i = 0; i < quota; ++i) {
+    // a[i] * all those in b, that fall in interval [quota - weight, quota - 1]
+    double intervalSum = prefixLogSum[quota - 1 - i];
+    const int lowerEnd = quota - 1 - weight - i;
+    if (lowerEnd >= 0) intervalSum = logSub(intervalSum, prefixLogSum[lowerEnd]);
+    if(a[i] + intervalSum > -INF) return true;
+  }
+  return false;
+}
+
+
 vector<double> VotingGame::banzhafDpSlow() {
   vector<double> res(players);
   // count swings for player i
@@ -87,8 +103,11 @@ VotingGame::VotingGame(istream &in) {
 }
 
 vector<double> VotingGame::banzhaf() {
+  set<ll> diff(weights.begin(), weights.end());
+  cout << "WEIGHT TYPES: " << diff.size() << endl;
   logSumsRec = vector<double>(players, -INF);
-  assert(players == weights.size());
+  set<ll> dummyWeights = {0}; // weights known to have no effect on the outcome of the game
+  assert(players == (int)weights.size());
   vector<double> right = emptyColumn();
   vector<double> left = emptyColumn();
   // prepare left
@@ -97,10 +116,16 @@ vector<double> VotingGame::banzhaf() {
   }
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
-    logSumsRec[i] = countSwingsColumn(right, left, weights[i]);
+    if (!dummyWeights.count(weights[i])) {
+      logSumsRec[i] = countSwingsColumn(right, left, weights[i]);
+    } else if (logSumsRec[i] == -INF) {
+      dummyWeights.insert(weights[i]);
+    }
     if (i > 0) {
-      addToColumnInplace(right, weights[i]);
-      removeFromColumnInplace(left, weights[i - 1]);
+      if (!dummyWeights.count(weights[i]))
+        addToColumnInplace(right, weights[i]);
+      if (!dummyWeights.count(weights[i - 1]))
+        removeFromColumnInplace(left, weights[i - 1]);
     }
   }
   normalizeBanzhafLogSums(logSumsRec);
@@ -129,6 +154,25 @@ void VotingGame::removeFromColumnInplace(vector<double> &a, ll weight) {
 }
 
 vector<double> VotingGame::shapley() {
+  vector<int> mapping;
+  vector<ll> newWeights;
+  ll newQuota = reduceDummyPlayers();
+  for (int i = 0; i < players; ++i) {
+    if (weights[i] == 0) continue;
+    mapping.push_back(i);
+    newWeights.push_back(weights[i]);
+  }
+  VotingGame reducedGame(newWeights, newQuota);
+  auto reducedRes = reducedGame.shapleyHelp();
+  vector<double> res(players, 0);
+  for (size_t i = 0; i < mapping.size(); ++i) {
+    res[mapping[i]] = reducedRes[i];
+  }
+  return res;
+}
+
+vector<double> VotingGame::shapleyHelp() {
+  cout << "players: " << players << ", quota: " << quota << endl;
   logSumsRec = vector<double>(players, -INF);
 
   matrix left = matrix(players, vector<double>(quota, -INF));
@@ -189,4 +233,36 @@ vector<double> VotingGame::shapley() {
   }
 
   return logSumsRec;
+}
+
+ll VotingGame::reduceDummyPlayers() {
+  ll reducedQuota = quota;
+  map<ll, vector<int>> w;
+  for (int i = 0; i < players; ++i) {
+    w[weights[i]].push_back(i);
+  }
+
+  vector<double> right = emptyColumn();
+  vector<double> left = emptyColumn();
+  // prepare left
+  for (int i = 0; i < players-1; ++i) {
+    addToColumnInplace(left, weights[i]);
+  }
+
+  // get results for all players
+  for (int i = players - 1; i >= 0; --i) {
+    if (!hasAnySwings(left, right, weights[i])) {
+      const ll curW = weights[i];
+      while (w[curW].size()) {
+        weights[w[curW].back()] = 0;
+        w[curW].pop_back();
+        reducedQuota -= curW;
+      }
+    }
+    if (i > 0) {
+      addToColumnInplace(right, weights[i]);
+      removeFromColumnInplace(left, weights[i - 1]);
+    }
+  }
+  return reducedQuota;
 }

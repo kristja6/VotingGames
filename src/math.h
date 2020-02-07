@@ -17,6 +17,10 @@ double logAdd(double, double);
 double logSub(double, double);
 double logInc(double & a, double b);
 double logDec(double & a, double b);
+pair<double, double> logAdd(pair<double, double>, pair<double, double>);
+pair<double, double> logInc(pair<double, double> & a, pair<double, double> b);
+double extendedLogToNorm(pair<double, double> a);
+
 pair<vector<double>, double> logToPaddedNorm(const vector<double> &a);
 pair<matrix, double> logToPaddedNorm(const matrix &a);
 void logToNorm(vector<double> &a);

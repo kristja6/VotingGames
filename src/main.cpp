@@ -24,7 +24,7 @@ void example1() {
 
 void example2() {
   cout << "DP" << endl;
-  VotingGame game(5, vector<ll>{4, 8, 20, 32, 44}, 54);
+  VotingGame game(vector<ll>{4, 8, 0, 20, 32, 0, 44, 1}, 54);
   cout << "Banzhaf: " << endl;
   printVec(game.banzhaf());
   cout << "Shapley: " << endl;
@@ -103,17 +103,17 @@ void measureVoting() {
   VotingGame game(cin);
   //measureBB(game);
   //measureDPBadMerge(game);
-  measureFastDP(game);
-  measureSlowDP(game);
-  measureMonteCarlo(game);
-  //measureFastShapley(game);
+  //measureFastDP(game);
+  //measureSlowDP(game);
+  //measureMonteCarlo(game);
+  measureFastShapley(game);
   //measureSlowShapley(game);
   //measureMonteCarloShapley(game);
-  for (int i = 1; i < 3; ++i) {
+  /*for (int i = 1; i < 3; ++i) {
     vector<int> vec = game.optimalCoalitionOfFixedSize(i);
     cout << game.v(vec) << endl;
     printVec(vec);
-  }
+  }*/
 }
 
 void measureMicroarray() {
@@ -149,15 +149,29 @@ void test1() {
   exit(0);
 }
 
+void testInteractionIndex() {
+  cout << "Interaction index" << endl;
+  //VotingGame game(5, vector<ll>{4, 8, 20, 32, 44}, 54);
+  VotingGame game(vector<ll>{4, 4, 4, 4, 1, 1, 1, 1}, 8);
+  printVec(game.banzhaf());
+  for (int i = 0; i < game.players; ++i) {
+    for (int j = 0; j < game.players; ++j) {
+      set<int> subset = {i, j};
+      cout << i << ' ' << j << ": " << game.banzhafInteractionEnum(vector<int>(subset.begin(), subset.end())) << endl;
+    }
+  }
+  cout << endl;
+}
+
 int main() {
   srand(time(0));
 
   cout << "running" << endl;
   cout << fixed << endl;
-  example1();
-  example2();
-  example3();
-  //measureMicroarray();
+  //testInteractionIndex();
+  //example2();
+  measureVoting();
+
 
   return 0;
 }

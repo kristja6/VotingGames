@@ -58,7 +58,6 @@ vector<double> MicroarrayGame::shapley() {
 
   vector<double> precomp(players);
 
-  int cnt = 0;
   for (auto & check: checks) {
     //cout << (cnt ++) << ' ' << check.size() << endl;
     for (auto & p: check)           {

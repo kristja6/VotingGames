@@ -48,7 +48,7 @@ vector<int> VotingMicroarray::expressionsToCoalition(const vector<double> &expre
 double VotingMicroarray::avgMatrixVal(const matrix &mtx) {
   double avg = 0;
   // special
-  for (int i = 0; i < mtx[0].size(); ++i) {
+  for (size_t i = 0; i < mtx[0].size(); ++i) {
     vector<double> curExp(players);
     for (int j = 0; j < players; ++j) {
       curExp[j] = mtx[j][i];
