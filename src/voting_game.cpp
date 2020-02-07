@@ -102,11 +102,11 @@ VotingGame::VotingGame(istream &in) {
   }
 }
 
-vector<double> VotingGame::banzhaf() {
+/*vector<double> VotingGame::banzhaf() {
   set<ll> diff(weights.begin(), weights.end());
   cout << "WEIGHT TYPES: " << diff.size() << endl;
   logSumsRec = vector<double>(players, -INF);
-  set<ll> dummyWeights = {0}; // weights known to have no effect on the outcome of the game
+  set<ll> dummyWeights; // weights known to have no effect on the outcome of the game
   assert(players == (int)weights.size());
   vector<double> right = emptyColumn();
   vector<double> left = emptyColumn();
@@ -119,7 +119,7 @@ vector<double> VotingGame::banzhaf() {
     if (!dummyWeights.count(weights[i])) {
       logSumsRec[i] = countSwingsColumn(right, left, weights[i]);
     } else if (logSumsRec[i] == -INF) {
-      dummyWeights.insert(weights[i]);
+      //dummyWeights.insert(weights[i]);
     }
     if (i > 0) {
       if (!dummyWeights.count(weights[i]))
@@ -129,6 +129,29 @@ vector<double> VotingGame::banzhaf() {
     }
   }
   normalizeBanzhafLogSums(logSumsRec);
+  //logToNorm(logSumsRec);
+  return logSumsRec;
+}*/
+
+vector<double> VotingGame::banzhaf() {
+  logSumsRec = vector<double>(players, -INF);
+  assert(players == (int)weights.size());
+  vector<double> right = emptyColumn();
+  vector<double> left = emptyColumn();
+  // prepare left
+  for (int i = 0; i < players-1; ++i) {
+    addToColumnInplace(left, weights[i]);
+  }
+  // get results for all players
+  for (int i = players - 1; i >= 0; --i) {
+    logSumsRec[i] = countSwingsColumn(right, left, weights[i]);
+    if (i > 0) {
+      addToColumnInplace(right, weights[i]);
+      removeFromColumnInplace(left, weights[i - 1]);
+    }
+  }
+  normalizeBanzhafLogSums(logSumsRec);
+  //logToNorm(logSumsRec);
   return logSumsRec;
 }
 
@@ -145,6 +168,13 @@ void VotingGame::addToColumnInplace(vector<double> &a, ll weight) {
     logInc(a[i], a[i - weight]);
   }
 }
+
+/*void VotingGame::addToColumnMultiple(vector<double> &a, ll weight, ll count) {
+  if (!weight) return;
+  for (int i = a.size() - 1; i >= weight; --i) {
+    logInc(a[i], a[i - weight]);
+  }
+}*/
 
 void VotingGame::removeFromColumnInplace(vector<double> &a, ll weight) {
   if (!weight) return;

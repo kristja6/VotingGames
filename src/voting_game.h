@@ -22,7 +22,7 @@ class VotingGame : public CoalGame<ll> {
   vector<double> banzhafDpSlow();
 
   // TIME: O(n*q) SPACE: O(n + q)
-  vector<double> banzhaf() override;
+  vector<double> banzhaf() override; // TODO: ma problemy s presnosti! Dost vazne!
   vector<double> banzhafBranchAndBound();
 
   // TIME: O(n^2*q), SPACE: O(nq)

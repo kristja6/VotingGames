@@ -25,8 +25,8 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
       sum += weights[i] = round(fabs(special[i][j] - avgControl[i]));
     }
     if (sum) {
-      VotingGame temp(weights, sum/2); // works quite nicely
-      //VotingGame temp(weights, (sum*5)/4); // seems ok as well
+      VotingNonunique temp(weights, sum/2); // works quite nicely
+      //VotingNonunique temp(weights, (sum*5)/4); // seems ok as well
       games.push_back(temp);
     }
   }

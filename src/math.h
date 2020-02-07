@@ -23,7 +23,7 @@ double extendedLogToNorm(pair<double, double> a);
 
 pair<vector<double>, double> logToPaddedNorm(const vector<double> &a);
 pair<matrix, double> logToPaddedNorm(const matrix &a);
-void logToNorm(vector<double> &a);
+vector<double> & logToNorm(vector<double> &a);
 vector<double> logToNormRes(const vector<double> & a);
 matrix logToNormRes(const matrix & a);
 void normToLog(vector<double> &a);

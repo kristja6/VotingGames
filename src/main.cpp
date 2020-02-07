@@ -3,6 +3,7 @@
 #include "voting_game.h"
 #include "math.h"
 #include "microarray_game.h"
+#include "voting_nonunique.h"
 
 void example1() {
   cout << "Monte carlo" << endl;
@@ -59,10 +60,10 @@ void measureSlowDP(VotingGame game) {
 void measureFastDP(VotingGame game) {
   cout << "Fast DP" << endl;
   //game.useFFT = true;
-  vector<double> res = game.banzhaf();
-  for (double r: res) cout << r << ' ';
-  cout << endl;
-  cout << endl;
+  printVec(game.banzhaf());
+  printVec(game.banzhafDpSlow());
+  VotingNonunique game2(game.weights, game.quota);
+  printVec(game2.banzhaf());
 }
 
 void measureMonteCarlo(VotingGame game) {
@@ -103,10 +104,10 @@ void measureVoting() {
   VotingGame game(cin);
   //measureBB(game);
   //measureDPBadMerge(game);
-  //measureFastDP(game);
+  measureFastDP(game);
   //measureSlowDP(game);
   //measureMonteCarlo(game);
-  measureFastShapley(game);
+  //measureFastShapley(game);
   //measureSlowShapley(game);
   //measureMonteCarloShapley(game);
   /*for (int i = 1; i < 3; ++i) {

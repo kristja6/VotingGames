@@ -46,8 +46,9 @@ pair<matrix, double> logToPaddedNorm(const matrix &a) {
   return {res, mx - top};
 }
 
-void logToNorm(vector<double> &a) {
+vector<double> & logToNorm(vector<double> &a) {
   for (double & i: a) i = exp(i);
+  return a;
 }
 
 vector<double> logFactCache;
@@ -138,6 +139,7 @@ matrix logToNormRes(const matrix &a) {
 }
 
 double logChoose(int n, int k) {
+  if (n == 0 && k == 0) return 0;
   if (n == 0) return -INF;
   return logFact(n) - logFact(n - k) - logFact(k);
 }
