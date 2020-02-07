@@ -24,6 +24,7 @@ public:
 
   double countSwingsColumn(vector<double> a, vector<double> b, ll weight);
 
+  // Time: O(n*q), Space: O(unique_weights * q)
   vector<double> banzhaf() override;
 
   vector<ll> origWeights;

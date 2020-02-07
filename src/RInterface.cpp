@@ -52,21 +52,21 @@ NumericMatrix vectorsToMatrix(const vector<vector<int>> & mtx) {
 // [[Rcpp::export]]
 NumericVector votingBanzhaf(const NumericVector & weights, const long long int quota) {
   vector<double> res;
-  VotingGame game(vector<long long int>(weights.begin(), weights.end()), quota);
+  VotingNonunique game(vector<long long int>(weights.begin(), weights.end()), quota);
   res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 NumericVector votingShapley(const IntegerVector & weights, const long long int quota) {
-  VotingGame game(vector<long long int>(weights.begin(), weights.end()), quota);
+  VotingNonunique game(vector<long long int>(weights.begin(), weights.end()), quota);
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 double votingVal(const IntegerVector & weights, const long long int quota, const IntegerVector & coal) {
-  VotingGame game(vector<long long int>(weights.begin(), weights.end()), quota);
+  VotingNonunique game(vector<long long int>(weights.begin(), weights.end()), quota);
   return game.v(vector<int>(coal.begin(), coal.end()));
 }
 
