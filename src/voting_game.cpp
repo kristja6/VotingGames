@@ -1,5 +1,6 @@
 #include "voting_game.h"
 #include "math.h"
+#include <NTL/RR.h>
 
 long long int VotingGame::v(const vector<int> &coalition) {
   int sum = 0;
@@ -7,7 +8,13 @@ long long int VotingGame::v(const vector<int> &coalition) {
   return sum >= quota;
 }
 
-vector<double> VotingGame::emptyColumn() {
+ZZX VotingGame::emptyColumn() {
+  ZZX res;
+  SetCoeff(res, 0, 1);
+  return res;
+}
+
+vector<double> VotingGame::emptyColumnDub() {
   vector<double> res(quota, -INF);
   res[0] = 0;
   return res;
@@ -46,6 +53,23 @@ double VotingGame::countSwingsColumn(const vector<double> &a, const vector<doubl
   return res;
 }
 
+ZZ VotingGame::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
+  ZZ res(0);
+  if (!weight) return res;
+  vector<ZZ> prefixSum(quota, ZZ(0));
+  prefixSum[0] = coeff(b,0);
+  for (int i = 1; i < quota; ++i) prefixSum[i] = prefixSum[i - 1] + coeff(b, i);
+
+  for (int i = 0; i < quota; ++i) {
+    // a[i] * all those in b, that fall in interval [quota - weight, quota - 1]
+    ZZ intervalSum = prefixSum[quota - 1 - i];
+    const int lowerEnd = quota - 1 - weight - i;
+    if (lowerEnd >= 0) intervalSum = intervalSum - prefixSum[lowerEnd];
+    res += coeff(a, i) * intervalSum;
+  }
+  return res;
+}
+
 bool VotingGame::hasAnySwings(const vector<double> &a, const vector<double> &b, ll weight) {
   if (!weight) return false;
   vector<double> prefixLogSum(quota);
@@ -66,7 +90,7 @@ vector<double> VotingGame::banzhafDpSlow() {
   vector<double> res(players);
   // count swings for player i
   for (int i = 0; i < players; ++ i) {
-    vector<double> c = emptyColumn();
+    vector<double> c = emptyColumnDub();
     for (int j = 0; j < players; ++ j) {
       if (i == j) continue;
       c = addToColumn(c, weights[j]);
@@ -134,25 +158,36 @@ VotingGame::VotingGame(istream &in) {
 }*/
 
 vector<double> VotingGame::banzhaf() {
-  logSumsRec = vector<double>(players, -INF);
+  //logSumsRec = vector<double>(players, -INF);
+  vector<ZZ> sums(players, ZZ(0));
   assert(players == (int)weights.size());
-  vector<double> right = emptyColumn();
-  vector<double> left = emptyColumn();
+  ZZX right = emptyColumn();
+  ZZX left = emptyColumn();
+  ZZ sum(0);
   // prepare left
   for (int i = 0; i < players-1; ++i) {
+    cout << i << ' ' << flush;
     addToColumnInplace(left, weights[i]);
   }
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
-    logSumsRec[i] = countSwingsColumn(right, left, weights[i]);
+    cout << i << ' ' << flush;
+    sum += sums[i] = countSwingsColumn(right, left, weights[i]);
     if (i > 0) {
       addToColumnInplace(right, weights[i]);
       removeFromColumnInplace(left, weights[i - 1]);
+      cout << right.rep.length() << ' ' << left.rep.length() << endl;
     }
   }
-  normalizeBanzhafLogSums(logSumsRec);
-  //logToNorm(logSumsRec);
-  return logSumsRec;
+  vector<double> res(players);
+
+  for (int i = 0; i < players; ++i) {
+    RR temp = conv<RR>(sums[i]);
+    temp /= conv<RR>(sum);
+    res[i] = conv<double>(temp);
+  }
+
+  return res;
 }
 
 vector<double> VotingGame::banzhafBranchAndBound() {
@@ -169,6 +204,14 @@ void VotingGame::addToColumnInplace(vector<double> &a, ll weight) {
   }
 }
 
+void VotingGame::addToColumnInplace(ZZX &a, ll weight) {
+  if (!weight) return;
+  for (int i = min(quota, a.rep.length() - 1 + weight); i >= weight; --i) {
+    //a[i], a[i - weight]);
+    SetCoeff(a, i, coeff(a, i) + coeff(a, i - weight));
+  }
+}
+
 /*void VotingGame::addToColumnMultiple(vector<double> &a, ll weight, ll count) {
   if (!weight) return;
   for (int i = a.size() - 1; i >= weight; --i) {
@@ -181,6 +224,15 @@ void VotingGame::removeFromColumnInplace(vector<double> &a, ll weight) {
   for (size_t i = weight; i < a.size(); ++i) {
     logDec(a[i], a[i - weight]);
   }
+}
+
+void VotingGame::removeFromColumnInplace(ZZX &a, ll weight) {
+  if (!weight) return;
+  for (size_t i = weight; i < a.rep.length(); ++i) {
+    //logDec(a[i], a[i - weight]);
+    SetCoeff(a, i, coeff(a, i) - coeff(a, i - weight));
+  }
+  a.normalize();
 }
 
 vector<double> VotingGame::shapley() {
@@ -272,8 +324,8 @@ ll VotingGame::reduceDummyPlayers() {
     w[weights[i]].push_back(i);
   }
 
-  vector<double> right = emptyColumn();
-  vector<double> left = emptyColumn();
+  vector<double> right = emptyColumnDub();
+  vector<double> left = emptyColumnDub();
   // prepare left
   for (int i = 0; i < players-1; ++i) {
     addToColumnInplace(left, weights[i]);

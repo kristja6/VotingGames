@@ -238,7 +238,10 @@ double median(vector<double> &a) {
 
 void deconvolution(ZZX &c, const ZZX &b) {
   c <<= (b.rep.length() - 1);
-  c = c/b;
+  //c = c/b;
+  ZZX res;
+  HomPseudoDiv(res, c, b); // TODO: why is not this the default?
+  c = res;
   c.normalize();
 }
 

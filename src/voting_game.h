@@ -22,7 +22,7 @@ class VotingGame : public CoalGame<ll> {
   vector<double> banzhafDpSlow();
 
   // TIME: O(n*q) SPACE: O(n + q)
-  vector<double> banzhaf() override; // TODO: ma problemy s presnosti! Dost vazne!
+  vector<double> banzhaf() override;
   vector<double> banzhafBranchAndBound();
 
   // TIME: O(n^2*q), SPACE: O(nq)
@@ -37,13 +37,17 @@ class VotingGame : public CoalGame<ll> {
 protected:
 
   // Banzhaf
-  vector<double> emptyColumn();
+  ZZX emptyColumn();
+  vector<double> emptyColumnDub();
   vector<double> addToColumn(vector<double> a, ll weight); // TODO: make in-place
   void addToColumnInplace(vector<double> & a, ll weight);
+  void addToColumnInplace(ZZX &a, ll weight);
   void removeFromColumnInplace(vector<double> & a, ll weight);
   double countSwingsColumn(const vector<double> &a, ll weight);
   double countSwingsColumn(const vector<double> &a, const vector<double> &b, ll weight);
+  ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
   bool hasAnySwings(const vector<double> &a, const vector<double> &b, ll weight);
+  void removeFromColumnInplace(ZZX &a, ll weight);
 
   void bbRec(ll sum, int idx, vector<bool> has, bool checkSum);
   ll reduceDummyPlayers();

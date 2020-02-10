@@ -131,8 +131,46 @@ vector<double> VotingNonunique::banzhaf() {
     //res[i] = conv<double>(weightToRes[origWeights[i]]);
   }
 
-  //normalizeBanzhafLogSums(res);
-  //logToNorm(res);
+  return res;
+}
+
+vector<double> VotingNonunique::banzhafSlow() {
+  cout << "using fft" << endl;
+  cout << "q = " << quota << ", u = " << w.size() << ", n = " << origWeights.size() << endl;
+  map<ll,ZZ> weightToRes;
+
+  ZZX right = emptyColumn();
+  ZZX left(w.size());
+
+
+  // get results for all players
+  ZZ sum(0);
+  for (int i = w.size() - 1; i >= 0; --i) {
+    left = mergeRec(0, i - 1);
+    weightToRes[w[i]] = countSwingsColumn(addToColumn(right, w[i], cnt[i] - 1), left, w[i]);
+    sum += weightToRes[w[i]] * cnt[i];
+
+    if (i > 0) {
+
+      right = addToColumn(right, w[i], cnt[i]);
+      if (right.rep.length() > quota) {
+        right.SetLength(quota);
+        right.normalize();
+      }
+      cout << i << ": " << left.rep.length() << ' ' << right.rep.length() << endl;
+    }
+    cout << endl;
+  }
+
+  vector<double> res(players);
+
+  for (int i = 0; i < players; ++i) {
+    RR temp = conv<RR>(weightToRes[origWeights[i]]);
+    temp /= conv<RR>(sum);
+    res[i] = conv<double>(temp);
+    //res[i] = conv<double>(weightToRes[origWeights[i]]);
+  }
+
   return res;
 }
 

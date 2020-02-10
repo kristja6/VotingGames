@@ -1,8 +1,8 @@
 import random
 import math
-n = 4000
-q = 10000
-mx = 50
+n = 40000
+q = 100000
+mx = 10
 mn = 1
 print(n, q)
 

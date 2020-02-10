@@ -28,6 +28,7 @@ public:
 
   // Time: O(n*q), Space: O(unique_weights * q)
   vector<double> banzhaf() override;
+  vector<double> banzhafSlow();
 
   ZZX mergeRec(int st, int en);
 
