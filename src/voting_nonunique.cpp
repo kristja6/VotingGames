@@ -40,7 +40,6 @@ ZZX VotingNonunique::columnWithOne(ll weight, ll count) {
   ZZ nck(1);
   for (int i = 0; i <= count; i ++) {
     if (i*weight >= quota) break;
-    //res[i*weight] = logChoose(count, i);
     SetCoeff(res, i*weight, nck);
     nck *= (count - i);
     nck /= (i + 1);
@@ -114,36 +113,29 @@ vector<double> VotingNonunique::banzhaf() {
   std::set<ll> dummyWeights = {0}; // weights known to have no effect on the outcome of the game
 
   ZZX right = emptyColumn();
-  vector<ZZX> left(w.size());
-  left[0] = emptyColumn();
+  ZZX left(w.size());
 
-  //cout << left[0] << endl;
-  for (size_t i = 1; i < w.size(); ++i) {
-    cout << i << ' ' << flush;
-    left[i] = addToColumn(left[i - 1], w[i - 1], cnt[i - 1]);
-    //cout << w[i - 1] << ' ' << cnt[i - 1] << left[i] << endl;
+  left = emptyColumn();
+  for (size_t i = 0; i <= w.size() - 2; ++i) {
+    cout << i << ' ' << w[i] << ' ' << cnt[i] << endl;
+    addToColumnInplace(left, w[i], cnt[i]);
   }
-  cout << endl;
-  // prepare left
-  /*for (int i = 0; i < w.size() - 1; ++i) {
-    left = mergeColumns(left, columnWithOne(w[i], cnt[i]));
-  }*/
+
   // get results for all players
   ZZ sum(0);
   for (int i = w.size() - 1; i >= 0; --i) {
-    cout << i << flush;
-    //vector<double> myColumn = columnWithOne(w[i], cnt[i] - 1);
-    //cout << left[i] << endl << right << endl << endl;
-    weightToRes[w[i]] = countSwingsColumn(addToColumn(right, w[i], cnt[i] - 1), left[i], w[i]);
+    cout << i << ' ' << w[i] << ' ' << cnt[i] << endl;
+    cout << "counting " << flush;
+    weightToRes[w[i]] = countSwingsColumn(addToColumn(right, w[i], cnt[i] - 1), left, w[i]);
     sum += weightToRes[w[i]] * cnt[i];
-    //cout << sum << endl;
+
     if (i > 0) {
-      //right = mergeColumns(right, columnWithOne(w[i], cnt[i]));
+      cout << "right " << flush;
       right = addToColumn(right, w[i], cnt[i]);
-      //left = unmergeColumns(left, columnWithOne(w[i - 1], cnt[i - 1]));
+      cout << "remove" << endl;
+      removeFromColumn(left, w[i - 1], cnt[i - 1]);
     }
   }
-  cout << endl;
 
   vector<double> res(players);
 
@@ -193,5 +185,13 @@ ZZX VotingNonunique::addToColumn(const ZZX &a, ll weight, ll count) {
     }
   }*/
   return a * columnWithOne(weight, count);
+}
+
+void VotingNonunique::addToColumnInplace(ZZX &a, ll weight, ll count) {
+  a *= columnWithOne(weight, count);
+}
+
+void VotingNonunique::removeFromColumn(ZZX &a, ll weight, ll count) {
+  a /= columnWithOne(weight, count);
 }
 

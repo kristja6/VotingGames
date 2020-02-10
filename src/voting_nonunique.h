@@ -21,10 +21,10 @@ public:
   ZZX columnWithOne(ll weight, ll count);
   ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
   ZZX addToColumn(const ZZX & a, ll weight, ll count);
+  void addToColumnInplace(ZZX & a, ll weight, ll count);
   // recover a in a*b = c
   //ZZX unmergeColumns(vector<double> c, vector<double> b);
-
-  double countSwingsColumn(vector<double> a, vector<double> b, ll weight);
+  void removeFromColumn(ZZX &a, ll weight, ll count);
 
   // Time: O(n*q), Space: O(unique_weights * q)
   vector<double> banzhaf() override;
