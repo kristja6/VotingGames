@@ -170,6 +170,19 @@ void testInteractionIndex() {
 int main() {
   srand(time(0));
 
+  /*ZZX a;
+  SetCoeff(a, 0, 2);
+  SetCoeff(a, 1, 20);
+  SetCoeff(a, 2, 90);
+  SetCoeff(a, 3, 240);
+  ZZX b;
+  SetCoeff(b, 0, 1);
+  SetCoeff(b, 1, 1);
+  cout << a << ' ' << b << ' ';
+  deconvolution(a, b);
+  cout << a << endl;
+  exit(0);*/
+
   cout << "running" << endl;
   cout << fixed << endl;
   //testInteractionIndex();

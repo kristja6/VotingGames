@@ -236,6 +236,12 @@ double median(vector<double> &a) {
   }
 }
 
+void deconvolution(ZZX &c, const ZZX &b) {
+  c <<= (b.rep.length() - 1);
+  c = c/b;
+  c.normalize();
+}
+
 ZZ choose(int n, int k) {
   return ZZ();
 }

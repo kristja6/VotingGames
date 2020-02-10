@@ -8,7 +8,7 @@
 #define INF (numeric_limits<double>::infinity())
 
 #include <bits/stdc++.h>
-#include <NTL/ZZ.h>
+#include <NTL/ZZX.h>
 using namespace NTL;
 #define EPS (1e-7)
 #define matrix vector<vector<double>>
@@ -58,5 +58,7 @@ public:
   // consolidate all the additions and get the actual matrix
   matrix getLogResInplace();
 };
+
+void deconvolution(ZZX & c, const ZZX & b);
 
 #endif //COAL_GAME_MATH_H

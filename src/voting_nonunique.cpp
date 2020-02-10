@@ -63,7 +63,7 @@ ZZ VotingNonunique::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
   ZZ res(0);
   if (!weight) return res;
   vector<ZZ> prefixSum(quota, ZZ(0));
-  prefixSum[0] = b[0];
+  prefixSum[0] = coeff(b,0);
   for (int i = 1; i < quota; ++i) prefixSum[i] = prefixSum[i - 1] + coeff(b, i);
 
   for (int i = 0; i < quota; ++i) {
@@ -76,65 +76,50 @@ ZZ VotingNonunique::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
   return res;
 }
 
-/*vector<double> VotingNonunique::banzhafUnstable() {
-  map<ll,double> weightToRes;
-  set<ll> dummyWeights = {0}; // weights known to have no effect on the outcome of the game
+ZZX VotingNonunique::mergeRec(int st, int en) {
+  if (en < 0 || st >= w.size()) return emptyColumn();
+  if (st == en) {
+    ZZX res = columnWithOne(w[st], cnt[st]);
+    return res;
+  }
+  ZZX res = mergeRec(st, (st + en)/2) * mergeRec((st + en)/2 + 1, en);
 
-  vector<double> right = emptyColumn();
-  vector<double> left = emptyColumn();
-  // prepare left
-  for (int i = 0; i < w.size() - 1; ++i) {
-    left = mergeColumns(left, columnWithOne(w[i], cnt[i]));
+  if (res.rep.length() > quota) {
+    res.SetLength(quota);
+    res.normalize();
   }
-  // get results for all players
-  for (int i = w.size() - 1; i >= 0; --i) {
-    vector<double> myColumn = columnWithOne(w[i], cnt[i] - 1);
-    weightToRes[w[i]] = countSwingsColumn(mergeColumns(right, myColumn), left, w[i]);
-    cout << w[i] << ": " << weightToRes[w[i]] << endl;
-    if (i > 0) {
-      right = mergeColumns(right, columnWithOne(w[i], cnt[i]));
-      left = unmergeColumns(left, columnWithOne(w[i - 1], cnt[i - 1]));
-    }
-    printVec(left);
-  }
-  vector<double> res(players);
-  for (int i = 0; i < players; ++i) {
-    res[i] = weightToRes[origWeights[i]];
-  }
-  normalizeBanzhafLogSums(res);
-  //logToNorm(res);
+
   return res;
-}*/
+}
 
 vector<double> VotingNonunique::banzhaf() {
   cout << "using fft" << endl;
   cout << "q = " << quota << ", u = " << w.size() << ", n = " << origWeights.size() << endl;
   map<ll,ZZ> weightToRes;
-  std::set<ll> dummyWeights = {0}; // weights known to have no effect on the outcome of the game
 
   ZZX right = emptyColumn();
   ZZX left(w.size());
 
-  left = emptyColumn();
-  for (size_t i = 0; i <= w.size() - 2; ++i) {
-    cout << i << ' ' << w[i] << ' ' << cnt[i] << endl;
-    addToColumnInplace(left, w[i], cnt[i]);
-  }
+  left = mergeRec(0, w.size() - 2);
 
   // get results for all players
   ZZ sum(0);
   for (int i = w.size() - 1; i >= 0; --i) {
-    cout << i << ' ' << w[i] << ' ' << cnt[i] << endl;
-    cout << "counting " << flush;
     weightToRes[w[i]] = countSwingsColumn(addToColumn(right, w[i], cnt[i] - 1), left, w[i]);
     sum += weightToRes[w[i]] * cnt[i];
 
     if (i > 0) {
-      cout << "right " << flush;
+
       right = addToColumn(right, w[i], cnt[i]);
-      cout << "remove" << endl;
+      if (right.rep.length() > quota) {
+        right.SetLength(quota);
+        right.normalize();
+      }
+
       removeFromColumn(left, w[i - 1], cnt[i - 1]);
+      cout << i << ": " << left.rep.length() << ' ' << right.rep.length() << endl;
     }
+    cout << endl;
   }
 
   vector<double> res(players);
@@ -192,6 +177,10 @@ void VotingNonunique::addToColumnInplace(ZZX &a, ll weight, ll count) {
 }
 
 void VotingNonunique::removeFromColumn(ZZX &a, ll weight, ll count) {
-  a /= columnWithOne(weight, count);
+  a = reverse(a, a.rep.length() - 1);
+  ZZX t = columnWithOne(weight, count);
+  t = reverse(t, t.rep.length() - 1);
+  deconvolution(a, t);
+  a = reverse(a, a.rep.length() - 1);
 }
 
