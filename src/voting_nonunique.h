@@ -7,6 +7,8 @@
 
 
 #include "coal_game.h"
+#include <NTL/ZZX.h>
+using namespace NTL;
 
 class VotingNonunique : public CoalGame<ll> {
 public:
@@ -14,13 +16,13 @@ public:
 
   ll v(const vector<int> &coalition) override;
 
-  vector<double> emptyColumn();
+  ZZX emptyColumn();
 
-  vector<double> columnWithOne(ll weight, ll count);
-  vector<double> mergeColumns(vector<double> a, vector<double> b);
-  vector<double> addToColumn(const vector<double> & a, double weight, ll count);
+  ZZX columnWithOne(ll weight, ll count);
+  ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
+  ZZX addToColumn(const ZZX & a, ll weight, ll count);
   // recover a in a*b = c
-  vector<double> unmergeColumns(vector<double> c, vector<double> b);
+  //ZZX unmergeColumns(vector<double> c, vector<double> b);
 
   double countSwingsColumn(vector<double> a, vector<double> b, ll weight);
 
@@ -32,7 +34,6 @@ public:
   vector<ll> cnt;
   ll quota;
 private:
-  vector<double> fillLeft(int last);
 };
 
 

@@ -8,7 +8,7 @@ MicroarrayGame::MicroarrayGame(istream &in, bool sparse) {
   if (sparse) {
     int checks_cnt;
     in >> players >> checks_cnt;
-    checks = vector<set<int>>(checks_cnt);
+    checks = vector<std::set<int>>(checks_cnt);
     for (int i = 0; i < checks_cnt; ++i) {
       int check_size;
       in >> check_size;
@@ -23,7 +23,7 @@ MicroarrayGame::MicroarrayGame(istream &in, bool sparse) {
 
 double MicroarrayGame::v(const vector<int> &coalition) {
   if (checks.empty()) return 0;
-  set<int> coal(coalition.begin(), coalition.end());
+  std::set<int> coal(coalition.begin(), coalition.end());
   double res = 0;
 
   for (auto & check: checks) {
@@ -100,7 +100,7 @@ vector<vector<int>> MicroarrayGame::expressionsToFeaturesStd2Groups(const vector
 }
 
 MicroarrayGame::MicroarrayGame(const vector<vector<int>> &mtx) :
-    CoalGame(mtx.size()), checks(vector<set<int>>(mtx[0].size())) {
+    CoalGame(mtx.size()), checks(vector<std::set<int>>(mtx[0].size())) {
   for (size_t i = 0; i < mtx.size(); ++i) {
     for (size_t j = 0; j < mtx[i].size(); ++j) {
       if (mtx[i][j] == 1) checks[j].insert(i);
@@ -116,4 +116,5 @@ double MicroarrayGame::banzhafInteraction() {
   }
   normalizeBanzhafLogSums(logSum);
   return logSum;*/
+  // TODO: finish
 }

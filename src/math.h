@@ -8,6 +8,8 @@
 #define INF (numeric_limits<double>::infinity())
 
 #include <bits/stdc++.h>
+#include <NTL/ZZ.h>
+using namespace NTL;
 #define EPS (1e-7)
 #define matrix vector<vector<double>>
 #define in_range(n, l, r) (n >= l && n <= r)
@@ -29,6 +31,7 @@ matrix logToNormRes(const matrix & a);
 void normToLog(vector<double> &a);
 double logFact(int);
 double logChoose(int n, int k);
+
 void printVec(const vector<double> &a);
 void printVec(const vector<int> &a);
 void printVec(const vector<long long int> &a);
@@ -55,6 +58,5 @@ public:
   // consolidate all the additions and get the actual matrix
   matrix getLogResInplace();
 };
-
 
 #endif //COAL_GAME_MATH_H

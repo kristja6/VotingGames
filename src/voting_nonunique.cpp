@@ -3,6 +3,7 @@
 //
 
 #include "voting_nonunique.h"
+#include <NTL/RR.h>
 
 VotingNonunique::VotingNonunique(vector<ll> weights, ll quota) : CoalGame(weights.size()), origWeights(weights), quota(quota) {
   sort(weights.begin(), weights.end());
@@ -27,22 +28,27 @@ VotingNonunique::VotingNonunique(vector<ll> weights, ll quota) : CoalGame(weight
   cout << "constructor done" << endl;*/
 }
 
-vector<double> VotingNonunique::emptyColumn() {
-  vector<double> res(quota, -INF);
-  res[0] = 0;
+ZZX VotingNonunique::emptyColumn() {
+  ZZX res;
+  SetCoeff(res, 0, 1);
   return res;
 }
 
-vector<double> VotingNonunique::columnWithOne(ll weight, ll count) {
-  vector<double> res(quota, -INF);
+ZZX VotingNonunique::columnWithOne(ll weight, ll count) {
+  ZZX res = emptyColumn();
+  // n choose k
+  ZZ nck(1);
   for (int i = 0; i <= count; i ++) {
     if (i*weight >= quota) break;
-    res[i*weight] = logChoose(count, i);
+    //res[i*weight] = logChoose(count, i);
+    SetCoeff(res, i*weight, nck);
+    nck *= (count - i);
+    nck /= (i + 1);
   }
   return res;
 }
 
-vector<double> VotingNonunique::unmergeColumns(vector<double> c, vector<double> b) {
+/*vector<double> VotingNonunique::unmergeColumns(vector<double> c, vector<double> b) {
   vector<double> res(quota);
   for (int i = 0; i < quota; ++ i) {
     res[i] = c[i];
@@ -52,20 +58,21 @@ vector<double> VotingNonunique::unmergeColumns(vector<double> c, vector<double> 
     res[i] -= b[0];
   }
   return res;
-}
+}*/
 
-double VotingNonunique::countSwingsColumn(vector<double> a, vector<double> b, ll weight) {
-  double res = -INF;
+ZZ VotingNonunique::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
+  ZZ res(0);
   if (!weight) return res;
-  vector<double> prefixLogSum(quota);
-  prefixLogSum[0] = b[0];
-  for (int i = 1; i < quota; ++i) prefixLogSum[i] = logAdd(prefixLogSum[i - 1], b[i]);
+  vector<ZZ> prefixSum(quota, ZZ(0));
+  prefixSum[0] = b[0];
+  for (int i = 1; i < quota; ++i) prefixSum[i] = prefixSum[i - 1] + coeff(b, i);
+
   for (int i = 0; i < quota; ++i) {
     // a[i] * all those in b, that fall in interval [quota - weight, quota - 1]
-    double intervalSum = prefixLogSum[quota - 1 - i];
+    ZZ intervalSum = prefixSum[quota - 1 - i];
     const int lowerEnd = quota - 1 - weight - i;
-    if (lowerEnd >= 0) intervalSum = logSub(intervalSum, prefixLogSum[lowerEnd]);
-    res = logAdd(res, a[i] + intervalSum);
+    if (lowerEnd >= 0) intervalSum = intervalSum - prefixSum[lowerEnd];
+    res += coeff(a, i) * intervalSum;
   }
   return res;
 }
@@ -101,46 +108,59 @@ double VotingNonunique::countSwingsColumn(vector<double> a, vector<double> b, ll
 }*/
 
 vector<double> VotingNonunique::banzhaf() {
-  map<ll,double> weightToRes;
-  set<ll> dummyWeights = {0}; // weights known to have no effect on the outcome of the game
+  map<ll,ZZ> weightToRes;
+  std::set<ll> dummyWeights = {0}; // weights known to have no effect on the outcome of the game
 
-  vector<double> right = emptyColumn();
-  vector<vector<double>> left(w.size());
+  ZZX right = emptyColumn();
+  vector<ZZX> left(w.size());
   left[0] = emptyColumn();
-  for (int i = 1; i < w.size(); ++i) {
+
+  //cout << left[0] << endl;
+  for (size_t i = 1; i < w.size(); ++i) {
     left[i] = addToColumn(left[i - 1], w[i - 1], cnt[i - 1]);
+    //cout << w[i - 1] << ' ' << cnt[i - 1] << left[i] << endl;
   }
   // prepare left
   /*for (int i = 0; i < w.size() - 1; ++i) {
     left = mergeColumns(left, columnWithOne(w[i], cnt[i]));
   }*/
   // get results for all players
+  ZZ sum(0);
   for (int i = w.size() - 1; i >= 0; --i) {
     //vector<double> myColumn = columnWithOne(w[i], cnt[i] - 1);
+    //cout << left[i] << endl << right << endl << endl;
     weightToRes[w[i]] = countSwingsColumn(addToColumn(right, w[i], cnt[i] - 1), left[i], w[i]);
+    sum += weightToRes[w[i]] * cnt[i];
+    //cout << sum << endl;
     if (i > 0) {
       //right = mergeColumns(right, columnWithOne(w[i], cnt[i]));
       right = addToColumn(right, w[i], cnt[i]);
       //left = unmergeColumns(left, columnWithOne(w[i - 1], cnt[i - 1]));
     }
   }
+
   vector<double> res(players);
+
   for (int i = 0; i < players; ++i) {
-    res[i] = weightToRes[origWeights[i]];
+    RR temp = conv<RR>(weightToRes[origWeights[i]]);
+    temp /= conv<RR>(sum);
+    res[i] = conv<double>(temp);
+    //res[i] = conv<double>(weightToRes[origWeights[i]]);
   }
-  normalizeBanzhafLogSums(res);
+
+  //normalizeBanzhafLogSums(res);
   //logToNorm(res);
   return res;
 }
 
-vector<double> VotingNonunique::fillLeft(int last) {
+/*vector<double> VotingNonunique::fillLeft(int last) {
   vector<double> left = emptyColumn();
   for (int i = 0; i <= last; ++i) {
     //left = mergeColumns(left, columnWithOne(w[i], cnt[i]));
     left = addToColumn(left, w[i], cnt[i]);
   }
   return left;
-}
+}*/
 
 ll VotingNonunique::v(const vector<int> &coalition) {
   int sum = 0;
@@ -148,7 +168,7 @@ ll VotingNonunique::v(const vector<int> &coalition) {
   return sum >= quota;
 }
 
-vector<double> VotingNonunique::mergeColumns(vector<double> a, vector<double> b) {
+/*vector<double> VotingNonunique::mergeColumns(vector<double> a, vector<double> b) {
   vector<double> res(quota, -INF);
   for (int i = 0; i < quota; ++ i) {
     for (int j = 0; j <= i; ++ j) {
@@ -156,16 +176,16 @@ vector<double> VotingNonunique::mergeColumns(vector<double> a, vector<double> b)
     }
   }
   return res;
-}
+}*/
 
-vector<double> VotingNonunique::addToColumn(const vector<double> &a, double weight, ll count) {
+ZZX VotingNonunique::addToColumn(const ZZX &a, ll weight, ll count) {
   if (!count) return a;
-  vector<double> res = a;
+  /*vector<double> res = a;
   for (int i = 0; i < quota; ++i) {
     for (int j = 1; j <= count && i - j*weight >= 0; ++j) {
       logInc(res[i], a[i - j*weight] + logChoose(count, j));
     }
-  }
-  return res;
+  }*/
+  return a * columnWithOne(weight, count);
 }
 

@@ -16,7 +16,7 @@ OBJEXT      := o
 
 #Flags, Libraries and Includes
 CFLAGS      := -Wall -O2 -g -std=c++17
-LIB         := -lR -lntl -lgmp -lm
+LIB         := -lR -lntl -lgmp -lm -pthread
 INC         := -I$(INCDIR) -I/usr/local/include -I/usr/share/R/include -I/usr/lib/R/site-library/Rccp/include -I/home/maty/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include
 INCDEP      := -I$(INCDIR)
 
@@ -28,6 +28,11 @@ OBJECTS     := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJE
 
 #Defauilt Make
 all: resources $(TARGET)
+
+todo:
+	echo " ----- TODO ----- "
+	grep -r "TODO" ./src 
+	echo " ---------------- "
 
 #Remake
 remake: cleaner all

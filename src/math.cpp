@@ -235,3 +235,7 @@ double median(vector<double> &a) {
     return (a[a.size()/2] + a[a.size()/2 - 1])/2;
   }
 }
+
+ZZ choose(int n, int k) {
+  return ZZ();
+}

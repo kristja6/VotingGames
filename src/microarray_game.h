@@ -17,7 +17,7 @@ public:
    * check_2_size check_2,1 check_2,2
    */
   MicroarrayGame(istream &, bool sparse = true);
-  MicroarrayGame(const vector<set<int>> & checks): CoalGame(checks.size()), checks(checks) {
+  MicroarrayGame(const vector<std::set<int>> & checks): CoalGame(checks.size()), checks(checks) {
   }
   // create from a boolean matrix, where each check is a column, each row a player.
   // 1 means that the player is required in the check
@@ -47,7 +47,7 @@ public:
   }*/
   static vector<vector<int>> expressionsToFeaturesStd2Groups(const vector<vector<double>> &, const vector<vector<double>> &);
 private:
-  vector<set<int>> checks;
+  vector<std::set<int>> checks;
 };
 
 

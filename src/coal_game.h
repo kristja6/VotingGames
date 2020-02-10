@@ -137,7 +137,7 @@ public:
 
   // NOTE: currently normalized by the number of possible coalitions without inputSubset
   double banzhafInteractionEnum(vector<int> inputSubset) {
-    set<int> forbidden(inputSubset.begin(), inputSubset.end());
+    std::set<int> forbidden(inputSubset.begin(), inputSubset.end());
     vector<int> empty;
     auto res = banzhafInteractionEnumRec1(0, forbidden, empty, inputSubset);
     res.first -= (players - inputSubset.size()) / log(2);
@@ -146,7 +146,7 @@ public:
   }
 
   // interates over subsets of 2^players - input_subset
-  pair<double, double> banzhafInteractionEnumRec1(int player, const set<int> & forbidden, vector<int> & curSubset, const vector<int> & inputSubset) {
+  pair<double, double> banzhafInteractionEnumRec1(int player, const std::set<int> & forbidden, vector<int> & curSubset, const vector<int> & inputSubset) {
     while (forbidden.count(player)) player ++;
     if (player == players) {
       return banzhafInteractionEnumRec2(0, curSubset, inputSubset);

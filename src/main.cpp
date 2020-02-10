@@ -60,9 +60,12 @@ void measureSlowDP(VotingGame game) {
 void measureFastDP(VotingGame game) {
   cout << "Fast DP" << endl;
   //game.useFFT = true;
+  cout << "normal" << endl;
   printVec(game.banzhaf());
-  printVec(game.banzhafDpSlow());
+  cout << "slow" << endl;
+  //printVec(game.banzhafDpSlow());
   VotingNonunique game2(game.weights, game.quota);
+  cout << "fft" << endl;
   printVec(game2.banzhaf());
 }
 
@@ -157,7 +160,7 @@ void testInteractionIndex() {
   printVec(game.banzhaf());
   for (int i = 0; i < game.players; ++i) {
     for (int j = 0; j < game.players; ++j) {
-      set<int> subset = {i, j};
+      std::set<int> subset = {i, j};
       cout << i << ' ' << j << ": " << game.banzhafInteractionEnum(vector<int>(subset.begin(), subset.end())) << endl;
     }
   }
