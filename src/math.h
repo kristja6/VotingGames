@@ -39,6 +39,7 @@ vector<int> inversePermutation(const vector<int> & p);
 double mean(const vector<double> & a);
 double sd(const vector<double> & a, double mean);
 double sd(const vector<double> & a);
+double median(vector<double> & a);
 
 vector<int> random_perm(int);
 vector<int> random_subset(int n);

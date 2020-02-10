@@ -131,6 +131,10 @@ public:
     coal.pop_back();
   }
 
+  virtual double banzhafInteraction(vector<int> inputSubset) {
+    return banzhafInteraction(inputSubset);
+  }
+
   // NOTE: currently normalized by the number of possible coalitions without inputSubset
   double banzhafInteractionEnum(vector<int> inputSubset) {
     set<int> forbidden(inputSubset.begin(), inputSubset.end());

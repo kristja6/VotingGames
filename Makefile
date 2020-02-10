@@ -16,7 +16,7 @@ OBJEXT      := o
 
 #Flags, Libraries and Includes
 CFLAGS      := -Wall -O2 -g -std=c++17
-LIB         := -lR
+LIB         := -lR -lntl -lgmp -lm
 INC         := -I$(INCDIR) -I/usr/local/include -I/usr/share/R/include -I/usr/lib/R/site-library/Rccp/include -I/home/maty/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include
 INCDEP      := -I$(INCDIR)
 

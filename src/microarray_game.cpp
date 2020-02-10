@@ -107,3 +107,13 @@ MicroarrayGame::MicroarrayGame(const vector<vector<int>> &mtx) :
     }
   }
 }
+
+double MicroarrayGame::banzhafInteraction() {
+  /*double res = -INF;
+
+  for (auto & check: checks) {
+    set<int> missing = check;
+  }
+  normalizeBanzhafLogSums(logSum);
+  return logSum;*/
+}

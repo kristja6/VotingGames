@@ -225,3 +225,13 @@ double extendedLogToNorm(pair<double, double> a) {
   double val = logSub(max(a.first, a.second), min(a.first, a.second));
   return exp(a.first > a.second ? -val : val);
 }
+
+double median(vector<double> &a) {
+  assert(a.size());
+  nth_element(a.begin(), a.begin() + a.size()/2, a.end());
+  if (a.size()%2 == 1) {
+    return a[a.size()/2];
+  } else {
+    return (a[a.size()/2] + a[a.size()/2 - 1])/2;
+  }
+}

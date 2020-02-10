@@ -26,6 +26,7 @@ public:
 
   vector<double> banzhaf() override ;
   vector<double> shapley() override ;
+  double banzhafInteraction();
 
   // assume group 0 is control and use the mean and sd of that. All groups 1 ... k are the studied groups
   /*static vector<vector<vector<int>>> expressionsToFeaturesStd2Groups(const vector<vector<double>>> & mtx) {

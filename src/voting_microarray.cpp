@@ -14,11 +14,13 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
 
   vector<double> s(genes);
   for (int i = 0; i < genes; ++i) {
-    avgControl[i] = mean(control[i]);
-    avgSpecial[i] = mean(special[i]);
-    s[i] = sd(control[i], avgControl[i]);
+    /*avgControl[i] = mean(control[i]);
+    avgSpecial[i] = mean(special[i]);*/
+    avgControl[i] = median(this->control[i]);
+    avgSpecial[i] = median(this->special[i]);
+    //s[i] = sd(control[i], avgControl[i]);
   }
-  cout << "fitting" << endl;
+  //cout << "fitting" << endl;
   for (int j = 0; j < samples; ++j) {
     //cout << "game number " << j << endl;
     vector<ll> weights(genes);
@@ -61,20 +63,32 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
     // TODO: make this more rigorous (normalize by number of control/special, find the actual optimal interval
     ll wrong = control[0].size();
     ll bestWrong = wrong;
-    ll bestIdx = -1;
+    ll firstIdx = 0;
+    ll lastIdx = sumsOfWeights.size() - 1;
     for (int i = 0; i < sumsOfWeights.size(); ++i) {
-      //cout << "(" << sumsOfWeights[i].first << ", " << sumsOfWeights[i].second << ", " << wrong << ") " << flush;
+      //cout << fixed << "(" << sumsOfWeights[i].first << ", " << sumsOfWeights[i].second << ", " << wrong << ") " << endl;
       if (!sumsOfWeights[i].second) wrong --;
       else wrong ++;
       if (wrong < bestWrong) {
         bestWrong = wrong;
-        bestIdx = i;
+        firstIdx = i;
+      }
+      if (wrong <= bestWrong) {
+        lastIdx = i;
       }
     }
-    //cout << endl;
-    //cout << "bestWrong: " << bestWrong << ", " << bestIdx << endl;
-    ll quota = (sumsOfWeights[bestIdx].first + sumsOfWeights[bestIdx + 1].first)/2;
+    //cout << firstIdx << ' ' << lastIdx << ": " << bestWrong << endl;
+    ll quota = (sumsOfWeights[firstIdx].first + sumsOfWeights[min(lastIdx + 1, (ll)sumsOfWeights.size() - 1)].first)/2;
+    vector<double> sortedWeights(sumsOfWeights.size());
+    for (int i = 0; i < sortedWeights.size(); ++i) {
+      sortedWeights[i] = sumsOfWeights[i].first;
+    }
+    //quota = sumsOfWeights[sumsOfWeights.size()/2].first; // use weighted median (same number of samples from both classes)
+    quota = median(sortedWeights); // use weighted median (same number of samples from both classes)
     //cout << "quota: " << quota << ", quota/sum: " << double(quota)/sum << endl;
+    //cout << endl' ' << coal.size() << ;
+    //cout << endl;
+
 
     VotingNonunique temp(weights, quota); // seems ok as well
     games.push_back(temp);
@@ -87,28 +101,50 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
 vector<int> VotingMicroarray::expressionsToCoalition(const vector<double> &expressions) {
   vector<int> res;
   for (int i = 0; i < players; ++i) {
-    if (abs(expressions[i] - avgSpecial[i]) < abs(expressions[i] - avgControl[i])) {
+    if (fabs(expressions[i] - avgSpecial[i]) < fabs(expressions[i] - avgControl[i])) {
       res.push_back(i);
     }
   }
   return res;
 }
 
+// k nearest neighbors
+/*vector<int> VotingMicroarray::expressionsToCoalition(const vector<double> &expressions) {
+  vector<int> res;
+  for (int i = 0; i < players; ++i) {
+    // classify gene as normal or abnormal (in coalition)
+    // if (abs(expressions[i] - avgControl[i]) > 4) res.push_back(i);
+    vector<pair<double, bool>> labeledExp;
+    for (int j = 0; j < special[0].size(); ++j) labeledExp.push_back({fabs(expressions[i] - special[i][j]), true});
+    for (int j = 0; j < special[0].size(); ++j) labeledExp.push_back({fabs(expressions[i] - control[i][j]), false});
+    sort(labeledExp.begin(), labeledExp.end());
+    bool isSpec = true;
+    for (int j = 0; j < special[0].size()/2; ++j) {
+      if (!labeledExp[j].second) isSpec = false;
+    }
+    if (isSpec) res.push_back(i);
+  }
+  return res;
+}*/
+
 double VotingMicroarray::avgMatrixVal(const matrix &mtx) {
   double avg = 0;
   // special
+  vector<double> vals;
   for (size_t i = 0; i < mtx[0].size(); ++i) {
     vector<double> curExp(players);
     for (int j = 0; j < players; ++j) {
       curExp[j] = mtx[j][i];
     }
-    avg += v(expressionsToCoalition(curExp));
+    //avg += v(expressionsToCoalition(curExp));
+    vals.push_back(v(expressionsToCoalition(curExp)));
   }
-  return avg / mtx[0].size();
+  return median(vals);
+  //return avg / mtx[0].size();
 }
 
 bool VotingMicroarray::predict(const vector<int> &coal) {
   double val = v(coal);
-  cout << "value: " << val << ' ' << ", avg special: " << avgSpecialVal << ' ' << "avg control: " << avgControlVal << endl;
+  cout << "value: " << val << ' ' << ", avg special: " << avgSpecialVal << ' ' << "avg control: " << avgControlVal << ' ' << coal.size() << endl;
   return abs(val - avgSpecialVal) < abs(val - avgControlVal);
 }
