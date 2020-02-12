@@ -17,7 +17,7 @@ vector<double> SumOfVoting::banzhaf() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < games.size(); ++i) {
     cout << i << ' ' << flush;
-    auto cur = games[i].banzhafSlow();
+    auto cur = games[i].banzhaf();
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];
     }

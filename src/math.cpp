@@ -238,11 +238,24 @@ double median(vector<double> &a) {
 
 void deconvolution(ZZX &c, const ZZX &b) {
   c <<= (b.rep.length() - 1);
-  //c = c/b;
-  ZZX res;
-  HomPseudoDiv(res, c, b); // TODO: why is not this the default?
-  c = res;
+  c = c/b;
+  //ZZX res;
+  //HomDivide(c, c, b); // TODO: why is not this the default?
+  //HomPseudoDiv(c, c, b); // TODO: why is not this the default?
+  //c = res;
   c.normalize();
+}
+
+void cutPolynom(ZZX &c, int maxLength) {
+  if (c.rep.length() > maxLength) {
+    c.SetLength(maxLength);
+    c.normalize();
+  }
+}
+
+ostream &operator<<(ostream &out, const LogNum &a) {
+  cout << a.v << "(" << a.norm() << ")" << endl;
+  return out;
 }
 
 ZZ choose(int n, int k) {

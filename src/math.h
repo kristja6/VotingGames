@@ -60,5 +60,40 @@ public:
 };
 
 void deconvolution(ZZX & c, const ZZX & b);
+void cutPolynom(ZZX & c, int maxLength);
+
+struct LogNum {
+  LogNum(): v(-INF) {}
+  LogNum(double v, bool isLog = false): v(isLog ? v : log(v)) {}
+  double v;
+
+  LogNum operator * (const LogNum & a) {
+    return v + a.v;
+  }
+  LogNum operator / (const LogNum & a) {
+    return v - a.v;
+  }
+  LogNum operator + (const LogNum & a) {
+    return logAdd(v, a.v);
+  }
+  LogNum operator - (const LogNum & a) {
+    return logSub(v, a.v);
+  }
+  LogNum & operator += (const LogNum & a) {
+    logInc(v, a.v);
+    return *this;
+  }
+  LogNum & operator *= (const LogNum & a) {
+    v += a.v;
+    return *this;
+  }
+  static LogNum nChooseK(int n, int k) {
+    return logChoose(n, k);
+  }
+  double norm() const { return exp(v); }
+  friend ostream & operator << (ostream &out, const LogNum & a);
+  double val() const { return v; }
+};
+ostream & operator << (ostream &out, const LogNum & a);
 
 #endif //COAL_GAME_MATH_H

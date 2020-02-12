@@ -108,13 +108,28 @@ MicroarrayGame::MicroarrayGame(const vector<vector<int>> &mtx) :
   }
 }
 
-double MicroarrayGame::banzhafInteraction() {
-  /*double res = -INF;
-
+double MicroarrayGame::banzhafInteraction(const vector<int> & inputSubset) {
+  LogNum res;
   for (auto & check: checks) {
-    set<int> missing = check;
+    // zero if none in the subset is in a check
+    std::set<int> freeToSwitch;
+    std::set<int> freeToSwitchInSubset = std::set<int>(inputSubset.begin(), inputSubset.end());
+    for (int i = 0; i < players; ++i) freeToSwitch.insert(i);
+    for (auto i: check) {
+      freeToSwitch.erase(i);
+      freeToSwitchInSubset.erase(i);
+    }
+    for (auto i: inputSubset) freeToSwitch.erase(i);
+
+    LogNum cur = LogNum(freeToSwitch.size() / log(2), true);
+    LogNum even, odd;
+    for (int j = 0; j < freeToSwitchInSubset.size(); ++j) {
+      if (j%2 == 0) even += LogNum::nChooseK(freeToSwitchInSubset.size(), j);
+      else odd += LogNum::nChooseK(freeToSwitchInSubset.size(), j);
+    }
+    if (inputSubset.size()%2) cur *= even - odd;
+    else cur *= odd - even;
+    res += cur;
   }
-  normalizeBanzhafLogSums(logSum);
-  return logSum;*/
-  // TODO: finish
+  return res.norm();
 }

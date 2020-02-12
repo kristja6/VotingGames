@@ -23,6 +23,7 @@ class VotingGame : public CoalGame<ll> {
 
   // TIME: O(n*q) SPACE: O(n + q)
   vector<double> banzhaf() override;
+  //vector<double> banzhafFast();
   vector<double> banzhafBranchAndBound();
 
   // TIME: O(n^2*q), SPACE: O(nq)
@@ -52,9 +53,14 @@ protected:
   void bbRec(ll sum, int idx, vector<bool> has, bool checkSum);
   ll reduceDummyPlayers();
 
+  ZZX mergeRec(int st, int en);
+
+  ZZX columnWithOne(int weight);
+
 private:
   vector<double> bbSums;
   vector<double> logSumsRec;
+  map<pair<int,int>,ZZX> cache;
 };
 
 #endif

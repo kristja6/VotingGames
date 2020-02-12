@@ -61,14 +61,16 @@ void measureFastDP(VotingGame game) {
   cout << "Fast DP" << endl;
   //game.useFFT = true;
   cout << "normal" << endl;
-  //printVec(game.banzhaf());
+  printVec(game.banzhaf());
   cout << "slow" << endl;
   //printVec(game.banzhafDpSlow());
   VotingNonunique game2(game.weights, game.quota);
   cout << "fft" << endl;
-  printVec(game2.banzhaf());
+  //printVec(game2.banzhaf());
   cout << "fft n^2" << endl;
   //printVec(game2.banzhafSlow());
+  cout << "fft tree" << endl;
+  //printVec(game.banzhafFast());
 }
 
 void measureMonteCarlo(VotingGame game) {
@@ -125,12 +127,11 @@ void measureVoting() {
 void measureMicroarray() {
   MicroarrayGame game(cin);
   printVec(game.banzhaf());
-  printVec(game.shapley());
-  for (int i = 1; i < 3; ++i) {
-    vector<int> vec = game.optimalCoalitionOfFixedSize(i);
-    cout << game.v(vec) << endl;
-    printVec(vec);
+  //printVec(game.shapley());
+  for (int i = 0; i < game.players; ++i) {
+    cout << game.banzhafInteraction(vector<int>{i}) << ' ' << flush;
   }
+  cout << endl;
 }
 
 void measureSumOfVoting() {
@@ -190,6 +191,7 @@ int main() {
   //testInteractionIndex();
   //example2();
   measureVoting();
+  //measureMicroarray();
 
 
   return 0;

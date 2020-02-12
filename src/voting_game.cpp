@@ -126,37 +126,6 @@ VotingGame::VotingGame(istream &in) {
   }
 }
 
-/*vector<double> VotingGame::banzhaf() {
-  set<ll> diff(weights.begin(), weights.end());
-  cout << "WEIGHT TYPES: " << diff.size() << endl;
-  logSumsRec = vector<double>(players, -INF);
-  set<ll> dummyWeights; // weights known to have no effect on the outcome of the game
-  assert(players == (int)weights.size());
-  vector<double> right = emptyColumn();
-  vector<double> left = emptyColumn();
-  // prepare left
-  for (int i = 0; i < players-1; ++i) {
-    addToColumnInplace(left, weights[i]);
-  }
-  // get results for all players
-  for (int i = players - 1; i >= 0; --i) {
-    if (!dummyWeights.count(weights[i])) {
-      logSumsRec[i] = countSwingsColumn(right, left, weights[i]);
-    } else if (logSumsRec[i] == -INF) {
-      //dummyWeights.insert(weights[i]);
-    }
-    if (i > 0) {
-      if (!dummyWeights.count(weights[i]))
-        addToColumnInplace(right, weights[i]);
-      if (!dummyWeights.count(weights[i - 1]))
-        removeFromColumnInplace(left, weights[i - 1]);
-    }
-  }
-  normalizeBanzhafLogSums(logSumsRec);
-  //logToNorm(logSumsRec);
-  return logSumsRec;
-}*/
-
 vector<double> VotingGame::banzhaf() {
   //logSumsRec = vector<double>(players, -INF);
   vector<ZZ> sums(players, ZZ(0));
@@ -165,10 +134,12 @@ vector<double> VotingGame::banzhaf() {
   ZZX left = emptyColumn();
   ZZ sum(0);
   // prepare left
-  for (int i = 0; i < players-1; ++i) {
+  /*for (int i = 0; i < players-1; ++i) {
     cout << i << ' ' << flush;
     addToColumnInplace(left, weights[i]);
-  }
+  }*/
+  left = mergeRec(0, players - 2);
+  //exit(0);
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
     cout << i << ' ' << flush;
@@ -189,6 +160,7 @@ vector<double> VotingGame::banzhaf() {
 
   return res;
 }
+map<ll,ll> len;
 
 vector<double> VotingGame::banzhafBranchAndBound() {
   bbSums = vector<double>(players);
@@ -228,7 +200,7 @@ void VotingGame::removeFromColumnInplace(vector<double> &a, ll weight) {
 
 void VotingGame::removeFromColumnInplace(ZZX &a, ll weight) {
   if (!weight) return;
-  for (size_t i = weight; i < a.rep.length(); ++i) {
+  for (int i = weight; i < a.rep.length(); ++i) {
     //logDec(a[i], a[i - weight]);
     SetCoeff(a, i, coeff(a, i) - coeff(a, i - weight));
   }
@@ -347,4 +319,28 @@ ll VotingGame::reduceDummyPlayers() {
     }
   }
   return reducedQuota;
+}
+
+ZZX VotingGame::mergeRec(int st, int en) {
+  //cout << "rec: " << st << ' ' << en << endl;
+  if (cache.find({st,en}) != cache.end()) return cache[{st,en}];
+  if (en < 0 || st >= players) return emptyColumn();
+  if (st == en) {
+    ZZX res = columnWithOne(weights[st]);
+    return res;
+  }
+  ZZX res = mergeRec(st, (st + en)/2) * mergeRec((st + en)/2 + 1, en);
+  cutPolynom(res, quota);
+
+
+  len[{en - st + 1}] ++;
+  return cache[{st,en}] = res;
+  //return res;
+}
+
+ZZX VotingGame::columnWithOne(int weight) {
+  ZZX res;
+  SetCoeff(res, 0, 1);
+  SetCoeff(res, weight, 1);
+  return res;
 }

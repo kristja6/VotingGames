@@ -15,17 +15,6 @@ VotingNonunique::VotingNonunique(vector<ll> weights, ll quota) : CoalGame(weight
       cnt.push_back(1);
     } else cnt.back() ++;
   }
-  /*cout << "gcd stuff" << endl;
-  ll g = w[0];
-  for (int i = 1; i < w.size(); ++i) {
-    g = __gcd(g, w[i]);
-  }
-  cout << "reducing with gcd: " << g << endl;
-  if (g > 1) {
-    for (int i = 0; i < w.size(); ++i) w[i] /= g;
-    this->quota /= g;
-  }
-  cout << "constructor done" << endl;*/
 }
 
 ZZX VotingNonunique::emptyColumn() {
@@ -47,18 +36,6 @@ ZZX VotingNonunique::columnWithOne(ll weight, ll count) {
   return res;
 }
 
-/*vector<double> VotingNonunique::unmergeColumns(vector<double> c, vector<double> b) {
-  vector<double> res(quota);
-  for (int i = 0; i < quota; ++ i) {
-    res[i] = c[i];
-    for (int j = 0; j < i; ++ j) {
-      logDec(res[i], res[j] + b[i - j]);
-    }
-    res[i] -= b[0];
-  }
-  return res;
-}*/
-
 ZZ VotingNonunique::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
   ZZ res(0);
   if (!weight) return res;
@@ -77,17 +54,13 @@ ZZ VotingNonunique::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
 }
 
 ZZX VotingNonunique::mergeRec(int st, int en) {
-  if (en < 0 || st >= w.size()) return emptyColumn();
+  if (en < 0 || st >= (int)w.size()) return emptyColumn();
   if (st == en) {
     ZZX res = columnWithOne(w[st], cnt[st]);
     return res;
   }
   ZZX res = mergeRec(st, (st + en)/2) * mergeRec((st + en)/2 + 1, en);
-
-  if (res.rep.length() > quota) {
-    res.SetLength(quota);
-    res.normalize();
-  }
+  cutPolynom(res, quota);
 
   return res;
 }
@@ -110,11 +83,8 @@ vector<double> VotingNonunique::banzhaf() {
 
     if (i > 0) {
 
-      right = addToColumn(right, w[i], cnt[i]);
-      if (right.rep.length() > quota) {
-        right.SetLength(quota);
-        right.normalize();
-      }
+      addToColumnInplace(right, w[i], cnt[i]);
+      cutPolynom(right, quota);
 
       removeFromColumn(left, w[i - 1], cnt[i - 1]);
       cout << i << ": " << left.rep.length() << ' ' << right.rep.length() << endl;
@@ -128,7 +98,6 @@ vector<double> VotingNonunique::banzhaf() {
     RR temp = conv<RR>(weightToRes[origWeights[i]]);
     temp /= conv<RR>(sum);
     res[i] = conv<double>(temp);
-    //res[i] = conv<double>(weightToRes[origWeights[i]]);
   }
 
   return res;
@@ -152,11 +121,8 @@ vector<double> VotingNonunique::banzhafSlow() {
 
     if (i > 0) {
 
-      right = addToColumn(right, w[i], cnt[i]);
-      if (right.rep.length() > quota) {
-        right.SetLength(quota);
-        right.normalize();
-      }
+      addToColumnInplace(right, w[i], cnt[i]);
+      cutPolynom(right, quota);
       cout << i << ": " << left.rep.length() << ' ' << right.rep.length() << endl;
     }
     cout << endl;
@@ -168,20 +134,10 @@ vector<double> VotingNonunique::banzhafSlow() {
     RR temp = conv<RR>(weightToRes[origWeights[i]]);
     temp /= conv<RR>(sum);
     res[i] = conv<double>(temp);
-    //res[i] = conv<double>(weightToRes[origWeights[i]]);
   }
 
   return res;
 }
-
-/*vector<double> VotingNonunique::fillLeft(int last) {
-  vector<double> left = emptyColumn();
-  for (int i = 0; i <= last; ++i) {
-    //left = mergeColumns(left, columnWithOne(w[i], cnt[i]));
-    left = addToColumn(left, w[i], cnt[i]);
-  }
-  return left;
-}*/
 
 ll VotingNonunique::v(const vector<int> &coalition) {
   int sum = 0;
@@ -189,24 +145,8 @@ ll VotingNonunique::v(const vector<int> &coalition) {
   return sum >= quota;
 }
 
-/*vector<double> VotingNonunique::mergeColumns(vector<double> a, vector<double> b) {
-  vector<double> res(quota, -INF);
-  for (int i = 0; i < quota; ++ i) {
-    for (int j = 0; j <= i; ++ j) {
-      logInc(res[i], a[j] + b[i-j]);
-    }
-  }
-  return res;
-}*/
-
 ZZX VotingNonunique::addToColumn(const ZZX &a, ll weight, ll count) {
   if (!count) return a;
-  /*vector<double> res = a;
-  for (int i = 0; i < quota; ++i) {
-    for (int j = 1; j <= count && i - j*weight >= 0; ++j) {
-      logInc(res[i], a[i - j*weight] + logChoose(count, j));
-    }
-  }*/
   return a * columnWithOne(weight, count);
 }
 

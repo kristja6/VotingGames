@@ -23,7 +23,6 @@ public:
   ZZX addToColumn(const ZZX & a, ll weight, ll count);
   void addToColumnInplace(ZZX & a, ll weight, ll count);
   // recover a in a*b = c
-  //ZZX unmergeColumns(vector<double> c, vector<double> b);
   void removeFromColumn(ZZX &a, ll weight, ll count);
 
   // Time: O(n*q), Space: O(unique_weights * q)
