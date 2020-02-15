@@ -1,4 +1,3 @@
-Udelat banzhafa pro nonunique hodnoty bez dekonvoluce (pres rekurzi dopocitacat levy vektor jako mam v sesite)
 Udelat interface pro banzhafa jedineho hrace (n^2 log(n)^2)
 Mozna udelat funkci pro vypocet banzhafa pro subset hracu, kde se bude balancovat mezi obema metodama
 

@@ -27,6 +27,7 @@ public:
 
   // Time: O(n*q), Space: O(unique_weights * q)
   vector<double> banzhaf() override;
+  double banzhaf(int player) override;
   void banzhafRec(int first, int last, ZZX pf);
   vector<double> banzhafSlow();
   vector<double> banzhafSlowUnmerge(); // TOOD: would be the best if I could find fast polynomial division

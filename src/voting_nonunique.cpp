@@ -70,26 +70,33 @@ void VotingNonunique::banzhafRec(int first, int last, ZZX pf) {
   const int mid = (first + last) / 2;
   if (first == last) {
     const int i = first;
-    weightToRes[w[i]] = countSwingsColumn(addToColumn(rolling, w[i], cnt[i] - 1), pf, w[i]);
+    cout << "add " << flush;
+    addToColumnInplace(rolling, w[i], cnt[i] - 1);
+    cout << "counting " << flush;
+    weightToRes[w[i]] = countSwingsColumn(rolling, pf, w[i]);
     sum += weightToRes[w[i]] * cnt[i];
-    addToColumnInplace(rolling, w[i], cnt[i]);
+    cout << "add " << endl;
+    addToColumnInplace(rolling, w[i], 1);
     return;
   }
 
   ZZX old = pf;
-  for (int i = first; i <= mid; ++ i) addToColumnInplace(pf, w[i], cnt[i]);
+  pf *= mergeRec(first, mid);
+  cutPolynom(pf, quota);
+
   banzhafRec(mid + 1, last, pf);
   banzhafRec(first, mid, old);
 }
 
 vector<double> VotingNonunique::banzhaf() {
+  cout << "using fft" << endl;
+  cout << "q = " << quota << ", u = " << w.size() << ", n = " << origWeights.size() << endl;
   weightToRes.clear();
   sum = 0;
   rolling = emptyColumn();
   banzhafRec(0, w.size() - 1, emptyColumn());
   // TODO: make a function for normalization
   vector<double> res(players);
-  cout << sum << endl;
   for (int i = 0; i < players; ++i) {
     RR temp = conv<RR>(weightToRes[origWeights[i]]);
     temp /= conv<RR>(sum);
