@@ -17,7 +17,7 @@ ZZX VotingGame::emptyColumn() {
 
 vector<LogNum> VotingGame::emptyColumnLogNum() {
   vector<LogNum> res(quota);
-  res[0] = 0;
+  res[0] = 1;
   return res;
 }
 
@@ -81,7 +81,7 @@ bool VotingGame::hasAnySwings(const vector<LogNum> &a, const vector<LogNum> &b, 
     LogNum intervalSum = prefixLogSum[quota - 1 - i];
     const int lowerEnd = quota - 1 - weight - i;
     if (lowerEnd >= 0) intervalSum -= prefixLogSum[lowerEnd];
-    if(a[i] + intervalSum > -INF) return true;
+    if(a[i] + intervalSum > 0) return true;
   }
   return false;
 }
@@ -139,7 +139,7 @@ vector<double> VotingGame::banzhaf() {
     cout << i << ' ' << flush;
     addToColumnInplace(left, weights[i]);
   }*/
-  left = mergeRec(0, players - 2);
+  left = mergeRecBanzhaf(0, players - 2);
   //exit(0);
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
@@ -208,7 +208,7 @@ void VotingGame::removeFromColumnInplace(ZZX &a, ll weight) {
   a.normalize();
 }
 
-vector<double> VotingGame::shapley() {
+vector<double> VotingGame::shapleyLogNum() {
   vector<int> mapping;
   vector<ll> newWeights;
   ll newQuota = reduceDummyPlayers();
@@ -217,8 +217,9 @@ vector<double> VotingGame::shapley() {
     mapping.push_back(i);
     newWeights.push_back(weights[i]);
   }
+  cout << "after reducing: " << newWeights.size() << ' ' << newQuota << endl;
   VotingGame reducedGame(newWeights, newQuota);
-  auto reducedRes = reducedGame.shapleyHelp();
+  auto reducedRes = reducedGame.shapleyLogNumHelp();
   vector<double> res(players, 0);
   for (size_t i = 0; i < mapping.size(); ++i) {
     res[mapping[i]] = reducedRes[i];
@@ -226,7 +227,7 @@ vector<double> VotingGame::shapley() {
   return res;
 }
 
-vector<double> VotingGame::shapleyHelp() {
+vector<double> VotingGame::shapleyLogNumHelp() {
   cout << "players: " << players << ", quota: " << quota << endl;
   logSumsRec = vector<double>(players, -INF);
 
@@ -322,13 +323,13 @@ ll VotingGame::reduceDummyPlayers() {
   return reducedQuota;
 }
 
-ZZX VotingGame::mergeRec(int st, int en) {
+ZZX VotingGame::mergeRecBanzhaf(int st, int en) {
   if (en < 0 || st >= players) return emptyColumn();
   if (st == en) {
     ZZX res = columnWithOne(weights[st]);
     return res;
   }
-  ZZX res = mergeRec(st, (st + en)/2) * mergeRec((st + en)/2 + 1, en);
+  ZZX res = mergeRecBanzhaf(st, (st + en) / 2) * mergeRecBanzhaf((st + en) / 2 + 1, en);
   cutPolynom(res, quota);
 
   return res;
@@ -345,10 +346,59 @@ double VotingGame::banzhaf(int player) {
   if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
     throw "can't compute just one!";
   }
-  BigNum swings = countSwingsColumn(mergeRec(0, player - 1), mergeRec(player + 1, players - 1), weights[player]);
+  BigNum swings = countSwingsColumn(mergeRecBanzhaf(0, player - 1), mergeRecBanzhaf(player + 1, players - 1), weights[player]);
   /*RR temp = conv<RR>(swings);
   temp /= conv<RR>(sum);
   res[i] = conv<double>(temp);*/
   // TODO: normalize
   return 0;
+}
+
+Polynomial2D VotingGame::mergeRecShapley(int st, int en) {
+  if (en < 0 || st >= players) return emptyTable();
+  if (st == en) {
+    Polynomial2D res = tableWithOne(weights[st]);
+    return res;
+  }
+  Polynomial2D res = mergeRecShapley(st, (st + en) / 2) * mergeRecShapley((st + en) / 2 + 1, en);
+  res.cutRows(quota);
+
+  return res;
+}
+
+Polynomial2D VotingGame::emptyTable() {
+  Polynomial2D res(quota, 1);
+  res.set(0, 0, 1);
+  return res;
+}
+
+Polynomial2D VotingGame::tableWithOne(int weight) {
+  Polynomial2D res(quota, 2);
+  res.set(0, 0, 1);
+  res.set(weight, 1, 1);
+  return res;
+}
+
+vector<double> VotingGame::shapleyNew() {
+  vector<double> res(players);
+  ZZ f = factorial(players);
+  for (int i = 0; i < players; ++i) {
+    ZZ swings = countSwingsTable(mergeRecShapley(0, i - 1) * mergeRecShapley(i + 1, players - 1), weights[i]);
+    RR temp = conv<RR>(swings);
+    temp /= conv<RR>(f);
+    res[i] = conv<double>(temp);
+  }
+  return res;
+}
+
+ZZ VotingGame::countSwingsTable(const Polynomial2D & a, int weight) {
+  ZZ res(0);
+  for (int i = 0; i < a.columns; ++i) {
+    ZZ cur(0);
+    for (int j = quota - weight; j < quota; ++j) {
+      cur += a.get(j, i);
+    }
+    res += cur*factorial(i) * factorial(players - i - 1);
+  }
+  return res;
 }

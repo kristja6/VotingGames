@@ -7,8 +7,7 @@ class VotingGame : public CoalGame<ll> {
   public:
   using ll = long long;
   VotingGame(const vector<ll> &weights, long long int quota):
-    CoalGame(weights.size()) {
-    cout << "here2" << endl;
+    CoalGame(weights.size()), weights(weights), quota(quota) {
   }
 
   // read from stdin
@@ -26,9 +25,10 @@ class VotingGame : public CoalGame<ll> {
   vector<double> banzhafBranchAndBound();
 
   // TIME: O(n^2*q), SPACE: O(nq)
-  vector<double> shapley() override;
-  vector<double> shapleyHelp();
+  vector<double> shapleyLogNum();
+  vector<double> shapleyLogNumHelp();
   ll v(const vector<int> & coalition) override;
+  vector<double> shapleyNew();
 
   // todo: make protected
   vector<ll> weights;
@@ -38,6 +38,7 @@ protected:
 
   // Banzhaf
   ZZX emptyColumn();
+  Polynomial2D emptyTable();
   vector<LogNum> emptyColumnLogNum();
   vector<LogNum> addToColumn(vector<LogNum> a, ll weight); // TODO: make in-place
   void addToColumnInplace(vector<LogNum> & a, ll weight);
@@ -52,9 +53,12 @@ protected:
   void bbRec(ll sum, int idx, vector<bool> has, bool checkSum);
   ll reduceDummyPlayers();
 
-  virtual ZZX mergeRec(int st, int en);
+  virtual ZZX mergeRecBanzhaf(int st, int en);
+  virtual Polynomial2D mergeRecShapley(int st, int en);
 
   ZZX columnWithOne(int weight);
+  Polynomial2D tableWithOne(int weight);
+  ZZ countSwingsTable(const Polynomial2D & a, int quota);
 
 private:
   vector<double> bbSums;

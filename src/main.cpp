@@ -29,7 +29,7 @@ void example2() {
   cout << "Banzhaf: " << endl;
   printVec(game.banzhaf());
   cout << "Shapley: " << endl;
-  printVec(game.shapley());
+  printVec(game.shapleyLogNum());
 }
 
 void example3() {
@@ -61,7 +61,7 @@ void measureFastDP(VotingGame game) {
   cout << "Fast DP" << endl;
   //game.useFFT = true;
   cout << "normal" << endl;
-  //printVec(game.banzhaf());
+  printVec(game.banzhaf());
   cout << "slow" << endl;
   //printVec(game.banzhafDpSlow());
   VotingNonunique game2(game.weights, game.quota);
@@ -90,8 +90,10 @@ void measureBB(VotingGame game) {
 }
 
 void measureFastShapley(VotingGame game) {
-  auto res = game.shapley();
-  printVec(res);
+  cout << "PLAYERS: " << game.players << endl;
+  printVec(game.shapleyLogNum());
+  printVec(game.shapleyNew());
+  //printVec(game.shapleyEnum());
 }
 
 void measureMonteCarloShapley(VotingGame game) {
@@ -114,7 +116,7 @@ void measureVoting() {
   measureFastDP(game);
   //measureSlowDP(game);
   //measureMonteCarlo(game);
-  //measureFastShapley(game);
+  measureFastShapley(game);
   //measureSlowShapley(game);
   //measureMonteCarloShapley(game);
   /*for (int i = 1; i < 3; ++i) {
@@ -173,29 +175,7 @@ void testInteractionIndex() {
 int main() {
   srand(time(0));
 
-  /*ZZX a;
-  SetCoeff(a, 0, 2);
-  SetCoeff(a, 1, 20);
-  SetCoeff(a, 2, 90);
-  SetCoeff(a, 3, 240);
-  ZZX b;
-  SetCoeff(b, 0, 1);
-  SetCoeff(b, 1, 1);
-  cout << a << ' ' << b << ' ';
-  deconvolution(a, b);
-  cout << a << endl;
-  exit(0);*/
-
-  cout << "running" << endl;
-  cout << fixed << endl;
-  LogNum a(10);
-  a += 4;
-  cout << a.val() << ' ' << a.norm() << endl;
-  //testInteractionIndex();
-  //example2();
   measureVoting();
-  //measureMicroarray();
-
 
   return 0;
 }

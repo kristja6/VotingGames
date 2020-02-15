@@ -68,16 +68,16 @@ struct LogNum {
   double v;
 
   inline LogNum operator * (const LogNum & a) const {
-    return v + a.v;
+    return LogNum(v + a.v, true);
   }
   inline LogNum operator / (const LogNum & a) const {
-    return v - a.v;
+    return LogNum(v - a.v, true);
   }
   inline LogNum operator + (const LogNum & a) const {
-    return logAdd(v, a.v);
+    return LogNum(logAdd(v, a.v), true);
   }
   inline LogNum operator - (const LogNum & a) const {
-    return logSub(v, a.v);
+    return LogNum(logSub(v, a.v), true);
   }
   inline LogNum & operator += (const LogNum & a) {
     logInc(v, a.v);
@@ -153,5 +153,26 @@ struct ExtLogNum {
 vector<double> toNormal(const vector<LogNum> & a);
 
 ostream & operator << (ostream &out, const LogNum & a);
+
+struct Polynomial2D {
+  Polynomial2D(int rows, int columns): rows(rows), columns(columns) {
+    data.SetMaxLength(rows * columns);
+  }
+  int rows, columns;
+  ZZX data;
+  Polynomial2D & operator *= (Polynomial2D a);
+  Polynomial2D operator * (Polynomial2D a);
+  ZZ get(int row, int column) const;
+  void set(int row, int column, const ZZ & val);
+  void set(int row, int column, int val);
+  void print();
+  void cutRows(int r);
+private:
+  void resize(int nrows, int ncolumns);
+};
+
+ZZ factorial(int n);
+
+void printVec(const vector<LogNum> &a);
 
 #endif //COAL_GAME_MATH_H
