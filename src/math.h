@@ -67,33 +67,91 @@ struct LogNum {
   LogNum(double v, bool isLog = false): v(isLog ? v : log(v)) {}
   double v;
 
-  LogNum operator * (const LogNum & a) {
+  inline LogNum operator * (const LogNum & a) const {
     return v + a.v;
   }
-  LogNum operator / (const LogNum & a) {
+  inline LogNum operator / (const LogNum & a) const {
     return v - a.v;
   }
-  LogNum operator + (const LogNum & a) {
+  inline LogNum operator + (const LogNum & a) const {
     return logAdd(v, a.v);
   }
-  LogNum operator - (const LogNum & a) {
+  inline LogNum operator - (const LogNum & a) const {
     return logSub(v, a.v);
   }
-  LogNum & operator += (const LogNum & a) {
+  inline LogNum & operator += (const LogNum & a) {
     logInc(v, a.v);
     return *this;
   }
-  LogNum & operator *= (const LogNum & a) {
+  inline LogNum & operator -= (const LogNum & a) {
+    logDec(v, a.v);
+    return *this;
+  }
+  inline LogNum & operator *= (const LogNum & a) {
     v += a.v;
+    return *this;
+  }
+  inline LogNum & operator /= (const LogNum & a) {
+    v -= a.v;
     return *this;
   }
   static LogNum nChooseK(int n, int k) {
     return logChoose(n, k);
   }
+  inline bool operator < (const LogNum & other) const {
+    return v < other.v;
+  }
+  inline bool operator == (const LogNum & other) const {
+    return v == other.v;
+  }
+  inline bool operator > (const LogNum & other) const {
+    return v > other.v;
+  }
   double norm() const { return exp(v); }
   friend ostream & operator << (ostream &out, const LogNum & a);
   double val() const { return v; }
 };
+
+struct ExtLogNum {
+  ExtLogNum(): pos(-INF), neg(-INF) {}
+  ExtLogNum(double v, bool isLog = false) {
+    if (v >= 0) pos = log(v);
+    else neg = log(-v);
+  }
+  inline ExtLogNum & operator *= (double a) {
+    if (a < 0) {
+      swap(pos, neg);
+      a = abs(a);
+    }
+    pos *= a, neg *= a;
+    return *this;
+  }
+  inline ExtLogNum & operator /= (double a) {
+    if (a < 0) {
+      swap(pos, neg);
+      a = abs(a);
+    }
+    pos /= a, neg /= a;
+    return *this;
+  }
+  inline ExtLogNum & operator /= (const LogNum & a) {
+    pos /= a, neg /= a;
+    return *this;
+  }
+  inline ExtLogNum & operator += (const ExtLogNum & a) {
+    pos += a.pos;
+    neg += a.neg;
+    return *this;
+  }
+  double norm() const {
+    LogNum val = max(pos, neg) - min(pos, neg);
+    return exp(neg > pos ? -val.val() : val.val());
+  }
+  LogNum pos, neg;
+};
+
+vector<double> toNormal(const vector<LogNum> & a);
+
 ostream & operator << (ostream &out, const LogNum & a);
 
 #endif //COAL_GAME_MATH_H

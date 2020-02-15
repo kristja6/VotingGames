@@ -258,6 +258,14 @@ ostream &operator<<(ostream &out, const LogNum &a) {
   return out;
 }
 
+vector<double> toNormal(const vector<LogNum> &a) {
+  vector<double> res(a.size());
+  for (int i = 0; i < a.size(); ++i) {
+    res[i] = a[i].norm();
+  }
+  return res;
+}
+
 ZZ choose(int n, int k) {
   return ZZ();
 }

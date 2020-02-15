@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 #include "math.h"
+#include "types.h"
 //#define ll long long
 #define BANZHAF_DENOM_SUBSETS 0
 #define BANZHAF_DENOM_WINNING 1
@@ -10,6 +11,7 @@
 
 using namespace std;
 using ll = long long;
+using namespace NTL;
 
 // type of weights
 template<class CoalValue>
@@ -30,13 +32,19 @@ public:
   virtual vector<double> shapley() {
     return shapleyEnum();
   }
+  virtual double shapley(int player) {
+    return shapley()[player];
+  }
   virtual vector<double> banzhaf() {
     return banzhafEnum();
+  }
+  virtual double banzhaf(int player) {
+    return banzhaf()[player];
   }
 
   // ---------- Monte Carlo methods -----------
   vector<double> shapleyMonteCarlo(ll iters) {
-    vector<double> sh(players);
+    vector<LogNum> sh(players);
     for (ll it = 0; it < iters; ++ it) {
       vector<int> pi = random_perm(players);
       vector<int> cur;
@@ -47,11 +55,11 @@ public:
       }
     }
     for (int i = 0; i < players; ++ i) sh[i] /= iters;
-    return sh;
+    return toNormal(sh);
   }
 
   vector<double> banzhafMonteCarlo(ll iters) {
-    vector<double> bz(players);
+    vector<LogNum> bz(players);
     vector<int> appears(players);
     double swingVotes = 0;
 
@@ -70,27 +78,27 @@ public:
         cur.push_back(deleted);
       }
     }
-    normalizeBanzhafSums(bz, iters, swingVotes);
-    return bz;
+    normalizeBanzhafLogSums(bz, iters, swingVotes);
+    return toNormal(bz);
   }
 
   // ------------ Enumeration ------------------
   vector<double> banzhafEnum() {
-    logSums = vector<double>(players, -INF);
+    logSums = vector<LogNum>(players);
     vector<int> coal;
     banzhafEnumRec(0, coal);
     normalizeBanzhafLogSums(logSums);
-    return logSums;
+    return toNormal(logSums);
   }
 
   void banzhafEnumRec(int player, vector<int> & coal) {
     if (player == players) {
       for (int i = (int)coal.size() - 1; i >= 0; --i) {
         const int pl = coal[i];
-        logInc(logSums[pl], log(v(coal)));
+        logSums[pl] += v(coal);
         swap(coal[i], coal.back());
         coal.pop_back();
-        logDec(logSums[pl], log(v(coal)));
+        logSums[pl] += v(coal);
         coal.push_back(pl);
       }
       sort(coal.begin(), coal.end());
@@ -103,11 +111,11 @@ public:
   }
 
   vector<double> shapleyEnum() {
-    logSums = vector<double>(players, -INF);
+    logSums = vector<LogNum>(players);
     vector<int> coal;
     shapleyEnumRec(0, coal);
     normalizeShapleyLogSums(logSums);
-    return logSums;
+    return toNormal(logSums);
   }
 
   void shapleyEnumRec(int player, vector<int> & coal) {
@@ -120,7 +128,7 @@ public:
         coal.pop_back();
         logDec(incr, log(v(coal)));
         coal.push_back(pl);
-        logInc(logSums[pl], incr + logFact(coal.size() - 1) + logFact(players - coal.size()));
+        logSums[pl] += LogNum(incr + logFact(coal.size() - 1) + logFact(players - coal.size()), true);
       }
       sort(coal.begin(), coal.end());
       return;
@@ -139,38 +147,36 @@ public:
   double banzhafInteractionEnum(vector<int> inputSubset) {
     std::set<int> forbidden(inputSubset.begin(), inputSubset.end());
     vector<int> empty;
-    auto res = banzhafInteractionEnumRec1(0, forbidden, empty, inputSubset);
-    res.first -= (players - inputSubset.size()) / log(2);
-    res.second -= (players - inputSubset.size()) / log(2);
-    return extendedLogToNorm(res);
+    ExtLogNum res = banzhafInteractionEnumRec1(0, forbidden, empty, inputSubset);
+    res /= LogNum((players - inputSubset.size()) / log(2), true);
+    return res.norm();
   }
 
   // interates over subsets of 2^players - input_subset
-  pair<double, double> banzhafInteractionEnumRec1(int player, const std::set<int> & forbidden, vector<int> & curSubset, const vector<int> & inputSubset) {
+  ExtLogNum banzhafInteractionEnumRec1(int player, const std::set<int> & forbidden, vector<int> & curSubset, const vector<int> & inputSubset) {
     while (forbidden.count(player)) player ++;
     if (player == players) {
       return banzhafInteractionEnumRec2(0, curSubset, inputSubset);
     }
-    pair<double, double> res = banzhafInteractionEnumRec1(player + 1, forbidden, curSubset, inputSubset);
+    ExtLogNum res = banzhafInteractionEnumRec1(player + 1, forbidden, curSubset, inputSubset);
     curSubset.push_back(player);
-    logInc(res, banzhafInteractionEnumRec1(player + 1, forbidden, curSubset, inputSubset));
+    res += banzhafInteractionEnumRec1(player + 1, forbidden, curSubset, inputSubset);
     curSubset.pop_back();
     return res;
   }
 
   // iterates over subsets of the input subset
-  // {negative part, positive part}
-  pair<double, double> banzhafInteractionEnumRec2(int player, vector<int> &curSubset, const vector<int> &subset, int added = 0) {
+  ExtLogNum banzhafInteractionEnumRec2(int player, vector<int> &curSubset, const vector<int> &subset, int added = 0) {
     if (player == (int)subset.size()) {
-      pair<double, double> res = {-INF, log(v(curSubset))};
-      if ((subset.size() - added) % 2 == 1) swap(res.first, res.second);
+      ExtLogNum res(v(curSubset));
+      if ((subset.size() - added) % 2 == 1) res *= -1;
       return res;
     }
 
-    pair<double, double> res = {-INF, -INF};
-    logInc(res, banzhafInteractionEnumRec2(player + 1, curSubset, subset, added));
+    ExtLogNum res;
+    res += banzhafInteractionEnumRec2(player + 1, curSubset, subset, added);
     curSubset.push_back(subset[player]);
-    logInc(res, banzhafInteractionEnumRec2(player + 1, curSubset, subset, added + 1));
+    res += banzhafInteractionEnumRec2(player + 1, curSubset, subset, added + 1);
     curSubset.pop_back();
     return res;
   }
@@ -207,18 +213,33 @@ protected:
     normalizeBanzhafSums(sums, pow(2, players - 1), accumulate(sums.begin(), sums.end(), 0.0));
   }
 
-  // all are log values
-  void normalizeBanzhafLogSums(vector<double> & sum, double subsets, double swingVotes) {
+  // For LogNum
+  void normalizeBanzhafLogSums(vector<LogNum> & sum, LogNum subsets, LogNum swingVotes) {
     if (banzhafDenominator == BANZHAF_DENOM_SUBSETS) for (auto & i: sum) i -= subsets;
     else if (banzhafDenominator == BANZHAF_DENOM_WINNING) for (auto & i: sum) i -= swingVotes;
-    if (!outputLog) logToNorm(sum);
   }
 
-  void normalizeBanzhafLogSums(vector<double> & sums){
+  void normalizeBanzhafLogSums(vector<LogNum> & sums){
     double subsets = (players - 1) / log(2);
-    double swingVotes = -INF;
+    LogNum swingVotes;
     if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
-      for (auto & i: sums) swingVotes = logAdd(swingVotes, i);
+      //for (auto & i: sums) swingVotes = logAdd(swingVotes, i);
+      for (auto & i: sums) swingVotes += i;
+    }
+    normalizeBanzhafLogSums(sums, subsets, swingVotes);
+  }
+
+  // For BigNum
+  void normalizeBanzhafLogSums(vector<BigNum> & sum, const BigNum & subsets, const BigNum & swingVotes) {
+    if (banzhafDenominator == BANZHAF_DENOM_SUBSETS) for (auto & i: sum) i -= subsets;
+    else if (banzhafDenominator == BANZHAF_DENOM_WINNING) for (auto & i: sum) i -= swingVotes;
+  }
+
+  void normalizeBanzhafLogSums(vector<BigNum> & sums){
+    BigNum subsets = power(ZZ(2), players - 1);
+    BigNum swingVotes(0);
+    if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
+      for (auto & i: sums) swingVotes += i;
     }
     normalizeBanzhafLogSums(sums, subsets, swingVotes);
   }
@@ -226,6 +247,10 @@ protected:
   void normalizeShapleyLogSums(vector<double> & sums) {
     for (auto & i: sums) i -= logFact(players);
     if (!outputLog) logToNorm(sums);
+  }
+
+  void normalizeShapleyLogSums(vector<LogNum> & sums) {
+    for (auto & i: sums) i /= LogNum(logFact(players), true);
   }
 
   vector<int> bestCoal;
@@ -252,7 +277,7 @@ protected:
 
 private:
   function<CoalValue(const vector<int> & players)> vFunc;
-  vector<double> logSums;
+  vector<LogNum> logSums;
 
 };
 

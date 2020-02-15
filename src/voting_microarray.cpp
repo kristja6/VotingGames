@@ -38,22 +38,22 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
     // pick optimal sum
     // true if special
     vector<pair<double, bool>> sumsOfWeights(special[0].size() + control[0].size());
-    for (int i = 0; i < special[0].size(); ++i) {
+    for (size_t i = 0; i < special[0].size(); ++i) {
       //cout << i << ' ' << flush;
       double sum = 0;
       vector<double> expressions(genes);
       for (int k = 0; k < genes; ++k) expressions[k] = special[k][i];
       vector<int> coal = expressionsToCoalition(expressions);
-      for (int k = 0; k < coal.size(); ++k) sum += weights[coal[k]];
+      for (size_t k = 0; k < coal.size(); ++k) sum += weights[coal[k]];
       sumsOfWeights[i] = {sum, true};
     }
-    for (int i = 0; i < control[0].size(); ++i) {
+    for (size_t i = 0; i < control[0].size(); ++i) {
       //cout << i << ' ' << flush;
       double sum = 0;
       vector<double> expressions(genes);
       for (int k = 0; k < genes; ++k) expressions[k] = control[k][i];
       vector<int> coal = expressionsToCoalition(expressions);
-      for (int k = 0; k < coal.size(); ++k) sum += weights[coal[k]];
+      for (size_t k = 0; k < coal.size(); ++k) sum += weights[coal[k]];
       sumsOfWeights[i + special[0].size()] = {sum, false};
     }
     //cout << endl;
@@ -65,7 +65,7 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
     ll bestWrong = wrong;
     ll firstIdx = 0;
     ll lastIdx = sumsOfWeights.size() - 1;
-    for (int i = 0; i < sumsOfWeights.size(); ++i) {
+    for (size_t i = 0; i < sumsOfWeights.size(); ++i) {
       //cout << fixed << "(" << sumsOfWeights[i].first << ", " << sumsOfWeights[i].second << ", " << wrong << ") " << endl;
       if (!sumsOfWeights[i].second) wrong --;
       else wrong ++;
@@ -80,7 +80,7 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
     //cout << firstIdx << ' ' << lastIdx << ": " << bestWrong << endl;
     ll quota = (sumsOfWeights[firstIdx].first + sumsOfWeights[min(lastIdx + 1, (ll)sumsOfWeights.size() - 1)].first)/2;
     vector<double> sortedWeights(sumsOfWeights.size());
-    for (int i = 0; i < sortedWeights.size(); ++i) {
+    for (size_t i = 0; i < sortedWeights.size(); ++i) {
       sortedWeights[i] = sumsOfWeights[i].first;
     }
     //quota = sumsOfWeights[sumsOfWeights.size()/2].first; // use weighted median (same number of samples from both classes)

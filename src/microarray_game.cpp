@@ -42,15 +42,15 @@ double MicroarrayGame::v(const vector<int> &coalition) {
 }
 
 vector<double> MicroarrayGame::banzhaf() {
-  vector<double> logSum(players, -INF);
+  vector<LogNum> logSum(players);
 
   for (auto & check: checks) {
     for (auto & p: check) {
-      logInc(logSum[p], (players - check.size()) / log(2));
+      logSum[p] += LogNum((players - check.size()) / log(2), true);
     }
   }
   normalizeBanzhafLogSums(logSum);
-  return logSum;
+  return toNormal(logSum);
 }
 
 vector<double> MicroarrayGame::shapley() {
@@ -123,7 +123,7 @@ double MicroarrayGame::banzhafInteraction(const vector<int> & inputSubset) {
 
     LogNum cur = LogNum(freeToSwitch.size() / log(2), true);
     LogNum even, odd;
-    for (int j = 0; j < freeToSwitchInSubset.size(); ++j) {
+    for (size_t j = 0; j < freeToSwitchInSubset.size(); ++j) {
       if (j%2 == 0) even += LogNum::nChooseK(freeToSwitchInSubset.size(), j);
       else odd += LogNum::nChooseK(freeToSwitchInSubset.size(), j);
     }

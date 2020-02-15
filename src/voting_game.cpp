@@ -1,5 +1,6 @@
 #include "voting_game.h"
 #include "math.h"
+#include "types.h"
 #include <NTL/RR.h>
 
 long long int VotingGame::v(const vector<int> &coalition) {
@@ -14,41 +15,41 @@ ZZX VotingGame::emptyColumn() {
   return res;
 }
 
-vector<double> VotingGame::emptyColumnDub() {
-  vector<double> res(quota, -INF);
+vector<LogNum> VotingGame::emptyColumnLogNum() {
+  vector<LogNum> res(quota);
   res[0] = 0;
   return res;
 }
 
-vector<double> VotingGame::addToColumn(vector<double> res, ll weight) {
+vector<LogNum> VotingGame::addToColumn(vector<LogNum> res, ll weight) {
   if (!weight) return res;
   for (int i = quota - 1; i >= weight; -- i) {
-    res[i] = logAdd(res[i], res[i - weight]);
+    res[i] += res[i - weight];
   }
   return res;
 }
 
-double VotingGame::countSwingsColumn(const vector<double> &a, ll weight) {
-  double res = -INF;
+LogNum VotingGame::countSwingsColumn(const vector<LogNum> &a, ll weight) {
+  LogNum res;
   if (!weight) return res;
   for (int i = max(0ll, quota - weight); i < quota; ++ i) {
-    res = logAdd(res, a[i]);
+    res += a[i];
   }
   return res;
 }
 
-double VotingGame::countSwingsColumn(const vector<double> &a, const vector<double> &b, ll weight) {
-  double res = -INF;
+LogNum VotingGame::countSwingsColumn(const vector<LogNum> &a, const vector<LogNum> &b, ll weight) {
+  LogNum res;
   if (!weight) return res;
-  vector<double> prefixLogSum(quota);
+  vector<LogNum> prefixLogSum(quota);
   prefixLogSum[0] = b[0];
-  for (int i = 1; i < quota; ++i) prefixLogSum[i] = logAdd(prefixLogSum[i - 1], b[i]);
+  for (int i = 1; i < quota; ++i) prefixLogSum[i] = prefixLogSum[i - 1] + b[i];
   for (int i = 0; i < quota; ++i) {
     // a[i] * all those in b, that fall in interval [quota - weight, quota - 1]
-    double intervalSum = prefixLogSum[quota - 1 - i];
+    LogNum intervalSum = prefixLogSum[quota - 1 - i];
     const int lowerEnd = quota - 1 - weight - i;
-    if (lowerEnd >= 0) intervalSum = logSub(intervalSum, prefixLogSum[lowerEnd]);
-    res = logAdd(res, a[i] + intervalSum);
+    if (lowerEnd >= 0) intervalSum -= prefixLogSum[lowerEnd];
+    res += a[i] + intervalSum;
   }
   return res;
 }
@@ -70,16 +71,16 @@ ZZ VotingGame::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
   return res;
 }
 
-bool VotingGame::hasAnySwings(const vector<double> &a, const vector<double> &b, ll weight) {
+bool VotingGame::hasAnySwings(const vector<LogNum> &a, const vector<LogNum> &b, ll weight) {
   if (!weight) return false;
-  vector<double> prefixLogSum(quota);
+  vector<LogNum> prefixLogSum(quota);
   prefixLogSum[0] = b[0];
-  for (int i = 1; i < quota; ++i) prefixLogSum[i] = logAdd(prefixLogSum[i - 1], b[i]);
+  for (int i = 1; i < quota; ++i) prefixLogSum[i] = prefixLogSum[i - 1] + b[i];
   for (int i = 0; i < quota; ++i) {
     // a[i] * all those in b, that fall in interval [quota - weight, quota - 1]
-    double intervalSum = prefixLogSum[quota - 1 - i];
+    LogNum intervalSum = prefixLogSum[quota - 1 - i];
     const int lowerEnd = quota - 1 - weight - i;
-    if (lowerEnd >= 0) intervalSum = logSub(intervalSum, prefixLogSum[lowerEnd]);
+    if (lowerEnd >= 0) intervalSum -= prefixLogSum[lowerEnd];
     if(a[i] + intervalSum > -INF) return true;
   }
   return false;
@@ -87,10 +88,10 @@ bool VotingGame::hasAnySwings(const vector<double> &a, const vector<double> &b, 
 
 
 vector<double> VotingGame::banzhafDpSlow() {
-  vector<double> res(players);
+  vector<LogNum> res(players);
   // count swings for player i
   for (int i = 0; i < players; ++ i) {
-    vector<double> c = emptyColumnDub();
+    vector<LogNum> c = emptyColumnLogNum();
     for (int j = 0; j < players; ++ j) {
       if (i == j) continue;
       c = addToColumn(c, weights[j]);
@@ -98,7 +99,7 @@ vector<double> VotingGame::banzhafDpSlow() {
     res[i] = countSwingsColumn(c, weights[i]);
   }
   normalizeBanzhafLogSums(res);
-  return res;
+  return toNormal(res);
 }
 
 void VotingGame::bbRec(ll sum, int idx, vector<bool> has, bool checkSum) {
@@ -169,10 +170,10 @@ vector<double> VotingGame::banzhafBranchAndBound() {
   return bbSums;
 }
 
-void VotingGame::addToColumnInplace(vector<double> &a, ll weight) {
+void VotingGame::addToColumnInplace(vector<LogNum> &a, ll weight) {
   if (!weight) return;
   for (int i = a.size() - 1; i >= weight; --i) {
-    logInc(a[i], a[i - weight]);
+    a[i] += a[i - weight];
   }
 }
 
@@ -191,10 +192,10 @@ void VotingGame::addToColumnInplace(ZZX &a, ll weight) {
   }
 }*/
 
-void VotingGame::removeFromColumnInplace(vector<double> &a, ll weight) {
+void VotingGame::removeFromColumnInplace(vector<LogNum> &a, ll weight) {
   if (!weight) return;
   for (size_t i = weight; i < a.size(); ++i) {
-    logDec(a[i], a[i - weight]);
+    a[i] -= a[i - weight];
   }
 }
 
@@ -296,8 +297,8 @@ ll VotingGame::reduceDummyPlayers() {
     w[weights[i]].push_back(i);
   }
 
-  vector<double> right = emptyColumnDub();
-  vector<double> left = emptyColumnDub();
+  vector<LogNum> right = emptyColumnLogNum();
+  vector<LogNum> left = emptyColumnLogNum();
   // prepare left
   for (int i = 0; i < players-1; ++i) {
     addToColumnInplace(left, weights[i]);
@@ -343,4 +344,16 @@ ZZX VotingGame::columnWithOne(int weight) {
   SetCoeff(res, 0, 1);
   SetCoeff(res, weight, 1);
   return res;
+}
+
+double VotingGame::banzhaf(int player) {
+  if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
+    throw "can't compute just one!";
+  }
+  BigNum swings = countSwingsColumn(mergeRec(0, player - 1), mergeRec(player + 1, players - 1), weights[player]);
+  /*RR temp = conv<RR>(swings);
+  temp /= conv<RR>(sum);
+  res[i] = conv<double>(temp);*/
+  // TODO: normalize
+  return 0;
 }

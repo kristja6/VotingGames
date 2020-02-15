@@ -188,6 +188,9 @@ int main() {
 
   cout << "running" << endl;
   cout << fixed << endl;
+  LogNum a(10);
+  a += 4;
+  cout << a.val() << ' ' << a.norm() << endl;
   //testInteractionIndex();
   //example2();
   measureVoting();
