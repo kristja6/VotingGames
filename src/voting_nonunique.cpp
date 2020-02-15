@@ -17,12 +17,6 @@ VotingNonunique::VotingNonunique(vector<ll> weights, ll quota) : CoalGame(weight
   }
 }
 
-ZZX VotingNonunique::emptyColumn() {
-  ZZX res;
-  SetCoeff(res, 0, 1);
-  return res;
-}
-
 ZZX VotingNonunique::columnWithOne(ll weight, ll count) {
   ZZX res = emptyColumn();
   // n choose k
@@ -35,36 +29,6 @@ ZZX VotingNonunique::columnWithOne(ll weight, ll count) {
   }
   return res;
 }
-
-ZZ VotingNonunique::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
-  ZZ res(0);
-  if (!weight) return res;
-  vector<ZZ> prefixSum(quota, ZZ(0));
-  prefixSum[0] = coeff(b,0);
-  for (int i = 1; i < quota; ++i) prefixSum[i] = prefixSum[i - 1] + coeff(b, i);
-
-  for (int i = 0; i < quota; ++i) {
-    // a[i] * all those in b, that fall in interval [quota - weight, quota - 1]
-    ZZ intervalSum = prefixSum[quota - 1 - i];
-    const int lowerEnd = quota - 1 - weight - i;
-    if (lowerEnd >= 0) intervalSum = intervalSum - prefixSum[lowerEnd];
-    res += coeff(a, i) * intervalSum;
-  }
-  return res;
-}
-
-ZZX VotingNonunique::mergeRec(int st, int en) {
-  if (en < 0 || st >= (int)w.size()) return emptyColumn();
-  if (st == en) {
-    ZZX res = columnWithOne(w[st], cnt[st]);
-    return res;
-  }
-  ZZX res = mergeRec(st, (st + en)/2) * mergeRec((st + en)/2 + 1, en);
-  cutPolynom(res, quota);
-
-  return res;
-}
-
 
 void VotingNonunique::banzhafRec(int first, int last, ZZX pf) {
   const int mid = (first + last) / 2;
@@ -205,3 +169,37 @@ void VotingNonunique::removeFromColumn(ZZX &a, ll weight, ll count) {
   a = reverse(a, a.rep.length() - 1);
 }
 
+ZZX VotingNonunique::emptyColumn() {
+  ZZX res;
+  SetCoeff(res, 0, 1);
+  return res;
+}
+
+ZZ VotingNonunique::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
+  ZZ res(0);
+  if (!weight) return res;
+  vector<ZZ> prefixSum(quota, ZZ(0));
+  prefixSum[0] = coeff(b,0);
+  for (int i = 1; i < quota; ++i) prefixSum[i] = prefixSum[i - 1] + coeff(b, i);
+
+  for (int i = 0; i < quota; ++i) {
+    // a[i] * all those in b, that fall in interval [quota - weight, quota - 1]
+    ZZ intervalSum = prefixSum[quota - 1 - i];
+    const int lowerEnd = quota - 1 - weight - i;
+    if (lowerEnd >= 0) intervalSum = intervalSum - prefixSum[lowerEnd];
+    res += coeff(a, i) * intervalSum;
+  }
+  return res;
+}
+
+ZZX VotingNonunique::mergeRec(int st, int en) {
+  if (en < 0 || st >= players) return emptyColumn();
+  if (st == en) {
+    ZZX res = columnWithOne(w[st], cnt[st]);
+    return res;
+  }
+  ZZX res = mergeRec(st, (st + en)/2) * mergeRec((st + en)/2 + 1, en);
+  cutPolynom(res, quota);
+
+  return res;
+}

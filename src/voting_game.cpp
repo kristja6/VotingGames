@@ -323,8 +323,6 @@ ll VotingGame::reduceDummyPlayers() {
 }
 
 ZZX VotingGame::mergeRec(int st, int en) {
-  //cout << "rec: " << st << ' ' << en << endl;
-  if (cache.find({st,en}) != cache.end()) return cache[{st,en}];
   if (en < 0 || st >= players) return emptyColumn();
   if (st == en) {
     ZZX res = columnWithOne(weights[st]);
@@ -333,10 +331,7 @@ ZZX VotingGame::mergeRec(int st, int en) {
   ZZX res = mergeRec(st, (st + en)/2) * mergeRec((st + en)/2 + 1, en);
   cutPolynom(res, quota);
 
-
-  len[{en - st + 1}] ++;
-  return cache[{st,en}] = res;
-  //return res;
+  return res;
 }
 
 ZZX VotingGame::columnWithOne(int weight) {

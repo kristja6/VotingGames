@@ -4,13 +4,11 @@
 #include "coal_game.h"
 
 class VotingGame : public CoalGame<ll> {
-  using ll = long long;
   public:
-  VotingGame(int players, const vector<ll> &weights, long long int quota) :
-      CoalGame(players), weights(weights), quota(quota) {
-  }
+  using ll = long long;
   VotingGame(const vector<ll> &weights, long long int quota):
-    VotingGame(weights.size(), weights, quota) {
+    CoalGame(weights.size()) {
+    cout << "here2" << endl;
   }
 
   // read from stdin
@@ -22,8 +20,8 @@ class VotingGame : public CoalGame<ll> {
   vector<double> banzhafDpSlow();
 
   // TIME: O(n^2*q) SPACE: O(n + q)
-  vector<double> banzhaf() override;
-  double banzhaf(int player) override;
+  virtual vector<double> banzhaf() override;
+  virtual double banzhaf(int player) override;
   //vector<double> banzhafFast();
   vector<double> banzhafBranchAndBound();
 
@@ -54,7 +52,7 @@ protected:
   void bbRec(ll sum, int idx, vector<bool> has, bool checkSum);
   ll reduceDummyPlayers();
 
-  ZZX mergeRec(int st, int en);
+  virtual ZZX mergeRec(int st, int en);
 
   ZZX columnWithOne(int weight);
 

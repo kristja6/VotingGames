@@ -7,6 +7,7 @@
 
 
 #include "coal_game.h"
+#include "voting_game.h"
 #include <NTL/ZZX.h>
 using namespace NTL;
 
@@ -16,18 +17,16 @@ public:
 
   ll v(const vector<int> &coalition) override;
 
-  ZZX emptyColumn();
-
   ZZX columnWithOne(ll weight, ll count);
-  ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
   ZZX addToColumn(const ZZX & a, ll weight, ll count);
+  ZZX emptyColumn(); // TODO: duplicite with voting_game.h
+  ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
   void addToColumnInplace(ZZX & a, ll weight, ll count);
   // recover a in a*b = c
   void removeFromColumn(ZZX &a, ll weight, ll count);
 
   // Time: O(n*q), Space: O(unique_weights * q)
   vector<double> banzhaf() override;
-  double banzhaf(int player) override;
   void banzhafRec(int first, int last, ZZX pf);
   vector<double> banzhafSlow();
   vector<double> banzhafSlowUnmerge(); // TOOD: would be the best if I could find fast polynomial division

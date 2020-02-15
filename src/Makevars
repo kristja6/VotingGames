@@ -1,4 +1,3 @@
 PKG_LIBS = -lR -lntl -lgmp -lm -pthread
-PKG_CFLAGS = -O3 -fPIC -L/home/maty/Downloads/ntl-11.4.3/src/.libs/
-PKG_CXXFLAGS = -O3 -fPIC -L/home/maty/Downloads/ntl-11.4.3/src/.libs/
+PKG_CFLAGS = -fPIC
 LD_LIBRARY_PATH = /usr/local/lib/
