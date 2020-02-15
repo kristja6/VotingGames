@@ -61,12 +61,12 @@ void measureFastDP(VotingGame game) {
   cout << "Fast DP" << endl;
   //game.useFFT = true;
   cout << "normal" << endl;
-  printVec(game.banzhaf());
+  //printVec(game.banzhaf());
   cout << "slow" << endl;
   //printVec(game.banzhafDpSlow());
   VotingNonunique game2(game.weights, game.quota);
   cout << "fft" << endl;
-  //printVec(game2.banzhaf());
+  printVec(game2.banzhaf());
   cout << "fft n^2" << endl;
   //printVec(game2.banzhafSlow());
   cout << "fft tree" << endl;

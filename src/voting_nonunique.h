@@ -27,7 +27,9 @@ public:
 
   // Time: O(n*q), Space: O(unique_weights * q)
   vector<double> banzhaf() override;
+  void banzhafRec(int first, int last, ZZX pf);
   vector<double> banzhafSlow();
+  vector<double> banzhafSlowUnmerge(); // TOOD: would be the best if I could find fast polynomial division
 
   ZZX mergeRec(int st, int en);
 
@@ -36,6 +38,10 @@ public:
   vector<ll> cnt;
   ll quota;
 private:
+  ZZX rolling;
+  vector<ZZ> sums;
+  ZZ sum;
+  map<ll,ZZ> weightToRes;
 };
 
 

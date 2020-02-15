@@ -65,7 +65,40 @@ ZZX VotingNonunique::mergeRec(int st, int en) {
   return res;
 }
 
+
+void VotingNonunique::banzhafRec(int first, int last, ZZX pf) {
+  const int mid = (first + last) / 2;
+  if (first == last) {
+    const int i = first;
+    weightToRes[w[i]] = countSwingsColumn(addToColumn(rolling, w[i], cnt[i] - 1), pf, w[i]);
+    sum += weightToRes[w[i]] * cnt[i];
+    addToColumnInplace(rolling, w[i], cnt[i]);
+    return;
+  }
+
+  ZZX old = pf;
+  for (int i = first; i <= mid; ++ i) addToColumnInplace(pf, w[i], cnt[i]);
+  banzhafRec(mid + 1, last, pf);
+  banzhafRec(first, mid, old);
+}
+
 vector<double> VotingNonunique::banzhaf() {
+  weightToRes.clear();
+  sum = 0;
+  rolling = emptyColumn();
+  banzhafRec(0, w.size() - 1, emptyColumn());
+  // TODO: make a function for normalization
+  vector<double> res(players);
+  cout << sum << endl;
+  for (int i = 0; i < players; ++i) {
+    RR temp = conv<RR>(weightToRes[origWeights[i]]);
+    temp /= conv<RR>(sum);
+    res[i] = conv<double>(temp);
+  }
+  return res;
+}
+
+vector<double> VotingNonunique::banzhafSlowUnmerge() {
   cout << "using fft" << endl;
   cout << "q = " << quota << ", u = " << w.size() << ", n = " << origWeights.size() << endl;
   map<ll,ZZ> weightToRes;
@@ -147,11 +180,14 @@ ll VotingNonunique::v(const vector<int> &coalition) {
 
 ZZX VotingNonunique::addToColumn(const ZZX &a, ll weight, ll count) {
   if (!count) return a;
-  return a * columnWithOne(weight, count);
+  ZZX res = a * columnWithOne(weight, count);
+  cutPolynom(res, quota);
+  return res;
 }
 
 void VotingNonunique::addToColumnInplace(ZZX &a, ll weight, ll count) {
   a *= columnWithOne(weight, count);
+  cutPolynom(a, quota);
 }
 
 void VotingNonunique::removeFromColumn(ZZX &a, ll weight, ll count) {
