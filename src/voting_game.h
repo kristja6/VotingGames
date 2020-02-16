@@ -11,6 +11,8 @@ class VotingGame : public CoalGame<ll> {
   VotingGame(const vector<ll> &weights, long long int quota):
     CoalGame(weights.size()), weights(weights), quota(quota) {
     cutoffDepth = getCutoffDepth();
+    nonzeroPlayers = players;
+    for (int i = 0; i < players; ++ i) if (!weights[i]) nonzeroPlayers --;
   }
 
   // read from stdin
@@ -30,6 +32,7 @@ class VotingGame : public CoalGame<ll> {
   // TIME: O(n^2*q), SPACE: O(nq)
   vector<double> shapleyLogNumHelp();
   vector<double> shapley() override;
+  double shapley(int player);
   vector<double> shapley(bool useLog);
   vector<double> shapleyHelp();
   ll v(const vector<int> & coalition) override;
@@ -72,6 +75,7 @@ private:
   map<pair<int,int>,ZZX> cache;
   int cutoffDepth;
   int getCutoffDepth();
+  int nonzeroPlayers;
 };
 
 #endif

@@ -93,12 +93,13 @@ void measureFastShapley(VotingGame game) {
   cout << "PLAYERS: " << game.players << endl;
   //printVec(game.shapley(true));
   cout << "normal" << endl;
-  //printVec(game.shapley());
+  printVec(game.shapley());
   //printVec(game.shapleyNew());
   //printVec(game.shapleyEnum());
   cout << "nonunique weights" << endl;
   VotingNonunique game2(game.weights, game.quota);
-  printVec(game2.shapley());
+  //printVec(game2.shapley());
+  //printVec(game2.shapleyTest());
 }
 
 void measureMonteCarloShapley(VotingGame game) {

@@ -37,8 +37,16 @@ votingMicroarrayBanzhaf <- function(special, control) {
     .Call(`_CoopGame_votingMicroarrayBanzhaf`, special, control)
 }
 
+votingMicroarrayBanzhafTop <- function(special, control, topN) {
+    .Call(`_CoopGame_votingMicroarrayBanzhafTop`, special, control, topN)
+}
+
 votingMicroarrayShapley <- function(special, control) {
     .Call(`_CoopGame_votingMicroarrayShapley`, special, control)
+}
+
+votingMicroarrayShapleyTop <- function(special, control, topN) {
+    .Call(`_CoopGame_votingMicroarrayShapleyTop`, special, control, topN)
 }
 
 votingMicroarrayValue <- function(special, control, coal) {

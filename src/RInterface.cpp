@@ -106,10 +106,15 @@ NumericMatrix expressionsToFeaturesStd(const NumericMatrix & special, const Nume
 
 // [[Rcpp::export]]
 NumericVector votingMicroarrayBanzhaf(const NumericMatrix &special, const NumericMatrix &control) {
-  cout << "creating game" << endl;
   VotingMicroarray game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
-  cout << "banzhaf" << endl;
   auto res = game.banzhaf();
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+NumericVector votingMicroarrayBanzhafTop(const NumericMatrix &special, const NumericMatrix &control, int topN) {
+  VotingMicroarray game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
+  auto res = game.banzhafTop(topN);
   return NumericVector(res.begin(), res.end());
 }
 
@@ -117,6 +122,13 @@ NumericVector votingMicroarrayBanzhaf(const NumericMatrix &special, const Numeri
 NumericVector votingMicroarrayShapley(const NumericMatrix &special, const NumericMatrix &control) {
   VotingMicroarray game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
   auto res = game.shapley();
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+NumericVector votingMicroarrayShapleyTop(const NumericMatrix &special, const NumericMatrix &control, int topN) {
+  VotingMicroarray game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
+  auto res = game.shapleyTop(topN);
   return NumericVector(res.begin(), res.end());
 }
 

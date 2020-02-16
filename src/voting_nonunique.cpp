@@ -204,6 +204,32 @@ ZZX VotingNonunique::mergeRec(int st, int en) {
   return res;
 }
 
+double VotingNonunique::shapley(int player) {
+  if (!origWeights[player]) return 0;
+  if (shapleyCache.find(origWeights[player]) != shapleyCache.end())
+    return shapleyCache[origWeights[player]];
+  // find index of my weight
+  int idx = -1;
+  for (int i = 0; i < w.size(); ++ i) {
+    if (origWeights[player] == w[i]) {
+      idx = i;
+      break;
+    }
+  }
+  assert(idx != -1);
+
+  Polynomial2D tab = mergeRecShapley(0, idx - 1) * mergeRecShapley(idx + 1, w.size() - 1);
+  tab.cutRows(quota);
+  addToTableInplace(tab, w[idx], cnt[idx] - 1);
+
+  ZZ swings = VotingGame::countSwingsTable(tab, w[idx], quota, players);
+
+  //cout << swings << endl;
+  RR temp = conv<RR>(swings);
+  temp /= conv<RR>(factorial(players));
+  return shapleyCache[origWeights[player]] = conv<double>(temp);
+}
+
 vector<double> VotingNonunique::shapley() {
   cout << "Shapley: q = " << quota << ", u = " << w.size() << ", n = " << players << endl;
   weightToRes.clear();
@@ -220,6 +246,18 @@ vector<double> VotingNonunique::shapley() {
   return res;
 }
 
+vector<double> VotingNonunique::shapleyTest() {
+  cout << "Shapley test: q = " << quota << ", u = " << w.size() << ", n = " << players << endl;
+  cout << origWeights.size() << endl;
+  vector<double> res(players);
+  for (int i = 0; i < players; ++ i) {
+    cout << i << ' ' << flush;
+    res[i] = shapley(i);
+  }
+  cout << endl;
+  return res;
+}
+
 void VotingNonunique::shapleyRec(int first, int last, const Polynomial2D & pf) {
   const int mid = (first + last) / 2;
   if (first == last) {
@@ -227,7 +265,9 @@ void VotingNonunique::shapleyRec(int first, int last, const Polynomial2D & pf) {
     const int i = first;
     addToTableInplace(rollingShapley, w[i], cnt[i] - 1);
     rollingShapley.cutRows(quota);
+
     weightToRes[w[i]] = VotingGame::countSwingsTable(rollingShapley * pf, w[i], quota, players);
+
     addToTableInplace(rollingShapley, w[i], 1);
     rollingShapley.cutRows(quota);
     return;
@@ -242,6 +282,7 @@ void VotingNonunique::shapleyRec(int first, int last, const Polynomial2D & pf) {
 }
 
 void VotingNonunique::addToTableInplace(Polynomial2D &a, ll weight, ll count) {
+  if (!weight || !count) return;
   a *= tableWithOne(weight, count);
   a.cutRows(quota);
 }
@@ -258,13 +299,15 @@ Polynomial2D VotingNonunique::tableWithOne(ll weight, ll count) {
 }
 
 Polynomial2D VotingNonunique::mergeRecShapley(int st, int en) {
-  if (en < 0 || st >= players) return VotingGame::emptyTable();
+  cout << "> " << st << ' ' << en << endl;
+  if (en < 0 || st >= w.size()) return VotingGame::emptyTable();
   if (st == en) {
     Polynomial2D res = tableWithOne(w[st], cnt[st]);
     return res;
   }
   Polynomial2D res = mergeRecShapley(st, (st + en)/2) * mergeRecShapley((st + en)/2 + 1, en);
   res.cutRows(quota);
+  cout << "< " << st << ' ' << en << endl;
 
   return res;
 }

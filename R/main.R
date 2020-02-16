@@ -36,6 +36,8 @@ sumOfVotingGames <- function(weights, quotas) {
 
 banzhaf <- function(x) UseMethod("banzhaf")
 shapley <- function(x) UseMethod("shapley")
+banzhafTop <- function(x, topN) UseMethod("banzhafTop")
+shapleyTop <- function(x, topN) UseMethod("shapleyTop")
 value <- function(x, coalition) UseMethod("value")
 
 banzhaf.microarrayGame <- function(game) {
@@ -56,6 +58,14 @@ banzhaf.votingMicroarray <- function(game) {
 
 shapley.votingMicroarray <- function(game) {
   return(votingMicroarrayShapley(game$special, game$control))
+}
+
+banzhafTop.votingMicroarray <- function(game, topN) {
+  return(votingMicroarrayBanzhafTop(game$special, game$control, topN))
+}
+
+shapleyTop.votingMicroarray <- function(game, topN) {
+  return(votingMicroarrayShapleyTop(game$special, game$control, topN))
 }
 
 value.votingMicroarray <- function(game, coalition) {

@@ -112,6 +112,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// votingMicroarrayBanzhafTop
+NumericVector votingMicroarrayBanzhafTop(const NumericMatrix& special, const NumericMatrix& control, int topN);
+RcppExport SEXP _CoopGame_votingMicroarrayBanzhafTop(SEXP specialSEXP, SEXP controlSEXP, SEXP topNSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type special(specialSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
+    Rcpp::traits::input_parameter< int >::type topN(topNSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingMicroarrayBanzhafTop(special, control, topN));
+    return rcpp_result_gen;
+END_RCPP
+}
 // votingMicroarrayShapley
 NumericVector votingMicroarrayShapley(const NumericMatrix& special, const NumericMatrix& control);
 RcppExport SEXP _CoopGame_votingMicroarrayShapley(SEXP specialSEXP, SEXP controlSEXP) {
@@ -121,6 +134,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericMatrix& >::type special(specialSEXP);
     Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
     rcpp_result_gen = Rcpp::wrap(votingMicroarrayShapley(special, control));
+    return rcpp_result_gen;
+END_RCPP
+}
+// votingMicroarrayShapleyTop
+NumericVector votingMicroarrayShapleyTop(const NumericMatrix& special, const NumericMatrix& control, int topN);
+RcppExport SEXP _CoopGame_votingMicroarrayShapleyTop(SEXP specialSEXP, SEXP controlSEXP, SEXP topNSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type special(specialSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
+    Rcpp::traits::input_parameter< int >::type topN(topNSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingMicroarrayShapleyTop(special, control, topN));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -208,7 +234,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_CoopGame_microarrayStrongestCoalition", (DL_FUNC) &_CoopGame_microarrayStrongestCoalition, 2},
     {"_CoopGame_expressionsToFeaturesStd", (DL_FUNC) &_CoopGame_expressionsToFeaturesStd, 2},
     {"_CoopGame_votingMicroarrayBanzhaf", (DL_FUNC) &_CoopGame_votingMicroarrayBanzhaf, 2},
+    {"_CoopGame_votingMicroarrayBanzhafTop", (DL_FUNC) &_CoopGame_votingMicroarrayBanzhafTop, 3},
     {"_CoopGame_votingMicroarrayShapley", (DL_FUNC) &_CoopGame_votingMicroarrayShapley, 2},
+    {"_CoopGame_votingMicroarrayShapleyTop", (DL_FUNC) &_CoopGame_votingMicroarrayShapleyTop, 3},
     {"_CoopGame_votingMicroarrayValue", (DL_FUNC) &_CoopGame_votingMicroarrayValue, 3},
     {"_CoopGame_votingMicroarrayPredict", (DL_FUNC) &_CoopGame_votingMicroarrayPredict, 3},
     {"_CoopGame_sumOfVotingBanzhaf", (DL_FUNC) &_CoopGame_sumOfVotingBanzhaf, 2},

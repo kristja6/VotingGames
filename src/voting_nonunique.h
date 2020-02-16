@@ -27,8 +27,10 @@ public:
   // recover a in a*b = c
   void removeFromColumn(ZZX &a, ll weight, ll count);
 
+  double shapley(int player);
   vector<double> shapley() override;
   void shapleyRec(int first, int last, const Polynomial2D &pf);
+  vector<double> shapleyTest();
 
     vector<double> banzhaf() override;
   void banzhafRec(int first, int last, ZZX pf);
@@ -48,6 +50,7 @@ private:
   vector<ZZ> sums;
   ZZ sum;
   map<ll,ZZ> weightToRes;
+  map<ll,double> shapleyCache;
 };
 
 

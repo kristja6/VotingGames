@@ -122,8 +122,10 @@ VotingGame::VotingGame(istream &in) {
   in >> players;
   in >> quota;
   weights = vector<ll>(players);
+  nonzeroPlayers = players;
   for (int i = 0; i < players; ++i) {
     in >> weights[i];
+    if (!weights[i]) nonzeroPlayers --;
   }
   cutoffDepth = getCutoffDepth();
 }
@@ -211,6 +213,13 @@ void VotingGame::removeFromColumnInplace(ZZX &a, ll weight) {
 
 vector<double> VotingGame::shapley() {
   return shapley(false);
+}
+
+double VotingGame::shapley(int player) {
+  ZZ swings = countSwingsTable(mergeRecShapleyDense(0, player - 1) * mergeRecShapleyDense(player + 1, players - 1), weights[player], quota, players);
+  RR temp = conv<RR>(swings);
+  temp /= conv<RR>(factorial(players));
+  return conv<double>(temp);
 }
 
 vector<double> VotingGame::shapley(bool logNum) {
@@ -432,15 +441,15 @@ ZZX VotingGame::columnWithOne(int weight) {
 }
 
 double VotingGame::banzhaf(int player) {
-  if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
+  if (!weights[player]) return 0;
+  /*if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
     throw "can't compute just one!";
-  }
+  }*/
+  // TODO: must use number of subsets as the denominator
   BigNum swings = countSwingsColumn(mergeRecBanzhaf(0, player - 1), mergeRecBanzhaf(player + 1, players - 1), weights[player], quota);
-  /*RR temp = conv<RR>(swings);
-  temp /= conv<RR>(sum);
-  res[i] = conv<double>(temp);*/
-  // TODO: normalize
-  return 0;
+  RR temp = conv<RR>(swings);
+  temp /= conv<RR>(power(ZZ(2), nonzeroPlayers - 1));
+  return conv<double>(temp);
 }
 
 
@@ -496,6 +505,7 @@ Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int depth) {
     res.cutRows(quota);
 
     return res;
+
   } else { // SPARSE
     auto ret = mergeRecShapleySparse(st, en);
     Polynomial2D res(quota, en - st + 2);
@@ -522,7 +532,9 @@ unordered_map<pair<int, int>, ZZ, IntPairHash> VotingGame::mergeRecShapleySparse
   unordered_map<pair<int, int>, ZZ, IntPairHash> res;
   for (const auto &i: r1) {
     for (const auto &j: r2) {
-      res[{i.first.first + j.first.first, i.first.second + j.first.second}] += i.second * j.second;
+      ZZ r = i.second * j.second;
+      if (r < quota)
+        res[{i.first.first + j.first.first, i.first.second + j.first.second}] += r;
     }
   }
   return res;

@@ -11,19 +11,48 @@
 
 using namespace std;
 
+struct PlayerWeights {
+  PlayerWeights(const vector<ll> &weights, int idx);
+  PlayerWeights() = default;
+  PlayerWeights(PlayerWeights &&) = default;
+  PlayerWeights(const PlayerWeights &) = default;
+  PlayerWeights & operator = (const PlayerWeights &) = default;
+
+  vector<ll> weights; // TODO: optimize this with a reference
+  int idx;
+
+  bool operator < (const PlayerWeights & o) const;
+};
+
+
 class SumOfVoting: public CoalGame<ll> {
 public:
   SumOfVoting(const vector<vector<ll>> & weights, const vector<ll> & quotas);
-  SumOfVoting(const vector<VotingNonunique> & games): CoalGame(games[0].players), games(games) {
-  }
+  /*SumOfVoting(const vector<VotingNonunique> & games): CoalGame(games[0].players), gamesNonunique(games) {
+  }*/
   SumOfVoting(int players): CoalGame(players) {
   }
   virtual ll v(const vector<int> & coal);
+
   vector<double> banzhaf() override;
+
+  double banzhaf(int player);
+
   vector<double> shapley() override;
 
+  double shapley(int player);
+
+  vector<double> shapleyTop(int topN);
+
+  vector<double> banzhafTop(int topN);
+
+  // doesn't return less than numberOfTopPlayers
+  vector<int> getTopPlayers(const vector<vector<ll>> & weights, int numberOfTopPlayers);
+
 protected:
-  vector<VotingNonunique> games;
+  vector<VotingNonunique> gamesNonunique;
+  vector<VotingGame> gamesUnique;
+  vector<vector<ll>> getWeights();
 };
 
 

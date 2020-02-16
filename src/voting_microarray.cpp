@@ -33,7 +33,7 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
     /*if (sum) {
       //VotingNonunique temp(weights, sum/2); // works quite nicely
       VotingNonunique temp(weights, sum/2); // seems ok as well
-      games.push_back(temp);
+      gamesNonunique.push_back(temp);
     }*/
     // pick optimal sum
     // true if special
@@ -90,7 +90,8 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
 
 
     VotingNonunique temp(weights, quota); // seems ok as well
-    games.push_back(temp);
+    gamesNonunique.push_back(temp);
+    gamesUnique.push_back(VotingGame(weights, quota));
   }
 
   avgSpecialVal = avgMatrixVal(special);
