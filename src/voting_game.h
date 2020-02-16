@@ -2,12 +2,15 @@
 #define __ZERO_ONE_GAME__
 
 #include "coal_game.h"
+#include "math.h"
 
 class VotingGame : public CoalGame<ll> {
   public:
+
   using ll = long long;
   VotingGame(const vector<ll> &weights, long long int quota):
     CoalGame(weights.size()), weights(weights), quota(quota) {
+    cutoffDepth = getCutoffDepth();
   }
 
   // read from stdin
@@ -25,8 +28,10 @@ class VotingGame : public CoalGame<ll> {
   vector<double> banzhafBranchAndBound();
 
   // TIME: O(n^2*q), SPACE: O(nq)
-  vector<double> shapleyLogNum();
   vector<double> shapleyLogNumHelp();
+  vector<double> shapley() override;
+  vector<double> shapley(bool useLog);
+  vector<double> shapleyHelp();
   ll v(const vector<int> & coalition) override;
   vector<double> shapleyNew();
 
@@ -35,35 +40,38 @@ class VotingGame : public CoalGame<ll> {
   ll quota;
 
 protected:
+  friend class VotingNonunique;
 
-  // Banzhaf
-  ZZX emptyColumn();
-  Polynomial2D emptyTable();
-  vector<LogNum> emptyColumnLogNum();
-  vector<LogNum> addToColumn(vector<LogNum> a, ll weight); // TODO: make in-place
-  void addToColumnInplace(vector<LogNum> & a, ll weight);
-  void addToColumnInplace(ZZX &a, ll weight);
-  void removeFromColumnInplace(vector<LogNum> & a, ll weight);
-  LogNum countSwingsColumn(const vector<LogNum> &a, ll weight);
-  LogNum countSwingsColumn(const vector<LogNum> &a, const vector<LogNum> &b, ll weight);
-  ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
-  bool hasAnySwings(const vector<LogNum> &a, const vector<LogNum> &b, ll weight);
-  void removeFromColumnInplace(ZZX &a, ll weight);
+  static ZZX emptyColumn();
+  static Polynomial2D emptyTable();
+  static vector<LogNum> emptyColumnLogNum(int quota);
+  static vector<LogNum> addToColumn(vector<LogNum> a, ll weight, int quota);
+  static void addToColumnInplace(vector<LogNum> & a, ll weight);
+  static void addToColumnInplace(ZZX &a, ll weight, int quota);
+  static void removeFromColumnInplace(vector<LogNum> & a, ll weight);
+  static LogNum countSwingsColumn(const vector<LogNum> &a, ll weight, int quota);
+  static LogNum countSwingsColumn(const vector<LogNum> &a, const vector<LogNum> &b, ll weight, int quota);
+  static ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight, int quota);
+  static bool hasAnySwings(const vector<LogNum> &a, const vector<LogNum> &b, ll weight, int quota);
+  static void removeFromColumnInplace(ZZX &a, ll weight);
 
   void bbRec(ll sum, int idx, vector<bool> has, bool checkSum);
   ll reduceDummyPlayers();
 
   virtual ZZX mergeRecBanzhaf(int st, int en);
-  virtual Polynomial2D mergeRecShapley(int st, int en);
+  virtual Polynomial2D mergeRecShapleyDense(int st, int en, int depth = 1);
+  unordered_map<pair<int,int>, ZZ, IntPairHash> mergeRecShapleySparse(int st, int en);
 
   ZZX columnWithOne(int weight);
   Polynomial2D tableWithOne(int weight);
-  ZZ countSwingsTable(const Polynomial2D & a, int quota);
+  static ZZ countSwingsTable(const Polynomial2D & a, int weight, int quota, int players);
 
 private:
   vector<double> bbSums;
   vector<double> logSumsRec;
   map<pair<int,int>,ZZX> cache;
+  int cutoffDepth;
+  int getCutoffDepth();
 };
 
 #endif

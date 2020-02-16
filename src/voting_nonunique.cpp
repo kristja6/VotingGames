@@ -5,16 +5,21 @@
 #include "voting_nonunique.h"
 #include <NTL/RR.h>
 
-VotingNonunique::VotingNonunique(vector<ll> weights, ll quota) : CoalGame(weights.size()), origWeights(weights), quota(quota) {
+VotingNonunique::VotingNonunique(vector<ll> weights, ll quota) : CoalGame(weights.size()), origWeights(weights)
+, quota(quota), rollingShapley(VotingGame::emptyTable()) {
   sort(weights.begin(), weights.end());
   // decrease unneeded resolution
   for (size_t i = 0; i < weights.size(); ++i) {
-    if (weights[i] == 0) continue;
+    if (weights[i] == 0) {
+      players --;
+      continue;
+    }
     if (w.empty() || w.back() != weights[i]) {
       w.push_back(weights[i]);
       cnt.push_back(1);
     } else cnt.back() ++;
   }
+  // remove zero players
 }
 
 ZZX VotingNonunique::columnWithOne(ll weight, ll count) {
@@ -34,13 +39,10 @@ void VotingNonunique::banzhafRec(int first, int last, ZZX pf) {
   const int mid = (first + last) / 2;
   if (first == last) {
     const int i = first;
-    cout << "add " << flush;
-    addToColumnInplace(rolling, w[i], cnt[i] - 1);
-    cout << "counting " << flush;
-    weightToRes[w[i]] = countSwingsColumn(rolling, pf, w[i]);
+    addToColumnInplace(rollingBanzhaf, w[i], cnt[i] - 1);
+    weightToRes[w[i]] = countSwingsColumn(rollingBanzhaf, pf, w[i]);
     sum += weightToRes[w[i]] * cnt[i];
-    cout << "add " << endl;
-    addToColumnInplace(rolling, w[i], 1);
+    addToColumnInplace(rollingBanzhaf, w[i], 1);
     return;
   }
 
@@ -53,11 +55,11 @@ void VotingNonunique::banzhafRec(int first, int last, ZZX pf) {
 }
 
 vector<double> VotingNonunique::banzhaf() {
-  cout << "using fft" << endl;
+  cout << "recursion based" << endl;
   cout << "q = " << quota << ", u = " << w.size() << ", n = " << origWeights.size() << endl;
   weightToRes.clear();
   sum = 0;
-  rolling = emptyColumn();
+  rollingBanzhaf = emptyColumn();
   banzhafRec(0, w.size() - 1, emptyColumn());
   // TODO: make a function for normalization
   vector<double> res(players);
@@ -70,7 +72,6 @@ vector<double> VotingNonunique::banzhaf() {
 }
 
 vector<double> VotingNonunique::banzhafSlowUnmerge() {
-  cout << "using fft" << endl;
   cout << "q = " << quota << ", u = " << w.size() << ", n = " << origWeights.size() << endl;
   map<ll,ZZ> weightToRes;
 
@@ -108,7 +109,6 @@ vector<double> VotingNonunique::banzhafSlowUnmerge() {
 }
 
 vector<double> VotingNonunique::banzhafSlow() {
-  cout << "using fft" << endl;
   cout << "q = " << quota << ", u = " << w.size() << ", n = " << origWeights.size() << endl;
   map<ll,ZZ> weightToRes;
 
@@ -203,3 +203,67 @@ ZZX VotingNonunique::mergeRec(int st, int en) {
 
   return res;
 }
+
+vector<double> VotingNonunique::shapley() {
+  cout << "Shapley: q = " << quota << ", u = " << w.size() << ", n = " << players << endl;
+  weightToRes.clear();
+  rollingShapley = VotingGame::emptyTable();
+  shapleyRec(0, w.size() - 1, VotingGame::emptyTable());
+  cout << endl;
+  // TODO: make a function for normalization
+  vector<double> res(players);
+  for (int i = 0; i < players; ++i) {
+    RR temp = conv<RR>(weightToRes[origWeights[i]]);
+    temp /= conv<RR>(factorial(players));
+    res[i] = conv<double>(temp);
+  }
+  return res;
+}
+
+void VotingNonunique::shapleyRec(int first, int last, Polynomial2D pf) {
+  const int mid = (first + last) / 2;
+  if (first == last) {
+    cout << first << ' ' << flush;
+    const int i = first;
+    addToTableInplace(rollingShapley, w[i], cnt[i] - 1);
+    weightToRes[w[i]] = VotingGame::countSwingsTable(rollingShapley * pf, w[i], quota, players);
+    addToTableInplace(rollingShapley, w[i], 1);
+    return;
+  }
+
+  Polynomial2D old = pf;
+  pf *= mergeRecShapley(first, mid);
+  rollingShapley.cutRows(quota);
+
+  shapleyRec(mid + 1, last, pf);
+  shapleyRec(first, mid, old);
+}
+
+void VotingNonunique::addToTableInplace(Polynomial2D &a, ll weight, ll count) {
+  a *= tableWithOne(weight, count);
+  a.cutRows(quota);
+}
+
+Polynomial2D VotingNonunique::tableWithOne(ll weight, ll count) {
+  Polynomial2D res(weight * count + 1, count + 1);
+  ZZ nck(1);
+  for (int i = 0; i <= count; ++i) {
+    res.set(i*weight, i, nck);
+    nck *= (count - i);
+    nck /= (i + 1);
+  }
+  return res;
+}
+
+Polynomial2D VotingNonunique::mergeRecShapley(int st, int en) {
+  if (en < 0 || st >= players) return VotingGame::emptyTable();
+  if (st == en) {
+    Polynomial2D res = tableWithOne(w[st], cnt[st]);
+    return res;
+  }
+  Polynomial2D res = mergeRecShapley(st, (st + en)/2) * mergeRecShapley((st + en)/2 + 1, en);
+  res.cutRows(quota);
+
+  return res;
+}
+

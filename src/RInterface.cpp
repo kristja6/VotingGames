@@ -106,7 +106,9 @@ NumericMatrix expressionsToFeaturesStd(const NumericMatrix & special, const Nume
 
 // [[Rcpp::export]]
 NumericVector votingMicroarrayBanzhaf(const NumericMatrix &special, const NumericMatrix &control) {
+  cout << "creating game" << endl;
   VotingMicroarray game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
+  cout << "banzhaf" << endl;
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }

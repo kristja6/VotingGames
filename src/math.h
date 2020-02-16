@@ -68,7 +68,7 @@ struct LogNum {
   double v;
 
   inline LogNum operator * (const LogNum & a) const {
-    return LogNum(v + a.v, true);
+    return {v + a.v, true};
   }
   inline LogNum operator / (const LogNum & a) const {
     return LogNum(v - a.v, true);
@@ -161,11 +161,11 @@ struct Polynomial2D {
   int rows, columns;
   ZZX data;
   Polynomial2D & operator *= (Polynomial2D a);
-  Polynomial2D operator * (Polynomial2D a);
+  Polynomial2D operator * (const Polynomial2D & a);
   ZZ get(int row, int column) const;
   void set(int row, int column, const ZZ & val);
   void set(int row, int column, int val);
-  void print();
+  void print() const;
   void cutRows(int r);
 private:
   void resize(int nrows, int ncolumns);
@@ -174,5 +174,15 @@ private:
 ZZ factorial(int n);
 
 void printVec(const vector<LogNum> &a);
+
+using IntPair = std::pair<int, int>;
+
+struct IntPairHash {
+  static_assert(sizeof(int) * 2 == sizeof(size_t));
+
+  size_t operator()(IntPair p) const noexcept {
+    return size_t(p.first) << 32 | p.second;
+  }
+};
 
 #endif //COAL_GAME_MATH_H

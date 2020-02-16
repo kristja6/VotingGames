@@ -291,7 +291,7 @@ void Polynomial2D::set(int row, int column, int val) {
   SetCoeff(data, row*columns + column, val);
 }
 
-void Polynomial2D::print() {
+void Polynomial2D::print() const {
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < columns; ++j) {
       cout << get(i, j) << ' ';
@@ -325,16 +325,17 @@ Polynomial2D &Polynomial2D::operator*=(Polynomial2D a) {
   return *this;
 }
 
-void Polynomial2D::cutRows(int r) {
+void Polynomial2D::cutRows(int r) { //TODO: is this correct?
   if (rows > r) {
     rows = r;
     cutPolynom(data, rows * columns);
   }
 }
 
-Polynomial2D Polynomial2D::operator*(Polynomial2D a) {
-  a *= *this;
-  return a;
+Polynomial2D Polynomial2D::operator*(const Polynomial2D & a) {
+  Polynomial2D res = a;
+  res *= *this;
+  return res;
 }
 
 void printVec(const vector<LogNum> &a) {

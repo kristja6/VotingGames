@@ -18,27 +18,33 @@ public:
   ll v(const vector<int> &coalition) override;
 
   ZZX columnWithOne(ll weight, ll count);
+  Polynomial2D tableWithOne(ll weight, ll count);
   ZZX addToColumn(const ZZX & a, ll weight, ll count);
   ZZX emptyColumn(); // TODO: duplicite with voting_game.h
   ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
   void addToColumnInplace(ZZX & a, ll weight, ll count);
+  void addToTableInplace(Polynomial2D & a, ll weight, ll count);
   // recover a in a*b = c
   void removeFromColumn(ZZX &a, ll weight, ll count);
 
-  // Time: O(n*q), Space: O(unique_weights * q)
-  vector<double> banzhaf() override;
+  vector<double> shapley() override;
+  void shapleyRec(int first, int last, Polynomial2D pf);
+
+    vector<double> banzhaf() override;
   void banzhafRec(int first, int last, ZZX pf);
   vector<double> banzhafSlow();
-  vector<double> banzhafSlowUnmerge(); // TOOD: would be the best if I could find fast polynomial division
+  vector<double> banzhafSlowUnmerge(); // TODO: would be the best if I could find fast polynomial division
 
   ZZX mergeRec(int st, int en);
+  Polynomial2D mergeRecShapley(int st, int en);
 
   vector<ll> origWeights;
   vector<ll> w;
   vector<ll> cnt;
   ll quota;
 private:
-  ZZX rolling;
+  ZZX rollingBanzhaf;
+  Polynomial2D rollingShapley;
   vector<ZZ> sums;
   ZZ sum;
   map<ll,ZZ> weightToRes;

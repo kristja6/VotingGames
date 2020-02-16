@@ -29,7 +29,7 @@ void example2() {
   cout << "Banzhaf: " << endl;
   printVec(game.banzhaf());
   cout << "Shapley: " << endl;
-  printVec(game.shapleyLogNum());
+  printVec(game.shapley());
 }
 
 void example3() {
@@ -91,9 +91,14 @@ void measureBB(VotingGame game) {
 
 void measureFastShapley(VotingGame game) {
   cout << "PLAYERS: " << game.players << endl;
-  printVec(game.shapleyLogNum());
-  printVec(game.shapleyNew());
+  //printVec(game.shapley(true));
+  cout << "normal" << endl;
+  //printVec(game.shapley());
+  //printVec(game.shapleyNew());
   //printVec(game.shapleyEnum());
+  cout << "nonunique weights" << endl;
+  VotingNonunique game2(game.weights, game.quota);
+  printVec(game2.shapley());
 }
 
 void measureMonteCarloShapley(VotingGame game) {
@@ -113,7 +118,7 @@ void measureVoting() {
   VotingGame game(cin);
   //measureBB(game);
   //measureDPBadMerge(game);
-  measureFastDP(game);
+  //measureFastDP(game);
   //measureSlowDP(game);
   //measureMonteCarlo(game);
   measureFastShapley(game);
@@ -174,6 +179,7 @@ void testInteractionIndex() {
 
 int main() {
   srand(time(0));
+  cout << fixed << setprecision(10) << endl;
 
   measureVoting();
 

@@ -77,7 +77,6 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
         lastIdx = i;
       }
     }
-    //cout << firstIdx << ' ' << lastIdx << ": " << bestWrong << endl;
     ll quota = (sumsOfWeights[firstIdx].first + sumsOfWeights[min(lastIdx + 1, (ll)sumsOfWeights.size() - 1)].first)/2;
     vector<double> sortedWeights(sumsOfWeights.size());
     for (size_t i = 0; i < sortedWeights.size(); ++i) {
