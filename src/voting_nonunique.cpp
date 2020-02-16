@@ -220,23 +220,25 @@ vector<double> VotingNonunique::shapley() {
   return res;
 }
 
-void VotingNonunique::shapleyRec(int first, int last, Polynomial2D pf) {
+void VotingNonunique::shapleyRec(int first, int last, const Polynomial2D & pf) {
   const int mid = (first + last) / 2;
   if (first == last) {
     cout << first << ' ' << flush;
     const int i = first;
     addToTableInplace(rollingShapley, w[i], cnt[i] - 1);
+    rollingShapley.cutRows(quota);
     weightToRes[w[i]] = VotingGame::countSwingsTable(rollingShapley * pf, w[i], quota, players);
     addToTableInplace(rollingShapley, w[i], 1);
+    rollingShapley.cutRows(quota);
     return;
   }
 
-  Polynomial2D old = pf;
-  pf *= mergeRecShapley(first, mid);
-  rollingShapley.cutRows(quota);
+  Polynomial2D npf = pf;
+  npf *= mergeRecShapley(first, mid);
+  npf.cutRows(quota);
 
-  shapleyRec(mid + 1, last, pf);
-  shapleyRec(first, mid, old);
+  shapleyRec(mid + 1, last, npf);
+  shapleyRec(first, mid, pf);
 }
 
 void VotingNonunique::addToTableInplace(Polynomial2D &a, ll weight, ll count) {

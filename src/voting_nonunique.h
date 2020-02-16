@@ -28,7 +28,7 @@ public:
   void removeFromColumn(ZZX &a, ll weight, ll count);
 
   vector<double> shapley() override;
-  void shapleyRec(int first, int last, Polynomial2D pf);
+  void shapleyRec(int first, int last, const Polynomial2D &pf);
 
     vector<double> banzhaf() override;
   void banzhafRec(int first, int last, ZZX pf);
