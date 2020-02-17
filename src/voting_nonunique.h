@@ -51,6 +51,8 @@ private:
   ZZ sum;
   map<ll,ZZ> weightToRes;
   map<ll,double> shapleyCache;
+  int maxPlayers;
+  void precompMaxPlayers();
 };
 
 

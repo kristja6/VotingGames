@@ -268,6 +268,7 @@ vector<double> toNormal(const vector<LogNum> &a) {
 
 vector<ZZ> factorialCache;
 ZZ factorial(int n) {
+  assert(n >= 0);
   if (factorialCache.empty()) factorialCache.push_back(ZZ(1));
   if (n < factorialCache.size()) return factorialCache[n];
   for (int i = factorialCache.size(); i <= n; ++ i) {
@@ -303,6 +304,7 @@ void Polynomial2D::print() const {
 
 void Polynomial2D::resize(int nrows, int ncolumns) {
   ZZX ndata;
+  ndata.SetMaxLength(nrows * ncolumns);
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < columns; ++j) {
       SetCoeff(ndata, i*ncolumns + j, get(i, j));
@@ -313,7 +315,7 @@ void Polynomial2D::resize(int nrows, int ncolumns) {
   }
   rows = nrows;
   columns = ncolumns;
-  data = ndata;
+  data = move(ndata);
 }
 
 Polynomial2D &Polynomial2D::operator*=(Polynomial2D a) {
@@ -336,6 +338,23 @@ Polynomial2D Polynomial2D::operator*(const Polynomial2D & a) {
   Polynomial2D res = a;
   res *= *this;
   return res;
+}
+
+void Polynomial2D::shrink(int nr, int nc) {
+  if (nc < columns) {
+    ZZX ndata;
+    ndata.SetMaxLength(nr*nc);
+    for (int i = 0; i < nr; ++i) {
+      for (int j = 0; j < nc; ++j) {
+        SetCoeff(ndata, i * nc + j, coeff(data, i * columns + j));
+      }
+    }
+    rows = nr;
+    columns = nc;
+    data = move(ndata);
+  } else if (nr < rows) {
+    cutRows(nr);
+  }
 }
 
 void printVec(const vector<LogNum> &a) {

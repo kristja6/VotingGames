@@ -117,7 +117,7 @@ void VotingGame::bbRec(ll sum, int idx, vector<bool> has, bool checkSum) {
   has[idx] = true;
   bbRec(sum + weights[idx], idx + 1, has, true);
 }
-
+ // todo: use max players her
 VotingGame::VotingGame(istream &in) {
   in >> players;
   in >> quota;
@@ -128,6 +128,7 @@ VotingGame::VotingGame(istream &in) {
     if (!weights[i]) nonzeroPlayers --;
   }
   cutoffDepth = getCutoffDepth();
+  precompMaxPlayers();
 }
 
 vector<double> VotingGame::banzhaf() {
@@ -216,7 +217,10 @@ vector<double> VotingGame::shapley() {
 }
 
 double VotingGame::shapley(int player) {
-  ZZ swings = countSwingsTable(mergeRecShapleyDense(0, player - 1) * mergeRecShapleyDense(player + 1, players - 1), weights[player], quota, players);
+
+  Polynomial2D tab = mergeRecShapleyDense(0, players - 1, maxPlayers) * mergeRecShapleyDense(player + 1, players - 1, maxPlayers);
+  tab.shrink(quota, maxPlayers);
+  ZZ swings = countSwingsTable(tab, weights[player], quota, players);
   RR temp = conv<RR>(swings);
   temp /= conv<RR>(factorial(players));
   return conv<double>(temp);
@@ -245,6 +249,7 @@ vector<double> VotingGame::shapley(bool logNum) {
 
 vector<double> VotingGame::shapleyLogNumHelp() {
   cout << "players: " << players << ", quota: " << quota << endl;
+  cout << "using log num" << endl;
   logSumsRec = vector<double>(players, -INF);
 
   matrix left = matrix(players, vector<double>(quota, -INF));
@@ -301,6 +306,13 @@ vector<double> VotingGame::shapleyLogNumHelp() {
       }
     }
   }
+  for (int i = 0; i < left.size(); ++i) {
+    for (int j = 0; j < left[i].size(); ++j) {
+      cout << left[i][j] << ' ';
+    }
+    cout << endl;
+  }
+  cout << endl;
   cout << endl;
   for (int i = 0; i < players; ++i) {
     logSumsRec[i] = exp(logSumsRec[i] - logFact(players));
@@ -331,7 +343,7 @@ vector<double> VotingGame::shapleyHelp() {
       }
     }
   }*/
-  auto temp = mergeRecShapleyDense(0, players - 2);
+  auto temp = mergeRecShapleyDense(0, players - 2, players);
   for (int i = 0; i < players - 1; ++i) {
     for (int j = 0; j < quota; ++j) {
       left[i][j] = temp.get(j, i);
@@ -470,11 +482,8 @@ vector<double> VotingGame::shapleyNew() {
   vector<double> res(players);
   ZZ f = factorial(players);
   for (int i = 0; i < players; ++i) {
-    cout << i << ' ' << flush;
-    ZZ swings = countSwingsTable(mergeRecShapleyDense(0, i - 1) * mergeRecShapleyDense(i + 1, players - 1), weights[i], quota, players);
-    RR temp = conv<RR>(swings);
-    temp /= conv<RR>(f);
-    res[i] = conv<double>(temp);
+    cout << i << ' ' << flush; // todo: use max players here
+    res[i] = shapley(i);
   }
   cout << endl;
   return res;
@@ -488,26 +497,29 @@ ZZ VotingGame::countSwingsTable(const Polynomial2D & a, int weight, int quota, i
       cur += a.get(j, i);
     }
     res += cur*factorial(i) * factorial(players - i - 1);
+    //cout << i << ": " << log(max(ZZ(1), cur*factorial(i) * factorial(players - i - 1))) << endl;
   }
   return res;
 }
 
-Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int depth) {
-  if (en < 0 || st >= players) return emptyTable();
+Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int maxPlayers, int depth) {
+  if (en < 0 || st > en) return emptyTable();
   if (depth < cutoffDepth) { // DENSE
     if (st == en) {
       Polynomial2D res = tableWithOne(weights[st]);
       return res;
     }
 
-    auto res = mergeRecShapleyDense(st, (st + en) / 2);
-    res *= mergeRecShapleyDense((st + en) / 2 + 1, en, depth + 1);
-    res.cutRows(quota);
+    auto res = mergeRecShapleyDense(st, (st + en) / 2, maxPlayers, depth + 1);
+    res *= mergeRecShapleyDense((st + en) / 2 + 1, en, maxPlayers, depth + 1);
+    //res.cutRows(quota);
+    //res.cutColumns(maxPlayers);
+    res.shrink(quota, maxPlayers);
 
     return res;
 
   } else { // SPARSE
-    auto ret = mergeRecShapleySparse(st, en);
+    auto ret = mergeRecShapleySparse(st, en, maxPlayers);
     Polynomial2D res(quota, en - st + 2);
     for (const auto &i: ret) {
       res.set(i.first.first, i.first.second, i.second);
@@ -516,8 +528,9 @@ Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int depth) {
   }
 }
 
-unordered_map<pair<int, int>, ZZ, IntPairHash> VotingGame::mergeRecShapleySparse(int st, int en) {
-  if (en < 0 || st >= players) {
+unordered_map<pair<int, int>, ZZ, IntPairHash> VotingGame::mergeRecShapleySparse(int st, int en, int maxPlayers) {
+  //cout << st << ' ' << en << endl;
+  if (en < 0 || st > en) {
     unordered_map<pair<int, int>, ZZ, IntPairHash> res;
     res[{0, 0}] = 1;
   } else if (st == en) {
@@ -526,14 +539,14 @@ unordered_map<pair<int, int>, ZZ, IntPairHash> VotingGame::mergeRecShapleySparse
     res[{weights[st], 1}] = 1;
     return res;
   }
-  auto r1 = mergeRecShapleySparse(st, (st + en) / 2);
-  auto r2 = mergeRecShapleySparse((st + en) / 2 + 1, en);
+  auto r1 = mergeRecShapleySparse(st, (st + en) / 2, maxPlayers);
+  auto r2 = mergeRecShapleySparse((st + en) / 2 + 1, en, maxPlayers);
   // merge
   unordered_map<pair<int, int>, ZZ, IntPairHash> res;
   for (const auto &i: r1) {
     for (const auto &j: r2) {
       ZZ r = i.second * j.second;
-      if (r < quota)
+      if (r < quota && i.second + j.second <= maxPlayers)
         res[{i.first.first + j.first.first, i.first.second + j.first.second}] += r;
     }
   }
@@ -542,4 +555,18 @@ unordered_map<pair<int, int>, ZZ, IntPairHash> VotingGame::mergeRecShapleySparse
 
 int VotingGame::getCutoffDepth() {
   return round(log2(pow(players, 2.0/3.0)));
+}
+
+void VotingGame::precompMaxPlayers() {
+  auto wc = weights;
+  sort(wc.begin(), wc.end());
+  maxPlayers = 0;
+  ll cumSum = 0;
+  for (int i = 0; i < wc.size(); ++ i) {
+    cumSum += wc[i];
+    if (cumSum > quota - 1) break;
+    else maxPlayers ++;
+  }
+  //maxPlayers = players - 1;
+  cout << "maxPlayers: " << maxPlayers << endl;
 }

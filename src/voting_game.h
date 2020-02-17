@@ -13,6 +13,7 @@ class VotingGame : public CoalGame<ll> {
     cutoffDepth = getCutoffDepth();
     nonzeroPlayers = players;
     for (int i = 0; i < players; ++ i) if (!weights[i]) nonzeroPlayers --;
+    precompMaxPlayers();
   }
 
   // read from stdin
@@ -62,8 +63,8 @@ protected:
   ll reduceDummyPlayers();
 
   virtual ZZX mergeRecBanzhaf(int st, int en);
-  virtual Polynomial2D mergeRecShapleyDense(int st, int en, int depth = 1);
-  unordered_map<pair<int,int>, ZZ, IntPairHash> mergeRecShapleySparse(int st, int en);
+  virtual Polynomial2D mergeRecShapleyDense(int st, int en, int maxPlayers, int depth = 1);
+  unordered_map<pair<int,int>, ZZ, IntPairHash> mergeRecShapleySparse(int st, int en, int maxPlayers);
 
   ZZX columnWithOne(int weight);
   Polynomial2D tableWithOne(int weight);
@@ -76,6 +77,8 @@ private:
   int cutoffDepth;
   int getCutoffDepth();
   int nonzeroPlayers;
+  int maxPlayers;
+  void precompMaxPlayers();
 };
 
 #endif

@@ -20,6 +20,7 @@ VotingNonunique::VotingNonunique(vector<ll> weights, ll quota) : CoalGame(weight
     } else cnt.back() ++;
   }
   // remove zero players
+  precompMaxPlayers();
 }
 
 ZZX VotingNonunique::columnWithOne(ll weight, ll count) {
@@ -219,7 +220,8 @@ double VotingNonunique::shapley(int player) {
   assert(idx != -1);
 
   Polynomial2D tab = mergeRecShapley(0, idx - 1) * mergeRecShapley(idx + 1, w.size() - 1);
-  tab.cutRows(quota);
+  //tab.cutRows(quota);
+  tab.shrink(quota, maxPlayers);
   addToTableInplace(tab, w[idx], cnt[idx] - 1);
 
   ZZ swings = VotingGame::countSwingsTable(tab, w[idx], quota, players);
@@ -264,18 +266,21 @@ void VotingNonunique::shapleyRec(int first, int last, const Polynomial2D & pf) {
     cout << first << ' ' << flush;
     const int i = first;
     addToTableInplace(rollingShapley, w[i], cnt[i] - 1);
-    rollingShapley.cutRows(quota);
+    //rollingShapley.cutRows(quota);
+    rollingShapley.shrink(quota, maxPlayers);
 
     weightToRes[w[i]] = VotingGame::countSwingsTable(rollingShapley * pf, w[i], quota, players);
 
     addToTableInplace(rollingShapley, w[i], 1);
-    rollingShapley.cutRows(quota);
+    //rollingShapley.cutRows(quota);
+    rollingShapley.shrink(quota, maxPlayers);
     return;
   }
 
   Polynomial2D npf = pf;
   npf *= mergeRecShapley(first, mid);
-  npf.cutRows(quota);
+  //npf.cutRows(quota);
+  npf.shrink(quota, maxPlayers);
 
   shapleyRec(mid + 1, last, npf);
   shapleyRec(first, mid, pf);
@@ -284,7 +289,8 @@ void VotingNonunique::shapleyRec(int first, int last, const Polynomial2D & pf) {
 void VotingNonunique::addToTableInplace(Polynomial2D &a, ll weight, ll count) {
   if (!weight || !count) return;
   a *= tableWithOne(weight, count);
-  a.cutRows(quota);
+  //a.cutRows(quota);
+  a.shrink(quota, maxPlayers);
 }
 
 Polynomial2D VotingNonunique::tableWithOne(ll weight, ll count) {
@@ -299,16 +305,29 @@ Polynomial2D VotingNonunique::tableWithOne(ll weight, ll count) {
 }
 
 Polynomial2D VotingNonunique::mergeRecShapley(int st, int en) {
-  cout << "> " << st << ' ' << en << endl;
   if (en < 0 || st >= w.size()) return VotingGame::emptyTable();
   if (st == en) {
     Polynomial2D res = tableWithOne(w[st], cnt[st]);
     return res;
   }
   Polynomial2D res = mergeRecShapley(st, (st + en)/2) * mergeRecShapley((st + en)/2 + 1, en);
-  res.cutRows(quota);
-  cout << "< " << st << ' ' << en << endl;
+  //res.cutRows(quota);
+  res.shrink(quota, maxPlayers);
 
   return res;
 }
 
+
+void VotingNonunique::precompMaxPlayers() {
+  auto wc = origWeights;
+  sort(wc.begin(), wc.end());
+  maxPlayers = 0;
+  ll cumSum = 0;
+  for (int i = 0; i < wc.size(); ++ i) {
+    cumSum += wc[i];
+    if (cumSum > quota - 1) break;
+    else maxPlayers ++;
+  }
+  //maxPlayers = players - 1;
+  cout << "maxPlayers: " << maxPlayers << endl;
+}
