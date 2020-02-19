@@ -502,6 +502,20 @@ ZZ VotingGame::countSwingsTable(const Polynomial2D & a, int weight, int quota, i
   return res;
 }
 
+ZZ VotingGame::countSwingsTable(const SparsePolynomial2D & a, int weight, int quota, int players) {
+  ZZ res(0);
+  vector<ZZ> temp(players);
+  for (const auto & i: a.data) {
+    if (i.first.first >= quota - weight && i.first.first < quota) {
+      temp[i.first.second] += i.second;
+    }
+  }
+  for (int i = 0; i < players; ++i) {
+    res += temp[i]*factorial(i) * factorial(players - i - 1);
+  }
+  return res;
+}
+
 Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int maxPlayers, int depth) {
   if (en < 0 || st > en) return emptyTable();
   if (depth < cutoffDepth) { // DENSE
@@ -546,7 +560,7 @@ unordered_map<pair<int, int>, ZZ, IntPairHash> VotingGame::mergeRecShapleySparse
   for (const auto &i: r1) {
     for (const auto &j: r2) {
       ZZ r = i.second * j.second;
-      if (r < quota && i.second + j.second <= maxPlayers)
+      if (r < quota && i.first.second + j.first.second <= maxPlayers)
         res[{i.first.first + j.first.first, i.first.second + j.first.second}] += r;
     }
   }
@@ -560,9 +574,10 @@ int VotingGame::getCutoffDepth() {
 void VotingGame::precompMaxPlayers() {
   auto wc = weights;
   sort(wc.begin(), wc.end());
-  maxPlayers = 0;
+  maxPlayers = 1;
   ll cumSum = 0;
   for (int i = 0; i < wc.size(); ++ i) {
+    if (!wc[i]) continue;
     cumSum += wc[i];
     if (cumSum > quota - 1) break;
     else maxPlayers ++;

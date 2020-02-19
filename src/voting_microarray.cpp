@@ -28,7 +28,9 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
     for (int i = 0; i < genes; ++i) {
       //sum += weights[i] = round(fabs(special[i][j] - avgControl[i]));
       // TODO: try different methods to choose weights
-      sum += weights[i] = round(fabs(special[i][j] - avgControl[i]));
+      ll t = round(fabs(special[i][j] - avgControl[i]));
+      //if (t <= 2) t = 0;
+      sum += weights[i] = t;
     }
     /*if (sum) {
       //VotingNonunique temp(weights, sum/2); // works quite nicely

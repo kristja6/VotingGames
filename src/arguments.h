@@ -6,6 +6,7 @@
 #define COAL_GAME_ARGUMENTS_H
 
 #include <bits/stdc++.h>
+#include "coal_game.h"
 using namespace std;
 
 struct Arguments {
@@ -19,7 +20,11 @@ struct Arguments {
 
   bool isZeroOneGame = false;
   string inputFileName;
+  bool has(const string & arg) { return namedArguments.count(arg); }
+  std::set<string> namedArguments;
 };
+
+pair<vector<ll>, ll> readVotingGameInstance();;
 
 
 #endif //COAL_GAME_ARGUMENTS_H

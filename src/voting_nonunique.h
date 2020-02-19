@@ -19,11 +19,13 @@ public:
 
   ZZX columnWithOne(ll weight, ll count);
   Polynomial2D tableWithOne(ll weight, ll count);
+  SparsePolynomial2D tableWithOneSparse(ll weight, ll count);
   ZZX addToColumn(const ZZX & a, ll weight, ll count);
   ZZX emptyColumn(); // TODO: duplicite with voting_game.h
   ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
   void addToColumnInplace(ZZX & a, ll weight, ll count);
   void addToTableInplace(Polynomial2D & a, ll weight, ll count);
+  void addToTableInplace(SparsePolynomial2D & a, ll weight, ll count);
   // recover a in a*b = c
   void removeFromColumn(ZZX &a, ll weight, ll count);
 
@@ -39,6 +41,8 @@ public:
 
   ZZX mergeRec(int st, int en);
   Polynomial2D mergeRecShapley(int st, int en);
+  SparsePolynomial2D mergeRecShapleySparse(int st, int en);
+  SparsePolynomial2D sparseWithOne(int weight, int count);
 
   vector<ll> origWeights;
   vector<ll> w;

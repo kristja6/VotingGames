@@ -61,7 +61,7 @@ double SumOfVoting::shapley(int player) {
   double res = 0;
   for (int i = 0; i < gamesUnique.size(); ++i) {
     cout << i << flush;
-    res += gamesUnique[i].shapley(player);
+    res += gamesNonunique[i].shapley(player);
   }
   cout << endl;
   return res;

@@ -69,6 +69,7 @@ protected:
   ZZX columnWithOne(int weight);
   Polynomial2D tableWithOne(int weight);
   static ZZ countSwingsTable(const Polynomial2D & a, int weight, int quota, int players);
+  static ZZ countSwingsTable(const SparsePolynomial2D & a, int weight, int quota, int players);
 
 private:
   vector<double> bbSums;

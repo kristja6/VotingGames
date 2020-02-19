@@ -186,4 +186,16 @@ struct IntPairHash {
   }
 };
 
+struct SparsePolynomial2D {
+  int maxRows, maxColumns;
+
+  SparsePolynomial2D(int maxRows, int maxColumns) : maxRows(maxRows), maxColumns(maxColumns) {}
+
+  SparsePolynomial2D operator * (const SparsePolynomial2D & o) const;
+
+  SparsePolynomial2D & operator *= (const SparsePolynomial2D & o);
+
+  unordered_map<pair<int,int>, ZZ, IntPairHash> data;
+};
+
 #endif //COAL_GAME_MATH_H

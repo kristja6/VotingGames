@@ -362,3 +362,30 @@ void printVec(const vector<LogNum> &a) {
   cout << endl << endl;
 }
 
+SparsePolynomial2D SparsePolynomial2D::operator*(const SparsePolynomial2D &o) const {
+  SparsePolynomial2D res(maxRows, maxColumns);
+  //cout << "(" << o.data.size() << " * " << data.size() << ")" << endl;
+  map<int,std::set<int>> tc;
+  for (const auto & i: data) {
+    for (const auto & j: o.data) {
+      if (i.first.first + j.first.first > maxRows) continue;
+      if (i.first.second + j.first.second > maxColumns) continue;
+      res.data[{i.first.first + j.first.first, i.first.second + j.first.second}] += i.second * j.second;
+      tc[i.first.second + j.first.second].insert(i.first.first + j.first.first);
+    }
+  }
+  /*for (const auto & i: tc) {
+    cout << i.first << "----------------------" << endl;
+    for (auto j: i.second) {
+      cout << j << ' ';
+    }
+    cout << endl;
+  }*/
+  return res;
+}
+
+SparsePolynomial2D &SparsePolynomial2D::operator*=(const SparsePolynomial2D &o) {
+  SparsePolynomial2D res = *this * o;
+  data = res.data;
+  return *this;
+}

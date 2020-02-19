@@ -4,6 +4,7 @@
 #include "math.h"
 #include "microarray_game.h"
 #include "voting_nonunique.h"
+#include "arguments.h"
 
 void example1() {
   cout << "Monte carlo" << endl;
@@ -93,13 +94,14 @@ void measureFastShapley(VotingGame game) {
   cout << "PLAYERS: " << game.players << endl;
   //printVec(game.shapley(true));
   cout << "normal" << endl;
-  //cout << (game.shapley(game.players/2)) << endl;
+  //cout << (game.shapley()) << endl;
+  //printVec(game.shapley());
   //printVec(game.shapleyNew());
   //printVec(game.shapleyEnum());
   cout << "nonunique weights" << endl;
   VotingNonunique game2(game.weights, game.quota);
-  printVec(game2.shapley());
-  //printVec(game2.shapleyTest());
+  //printVec(game2.shapley());
+  printVec(game2.shapleyTest());
 }
 
 void measureMonteCarloShapley(VotingGame game) {
@@ -178,11 +180,28 @@ void testInteractionIndex() {
   cout << endl;
 }
 
-int main() {
+int main(int argc, const char ** argv) {
   srand(time(0));
-  cout << fixed << setprecision(10) << endl;
+  Arguments args;
+  args.ReadArguments(argc, argv);
+  auto instance = readVotingGameInstance();
 
-  measureVoting();
+  CoalGame<ll> * game = nullptr;
+  if (args.has("unique")) {
+    game = new VotingGame(instance.first, instance.second);
+  } else if (args.has("nonunique")) {
+    game = new VotingNonunique(instance.first, instance.second);
+  }
+  if (game == nullptr) {
+    // TODO: meaningful output here
+    cout << "Specify algorithm" << endl;
+  }
+
+  if (args.has("shapley")) {
+    printVec(game->banzhaf());
+  } else {
+    printVec(game->shapley());
+  }
 
   return 0;
 }
