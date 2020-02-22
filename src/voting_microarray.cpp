@@ -130,7 +130,6 @@ vector<int> VotingMicroarray::expressionsToCoalition(const vector<double> &expre
 }*/
 
 double VotingMicroarray::avgMatrixVal(const matrix &mtx) {
-  double avg = 0;
   // special
   vector<double> vals;
   for (size_t i = 0; i < mtx[0].size(); ++i) {

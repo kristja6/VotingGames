@@ -14,7 +14,7 @@ bool Arguments::ReadArguments(int argc, const char **argv) {
         switch (argv[i][j]) { // display help
           case 'z': isZeroOneGame = true; break;
           case '-':
-            for (int k = j + 1; k < len; ++ k) res.push_back(argv[i][k]);
+            for (size_t k = j + 1; k < len; ++ k) res.push_back(argv[i][k]);
             namedArguments.insert(res);
             j = len;
             break;

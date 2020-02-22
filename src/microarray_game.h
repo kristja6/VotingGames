@@ -9,7 +9,7 @@
 #include "math.h"
 
 
-class MicroarrayGame : public CoalGame<double> {
+class MicroarrayGame : public CoalGame {
 public:
   // format of input:
   /* items checks

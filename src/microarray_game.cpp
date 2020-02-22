@@ -42,50 +42,35 @@ double MicroarrayGame::v(const vector<int> &coalition) {
 }
 
 vector<double> MicroarrayGame::banzhaf() {
-  vector<LogNum> logSum(players);
+  vector<ZZ> sums(players);
 
   for (auto & check: checks) {
     for (auto & p: check) {
-      logSum[p] += LogNum((players - check.size()) / log(2), true);
+      sums[p] += power(ZZ(2), (players - check.size()));
     }
   }
-  normalizeBanzhafLogSums(logSum);
-  return toNormal(logSum);
+  return normalizeRawBanzhaf(sums);
 }
 
 vector<double> MicroarrayGame::shapley() {
-  vector<double> logSum(players, -INF);
+  vector<ZZ> sums(players);
 
-  vector<double> precomp(players);
+  vector<ZZ> precomp(players);
 
   for (auto & check: checks) {
-    //cout << (cnt ++) << ' ' << check.size() << endl;
     for (auto & p: check)           {
       // sum over all sizes
       for (int ad = 0; ad <= players - (int)check.size(); ++ ad) {
-        double subsets = logChoose(players - (int)check.size(), ad);
-        logInc(logSum[p], subsets + logFact(check.size() + ad - 1) + logFact(players - check.size() - ad));
+        ZZ subsets = nChooseK(players - (int)check.size(), ad); // todo: optimize this (rolling n choose k)
+        sums[p] += subsets * factorial(check.size() + ad - 1) * factorial(players - check.size() - ad);
       }
     }
   }
   for (int i = 0; i < players; ++i) {
-    logSum[i] -= log(checks.size());
+    sums[i] /= checks.size(); // TODO: needs to be RR?
   }
-  normalizeShapleyLogSums(logSum);
-  return logSum;
+  return normalizeRawShapley(sums);
 }
-
-/*vector<vector<int>> MicroarrayGame::expressionsToFeaturesStd2Groups(const vector<vector<double>> & special, const vector<vector<double>> & control) {
-  vector<vector<int>> res = vector<vector<int>>(special.size(), vector<int>(special[0].size(), 0));
-  for (size_t i = 0; i < special[0].size(); ++i) {
-    double u = mean(control[i]);
-    double s = sd(control[i], u);
-    for (size_t j = 0; j < control[i].size(); ++j) {
-      if (fabs(special[i][j] - u) >= 2*s) res[i][j] = 1;
-    }
-  }
-  return res;
-}*/
 
 vector<vector<int>> MicroarrayGame::expressionsToFeaturesStd2Groups(const vector<vector<double>> & special, const vector<vector<double>> & control) {
   vector<vector<int>> res = vector<vector<int>>(special.size(), vector<int>(special[0].size(), 0));
@@ -109,7 +94,7 @@ MicroarrayGame::MicroarrayGame(const vector<vector<int>> &mtx) :
 }
 
 double MicroarrayGame::banzhafInteraction(const vector<int> & inputSubset) {
-  LogNum res;
+  ZZ res;
   for (auto & check: checks) {
     // zero if none in the subset is in a check
     std::set<int> freeToSwitch;
@@ -121,15 +106,15 @@ double MicroarrayGame::banzhafInteraction(const vector<int> & inputSubset) {
     }
     for (auto i: inputSubset) freeToSwitch.erase(i);
 
-    LogNum cur = LogNum(freeToSwitch.size() / log(2), true);
-    LogNum even, odd;
+    ZZ cur = power(ZZ(2), freeToSwitch.size());
+    ZZ even, odd;
     for (size_t j = 0; j < freeToSwitchInSubset.size(); ++j) {
-      if (j%2 == 0) even += LogNum::nChooseK(freeToSwitchInSubset.size(), j);
-      else odd += LogNum::nChooseK(freeToSwitchInSubset.size(), j);
+      if (j%2 == 0) even += nChooseK(freeToSwitchInSubset.size(), j);
+      else odd += nChooseK(freeToSwitchInSubset.size(), j);
     }
     if (inputSubset.size()%2) cur *= even - odd;
     else cur *= odd - even;
     res += cur;
   }
-  return res.norm();
+  return normalizeRawBanzhaf(vector<ZZ>{res})[0];
 }

@@ -260,7 +260,7 @@ ostream &operator<<(ostream &out, const LogNum &a) {
 
 vector<double> toNormal(const vector<LogNum> &a) {
   vector<double> res(a.size());
-  for (int i = 0; i < a.size(); ++i) {
+  for (size_t i = 0; i < a.size(); ++i) {
     res[i] = a[i].norm();
   }
   return res;
@@ -270,7 +270,7 @@ vector<ZZ> factorialCache;
 ZZ factorial(int n) {
   assert(n >= 0);
   if (factorialCache.empty()) factorialCache.push_back(ZZ(1));
-  if (n < factorialCache.size()) return factorialCache[n];
+  if (n < (int)factorialCache.size()) return factorialCache[n];
   for (int i = factorialCache.size(); i <= n; ++ i) {
     factorialCache.push_back(factorialCache.back() * i);
   }
@@ -362,9 +362,12 @@ void printVec(const vector<LogNum> &a) {
   cout << endl << endl;
 }
 
+ZZ nChooseK(int a, int b) {
+  return (factorial(a) / factorial(b)) / factorial(a - b);
+}
+
 SparsePolynomial2D SparsePolynomial2D::operator*(const SparsePolynomial2D &o) const {
   SparsePolynomial2D res(maxRows, maxColumns);
-  //cout << "(" << o.data.size() << " * " << data.size() << ")" << endl;
   map<int,std::set<int>> tc;
   for (const auto & i: data) {
     for (const auto & j: o.data) {
@@ -374,13 +377,6 @@ SparsePolynomial2D SparsePolynomial2D::operator*(const SparsePolynomial2D &o) co
       tc[i.first.second + j.first.second].insert(i.first.first + j.first.first);
     }
   }
-  /*for (const auto & i: tc) {
-    cout << i.first << "----------------------" << endl;
-    for (auto j: i.second) {
-      cout << j << ' ';
-    }
-    cout << endl;
-  }*/
   return res;
 }
 

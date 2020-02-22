@@ -3,7 +3,15 @@
 #include "types.h"
 #include <NTL/RR.h>
 
-long long int VotingGame::v(const vector<int> &coalition) {
+VotingGame::VotingGame(const vector<ll> &weights, long long int quota) :
+    CoalGame(weights.size()), weights(weights), quota(quota) {
+  cutoffDepth = getCutoffDepth();
+  nonzeroPlayers = players;
+  for (int i = 0; i < players; ++ i) if (!weights[i]) nonzeroPlayers --;
+  precompMaxPlayers();
+}
+
+double VotingGame::v(const vector<int> &coalition) {
   int sum = 0;
   for (int i: coalition) sum += weights[i];
   return sum >= quota;
@@ -15,46 +23,7 @@ ZZX VotingGame::emptyColumn() {
   return res;
 }
 
-vector<LogNum> VotingGame::emptyColumnLogNum(int quota) {
-  vector<LogNum> res(quota);
-  res[0] = 1;
-  return res;
-}
-
-vector<LogNum> VotingGame::addToColumn(vector<LogNum> res, ll weight, int quota) {
-  if (!weight) return res;
-  for (int i = quota - 1; i >= weight; -- i) {
-    res[i] += res[i - weight];
-  }
-  return res;
-}
-
-LogNum VotingGame::countSwingsColumn(const vector<LogNum> &a, ll weight, int quota) {
-  LogNum res;
-  if (!weight) return res;
-  for (int i = max(0ll, quota - weight); i < quota; ++ i) {
-    res += a[i];
-  }
-  return res;
-}
-
-LogNum VotingGame::countSwingsColumn(const vector<LogNum> &a, const vector<LogNum> &b, ll weight, int quota) {
-  LogNum res;
-  if (!weight) return res;
-  vector<LogNum> prefixLogSum(quota);
-  prefixLogSum[0] = b[0];
-  for (int i = 1; i < quota; ++i) prefixLogSum[i] = prefixLogSum[i - 1] + b[i];
-  for (int i = 0; i < quota; ++i) {
-    // a[i] * all those in b, that fall in interval [quota - weight, quota - 1]
-    LogNum intervalSum = prefixLogSum[quota - 1 - i];
-    const int lowerEnd = quota - 1 - weight - i;
-    if (lowerEnd >= 0) intervalSum -= prefixLogSum[lowerEnd];
-    res += a[i] + intervalSum;
-  }
-  return res;
-}
-
-ZZ VotingGame::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight, int quota) {
+ZZ VotingGame::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
   ZZ res(0);
   if (!weight) return res;
   vector<ZZ> prefixSum(quota, ZZ(0));
@@ -71,162 +40,72 @@ ZZ VotingGame::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight, int qu
   return res;
 }
 
-bool VotingGame::hasAnySwings(const vector<LogNum> &a, const vector<LogNum> &b, ll weight, int quota) {
-  if (!weight) return false;
-  vector<LogNum> prefixLogSum(quota);
-  prefixLogSum[0] = b[0];
-  for (int i = 1; i < quota; ++i) prefixLogSum[i] = prefixLogSum[i - 1] + b[i];
-  for (int i = 0; i < quota; ++i) {
-    // a[i] * all those in b, that fall in interval [quota - weight, quota - 1]
-    LogNum intervalSum = prefixLogSum[quota - 1 - i];
-    const int lowerEnd = quota - 1 - weight - i;
-    if (lowerEnd >= 0) intervalSum -= prefixLogSum[lowerEnd];
-    if(a[i] + intervalSum > 0) return true;
-  }
-  return false;
-}
-
-
-vector<double> VotingGame::banzhafDpSlow() {
-  vector<LogNum> res(players);
+vector<double> VotingGame::banzhafNaiveDp() {
+  vector<ZZ> res(players);
   // count swings for player i
   for (int i = 0; i < players; ++ i) {
-    vector<LogNum> c = emptyColumnLogNum(quota);
+   ZZX c = emptyColumn();
     for (int j = 0; j < players; ++ j) {
       if (i == j) continue;
-      c = addToColumn(c, weights[j], quota);
+      addToColumnInplace(c, weights[j]);
     }
-    res[i] = countSwingsColumn(c, weights[i], quota);
+    res[i] = countSwingsColumn(c, emptyColumn(), weights[i]);
   }
-  normalizeBanzhafLogSums(res);
-  return toNormal(res);
+  return normalizeRawBanzhaf(res);
 }
 
-void VotingGame::bbRec(ll sum, int idx, vector<bool> has, bool checkSum) {
-  if (sum >= quota && checkSum) {
-    for (int i = 0; i < idx; ++ i) {
-      if (has[i] && sum - weights[i] < quota) {
-        bbSums[i] ++;
-      }
-    }
-    checkSum = false;
-  }
-  if (idx == players) return;
-
-  bbRec(sum, idx + 1, has, checkSum);
-  has[idx] = true;
-  bbRec(sum + weights[idx], idx + 1, has, true);
-}
- // todo: use max players her
-VotingGame::VotingGame(istream &in) {
-  in >> players;
-  in >> quota;
-  weights = vector<ll>(players);
-  nonzeroPlayers = players;
-  for (int i = 0; i < players; ++i) {
-    in >> weights[i];
-    if (!weights[i]) nonzeroPlayers --;
-  }
-  cutoffDepth = getCutoffDepth();
-  precompMaxPlayers();
-}
-
-vector<double> VotingGame::banzhaf() {
-  //logSumsRec = vector<double>(players, -INF);
+vector<double> VotingGame::banzhafUnoDp() {
   vector<ZZ> sums(players, ZZ(0));
   assert(players == (int)weights.size());
   ZZX right = emptyColumn();
-  ZZX left = emptyColumn();
+  ZZX left = mergeRecBanzhaf(0, players - 2);
   ZZ sum(0);
-  // prepare left
-  /*for (int i = 0; i < players-1; ++i) {
-    cout << i << ' ' << flush;
-    addToColumnInplace(left, weights[i]);
-  }*/
-  left = mergeRecBanzhaf(0, players - 2);
-  //exit(0);
+
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
     cout << i << ' ' << flush;
-    sum += sums[i] = countSwingsColumn(right, left, weights[i], quota);
+    sum += sums[i] = countSwingsColumn(right, left, weights[i]);
     if (i > 0) {
-      addToColumnInplace(right, weights[i], quota);
+      addToColumnInplace(right, weights[i]);
       removeFromColumnInplace(left, weights[i - 1]);
       cout << right.rep.length() << ' ' << left.rep.length() << endl;
     }
   }
-  vector<double> res(players);
 
-  for (int i = 0; i < players; ++i) {
-    RR temp = conv<RR>(sums[i]);
-    temp /= conv<RR>(sum);
-    res[i] = conv<double>(temp);
-  }
-
-  return res;
-}
-map<ll,ll> len;
-
-vector<double> VotingGame::banzhafBranchAndBound() {
-  bbSums = vector<double>(players);
-  bbRec(0, 0, vector<bool>(players, false), true);
-  normalizeBanzhafSums(bbSums);
-  return bbSums;
+  return normalizeRawBanzhaf(sums);
 }
 
-void VotingGame::addToColumnInplace(vector<LogNum> &a, ll weight) {
+vector<double> VotingGame::banzhaf() {
+  return banzhafUnoDp();
+}
+
+void VotingGame::addToColumnInplace(ZZX &a, ll weight) {
   if (!weight) return;
-  for (int i = a.size() - 1; i >= weight; --i) {
-    a[i] += a[i - weight];
-  }
-}
-
-void VotingGame::addToColumnInplace(ZZX &a, ll weight, int quota) {
-  if (!weight) return;
-  for (int i = min(quota, (int)(a.rep.length() + weight - 1)); i >= weight; --i) {
-    //a[i], a[i - weight]);
+  for (int i = min(quota, (ll)(a.rep.length() + weight - 1)); i >= weight; --i) {
     SetCoeff(a, i, coeff(a, i) + coeff(a, i - weight));
-  }
-}
-
-/*void VotingGame::addToColumnMultiple(vector<double> &a, ll weight, ll count) {
-  if (!weight) return;
-  for (int i = a.size() - 1; i >= weight; --i) {
-    logInc(a[i], a[i - weight]);
-  }
-}*/
-
-void VotingGame::removeFromColumnInplace(vector<LogNum> &a, ll weight) {
-  if (!weight) return;
-  for (size_t i = weight; i < a.size(); ++i) {
-    a[i] -= a[i - weight];
   }
 }
 
 void VotingGame::removeFromColumnInplace(ZZX &a, ll weight) {
   if (!weight) return;
   for (int i = weight; i < a.rep.length(); ++i) {
-    //logDec(a[i], a[i - weight]);
     SetCoeff(a, i, coeff(a, i) - coeff(a, i - weight));
   }
   a.normalize();
 }
 
 vector<double> VotingGame::shapley() {
-  return shapley(false);
+  return shapleyUnoDp();
 }
 
 double VotingGame::shapley(int player) {
-
   Polynomial2D tab = mergeRecShapleyDense(0, players - 1, maxPlayers) * mergeRecShapleyDense(player + 1, players - 1, maxPlayers);
   tab.shrink(quota, maxPlayers);
-  ZZ swings = countSwingsTable(tab, weights[player], quota, players);
-  RR temp = conv<RR>(swings);
-  temp /= conv<RR>(factorial(players));
-  return conv<double>(temp);
+  ZZ swings = countSwingsTable(tab, weights[player]);
+  return normalizeRawShapley(vector<ZZ>{swings})[0];
 }
 
-vector<double> VotingGame::shapley(bool logNum) {
+vector<double> VotingGame::shapleyUnoDp() {
   vector<int> mapping;
   vector<ll> newWeights;
   ll newQuota = reduceDummyPlayers();
@@ -238,8 +117,7 @@ vector<double> VotingGame::shapley(bool logNum) {
   cout << "after reducing: " << newWeights.size() << ' ' << newQuota << endl;
   VotingGame reducedGame(newWeights, newQuota);
   vector<double> reducedRes;
-  if(logNum) reducedRes = reducedGame.shapleyLogNumHelp();
-  else reducedRes = reducedGame.shapleyHelp();
+  reducedRes = reducedGame.shapleyUnoDpHelper();
   vector<double> res(players, 0);
   for (size_t i = 0; i < mapping.size(); ++i) {
     res[mapping[i]] = reducedRes[i];
@@ -247,81 +125,7 @@ vector<double> VotingGame::shapley(bool logNum) {
   return res;
 }
 
-vector<double> VotingGame::shapleyLogNumHelp() {
-  cout << "players: " << players << ", quota: " << quota << endl;
-  cout << "using log num" << endl;
-  logSumsRec = vector<double>(players, -INF);
-
-  matrix left = matrix(players, vector<double>(quota, -INF));
-  left[0][0] = 0;
-  matrix right = matrix(players, vector<double>(quota, -INF));
-  matrix rightPf = matrix(players, vector<double>(quota));
-  for (int i = 0; i < players; ++i) {
-    right[i][0] = logFact(i) + logFact(players - i - 1);
-  }
-  // fill up left
-  for (int i = 0; i < players - 1; ++i) {
-    for (int j = players - 1; j >= 1; --j) {
-      for (int k = quota - 1; k >= weights[i]; --k) {
-        left[j][k] = logAdd(left[j][k], left[j - 1][k - weights[i]]);
-      }
-    }
-  }
-
-  for (int i = players - 1; i >= 0 ; --i) {
-    cout << i << ' ' << flush;
-    // compute prefix for right
-    for (int j = 0; j < players; ++ j) {
-      rightPf[j][0] = right[j][0];
-      for (int k = 1; k < quota; ++k) {
-        rightPf[j][k] = logAdd(rightPf[j][k - 1], right[j][k]);
-      }
-    }
-
-    // count result for player i
-    for (int j = 0; j < players; ++j) {
-      for (int k = 0; k < quota; ++k) {
-        const int subIndex = quota - weights[i] - k - 1;
-        const double subs = (subIndex < 0 ? 0 : rightPf[j][subIndex]);
-        if (subIndex < 0) {
-          logInc(logSumsRec[i], left[j][k] + rightPf[j][quota - 1 - k]);
-        } else {
-          logInc(logSumsRec[i], left[j][k] + logSub(rightPf[j][quota - 1 - k], subs));
-        }
-      }
-    }
-
-    if (i > 0) {
-      for (int j = 1; j < players; ++j) {
-        for (int k = weights[i - 1]; k < quota; ++k) {
-          logDec(left[j][k], left[j - 1][k - weights[i - 1]]);
-        }
-      }
-
-      // add to the right matrix
-      for (int j = 0; j < players - 1; ++j) {
-        for (int k = quota - 1; k >= weights[i]; --k) {
-          logInc(right[j][k], right[j + 1][k - weights[i]]);
-        }
-      }
-    }
-  }
-  for (int i = 0; i < left.size(); ++i) {
-    for (int j = 0; j < left[i].size(); ++j) {
-      cout << left[i][j] << ' ';
-    }
-    cout << endl;
-  }
-  cout << endl;
-  cout << endl;
-  for (int i = 0; i < players; ++i) {
-    logSumsRec[i] = exp(logSumsRec[i] - logFact(players));
-  }
-
-  return logSumsRec;
-}
-
-vector<double> VotingGame::shapleyHelp() {
+vector<double> VotingGame::shapleyUnoDpHelper() {
   cout << "players: " << players << ", quota: " << quota << endl;
   vector<ZZ> sums = vector<ZZ>(players, ZZ(0));
 
@@ -336,13 +140,6 @@ vector<double> VotingGame::shapleyHelp() {
   }
 
   // fill up left
-  /*for (int i = 0; i < players - 1; ++i) {
-    for (int j = players - 1; j >= 1; --j) {
-      for (int k = quota - 1; k >= weights[i]; --k) {
-        left[j][k] += left[j - 1][k - weights[i]];
-      }
-    }
-  }*/
   auto temp = mergeRecShapleyDense(0, players - 2, players);
   for (int i = 0; i < players - 1; ++i) {
     for (int j = 0; j < quota; ++j) {
@@ -391,14 +188,7 @@ vector<double> VotingGame::shapleyHelp() {
   }
   cout << endl;
 
-  vector<double> res(players);
-  for (int i = 0; i < players; ++i) {
-    RR temp = conv<RR>(sums[i]);
-    temp /= conv<RR>(factorial(players));
-    res[i] = conv<double>(temp);
-  }
-
-  return res;
+  return normalizeRawShapley(sums);
 }
 
 ll VotingGame::reduceDummyPlayers() {
@@ -408,16 +198,16 @@ ll VotingGame::reduceDummyPlayers() {
     w[weights[i]].push_back(i);
   }
 
-  vector<LogNum> right = emptyColumnLogNum(quota);
-  vector<LogNum> left = emptyColumnLogNum(quota);
+  auto right = emptyColumn();
+  auto left = emptyColumn();
   // prepare left
-  for (int i = 0; i < players-1; ++i) {
+  for (int i = 0; i < players-1; ++i) { // TODO: use merge rec
     addToColumnInplace(left, weights[i]);
   }
 
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
-    if (!hasAnySwings(left, right, weights[i], quota)) {
+    if (!banzhaf(i)) {
       const ll curW = weights[i];
       while (w[curW].size()) {
         weights[w[curW].back()] = 0;
@@ -454,16 +244,10 @@ ZZX VotingGame::columnWithOne(int weight) {
 
 double VotingGame::banzhaf(int player) {
   if (!weights[player]) return 0;
-  /*if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
-    throw "can't compute just one!";
-  }*/
   // TODO: must use number of subsets as the denominator
-  BigNum swings = countSwingsColumn(mergeRecBanzhaf(0, player - 1), mergeRecBanzhaf(player + 1, players - 1), weights[player], quota);
-  RR temp = conv<RR>(swings);
-  temp /= conv<RR>(power(ZZ(2), nonzeroPlayers - 1));
-  return conv<double>(temp);
+  BigNum swings = countSwingsColumn(mergeRecBanzhaf(0, player - 1), mergeRecBanzhaf(player + 1, players - 1), weights[player]);
+  return normalizeRawBanzhaf(vector<ZZ>{swings})[0];
 }
-
 
 Polynomial2D VotingGame::emptyTable() {
   Polynomial2D res(1, 1);
@@ -482,14 +266,14 @@ vector<double> VotingGame::shapleyNew() {
   vector<double> res(players);
   ZZ f = factorial(players);
   for (int i = 0; i < players; ++i) {
-    cout << i << ' ' << flush; // todo: use max players here
+    cout << i << ' ' << flush;
     res[i] = shapley(i);
   }
   cout << endl;
   return res;
 }
 
-ZZ VotingGame::countSwingsTable(const Polynomial2D & a, int weight, int quota, int players) {
+ZZ VotingGame::countSwingsTable(const Polynomial2D & a, int weight) {
   ZZ res(0);
   for (int i = 0; i < a.columns; ++i) {
     ZZ cur(0);
@@ -497,12 +281,11 @@ ZZ VotingGame::countSwingsTable(const Polynomial2D & a, int weight, int quota, i
       cur += a.get(j, i);
     }
     res += cur*factorial(i) * factorial(players - i - 1);
-    //cout << i << ": " << log(max(ZZ(1), cur*factorial(i) * factorial(players - i - 1))) << endl;
   }
   return res;
 }
 
-ZZ VotingGame::countSwingsTable(const SparsePolynomial2D & a, int weight, int quota, int players) {
+ZZ VotingGame::countSwingsTable(const SparsePolynomial2D & a, int weight) {
   ZZ res(0);
   vector<ZZ> temp(players);
   for (const auto & i: a.data) {
@@ -516,7 +299,7 @@ ZZ VotingGame::countSwingsTable(const SparsePolynomial2D & a, int weight, int qu
   return res;
 }
 
-Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int maxPlayers, int depth) {
+Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int depth) {
   if (en < 0 || st > en) return emptyTable();
   if (depth < cutoffDepth) { // DENSE
     if (st == en) {
@@ -524,47 +307,37 @@ Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int maxPlayers, in
       return res;
     }
 
-    auto res = mergeRecShapleyDense(st, (st + en) / 2, maxPlayers, depth + 1);
-    res *= mergeRecShapleyDense((st + en) / 2 + 1, en, maxPlayers, depth + 1);
-    //res.cutRows(quota);
-    //res.cutColumns(maxPlayers);
+    auto res = mergeRecShapleyDense(st, (st + en) / 2, depth + 1);
+    res *= mergeRecShapleyDense((st + en) / 2 + 1, en, depth + 1);
     res.shrink(quota, maxPlayers);
 
     return res;
 
   } else { // SPARSE
-    auto ret = mergeRecShapleySparse(st, en, maxPlayers);
+    auto ret = mergeRecShapleySparse(st, en);
     Polynomial2D res(quota, en - st + 2);
-    for (const auto &i: ret) {
+    for (const auto &i: ret.data) {
       res.set(i.first.first, i.first.second, i.second);
     }
     return res;
   }
 }
 
-unordered_map<pair<int, int>, ZZ, IntPairHash> VotingGame::mergeRecShapleySparse(int st, int en, int maxPlayers) {
-  //cout << st << ' ' << en << endl;
+SparsePolynomial2D VotingGame::mergeRecShapleySparse(int st, int en) {
   if (en < 0 || st > en) {
-    unordered_map<pair<int, int>, ZZ, IntPairHash> res;
-    res[{0, 0}] = 1;
+    SparsePolynomial2D res(quota, maxPlayers + 1);
+    res.data[{0, 0}] = 1;
+    return res;
   } else if (st == en) {
-    unordered_map<pair<int, int>, ZZ, IntPairHash> res;
-    res[{0, 0}] = 1;
-    res[{weights[st], 1}] = 1;
+    SparsePolynomial2D res(quota, maxPlayers + 1);
+    res.data[{0, 0}] = 1;
+    res.data[{weights[st], 1}] = 1;
     return res;
   }
-  auto r1 = mergeRecShapleySparse(st, (st + en) / 2, maxPlayers);
-  auto r2 = mergeRecShapleySparse((st + en) / 2 + 1, en, maxPlayers);
-  // merge
-  unordered_map<pair<int, int>, ZZ, IntPairHash> res;
-  for (const auto &i: r1) {
-    for (const auto &j: r2) {
-      ZZ r = i.second * j.second;
-      if (r < quota && i.first.second + j.first.second <= maxPlayers)
-        res[{i.first.first + j.first.first, i.first.second + j.first.second}] += r;
-    }
-  }
-  return res;
+
+  auto r1 = mergeRecShapleySparse(st, (st + en) / 2);
+  auto r2 = mergeRecShapleySparse((st + en) / 2 + 1, en);
+  return r1 * r2;
 }
 
 int VotingGame::getCutoffDepth() {
@@ -576,7 +349,7 @@ void VotingGame::precompMaxPlayers() {
   sort(wc.begin(), wc.end());
   maxPlayers = 1;
   ll cumSum = 0;
-  for (int i = 0; i < wc.size(); ++ i) {
+  for (size_t i = 0; i < wc.size(); ++ i) {
     if (!wc[i]) continue;
     cumSum += wc[i];
     if (cumSum > quota - 1) break;
@@ -585,3 +358,12 @@ void VotingGame::precompMaxPlayers() {
   //maxPlayers = players - 1;
   cout << "maxPlayers: " << maxPlayers << endl;
 }
+
+const vector<ll> & VotingGame::getWeights() const {
+  return weights;
+}
+
+ll VotingGame::getQuota() const {
+  return quota;
+}
+

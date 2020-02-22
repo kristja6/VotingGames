@@ -25,25 +25,19 @@ struct PlayerWeights {
 };
 
 
-class SumOfVoting: public CoalGame<ll> {
+class SumOfVoting: public CoalGame {
 public:
   SumOfVoting(const vector<vector<ll>> & weights, const vector<ll> & quotas);
   /*SumOfVoting(const vector<VotingNonunique> & games): CoalGame(games[0].players), gamesNonunique(games) {
   }*/
   SumOfVoting(int players): CoalGame(players) {
   }
-  virtual ll v(const vector<int> & coal);
-
+  virtual double v(const vector<int> & coal);
   vector<double> banzhaf() override;
-
   double banzhaf(int player);
-
   vector<double> shapley() override;
-
   double shapley(int player);
-
   vector<double> shapleyTop(int topN);
-
   vector<double> banzhafTop(int topN);
 
   // doesn't return less than numberOfTopPlayers

@@ -198,4 +198,6 @@ struct SparsePolynomial2D {
   unordered_map<pair<int,int>, ZZ, IntPairHash> data;
 };
 
+ZZ nChooseK(int a, int b);
+
 #endif //COAL_GAME_MATH_H

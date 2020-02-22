@@ -11,52 +11,56 @@
 #include <NTL/ZZX.h>
 using namespace NTL;
 
-class VotingNonunique : public CoalGame<ll> {
+class VotingNonunique : public VotingGame {
 public:
-  VotingNonunique(vector<ll> weights, ll quota);
+  VotingNonunique(const vector<ll> &weights, ll quota);
 
-  ll v(const vector<int> &coalition) override;
+  double v(const vector<int> &coalition) override;
 
+  double shapley(int player) override;
+  vector<double> shapley() override;
+  vector<double> banzhaf() override;
+
+  virtual vector<double> shapleyNew() override;
+  vector<double> shapleyNewForEachPlayer();
+
+  vector<double> banzhafNewOnlyConvolution();
+  vector<double> banzhafNewWithDeconvolution(); // TODO: would be the best if I could find fast polynomial division
+
+protected:
+  // Banzhaf methods
   ZZX columnWithOne(ll weight, ll count);
+  ZZX addToColumn(const ZZX & a, ll weight, ll count);
+  void addToColumnInplace(ZZX & a, ll weight, ll count);
+
+  void banzhafRec(int first, int last, ZZX pf);
+  ZZX banzhafMergeRec(int st, int en);
+
+  // Shapley methods
   Polynomial2D tableWithOne(ll weight, ll count);
   SparsePolynomial2D tableWithOneSparse(ll weight, ll count);
-  ZZX addToColumn(const ZZX & a, ll weight, ll count);
-  ZZX emptyColumn(); // TODO: duplicite with voting_game.h
-  ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
-  void addToColumnInplace(ZZX & a, ll weight, ll count);
   void addToTableInplace(Polynomial2D & a, ll weight, ll count);
   void addToTableInplace(SparsePolynomial2D & a, ll weight, ll count);
-  // recover a in a*b = c
   void removeFromColumn(ZZX &a, ll weight, ll count);
 
-  double shapley(int player);
-  vector<double> shapley() override;
-  void shapleyRec(int first, int last, const Polynomial2D &pf);
-  vector<double> shapleyTest();
-
-    vector<double> banzhaf() override;
-  void banzhafRec(int first, int last, ZZX pf);
-  vector<double> banzhafSlow();
-  vector<double> banzhafSlowUnmerge(); // TODO: would be the best if I could find fast polynomial division
-
-  ZZX mergeRec(int st, int en);
   Polynomial2D mergeRecShapley(int st, int en);
-  SparsePolynomial2D mergeRecShapleySparse(int st, int en);
+  SparsePolynomial2D mergeRecShapleySparse(int st, int en) override;
   SparsePolynomial2D sparseWithOne(int weight, int count);
+  void shapleyMergeRec(int first, int last, const Polynomial2D &pf);
 
-  vector<ll> origWeights;
-  vector<ll> w;
-  vector<ll> cnt;
-  ll quota;
+
+  // information about the game
+  vector<ll> uniqueWeights;
+  vector<ll> weightCount;
+
 private:
+
   ZZX rollingBanzhaf;
   Polynomial2D rollingShapley;
   vector<ZZ> sums;
   ZZ sum;
-  map<ll,ZZ> weightToRes;
-  map<ll,double> shapleyCache;
-  int maxPlayers;
-  void precompMaxPlayers();
+  unordered_map<ll,ZZ> weightToRes;
+  unordered_map<ll,double> shapleyCache;
 };
 
 
