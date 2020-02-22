@@ -9,6 +9,8 @@
 #define BANZHAF_DENOM_WINNING 1
 #define BANZHAF_DENOM_NONE 2
 
+#define dbg cerr
+
 using namespace std;
 using ll = long long;
 using namespace NTL;
@@ -61,6 +63,7 @@ protected:
 
   vector<double> normalizeRawBanzhaf(const vector<BigNum> &sums);
   vector<double> normalizeRawShapley(const vector<BigNum> &sums);
+  vector<double> normalizeShapleyCounts(const vector<BigNum> &sums);
 
   vector<int> bestCoal;
   double bestValue;

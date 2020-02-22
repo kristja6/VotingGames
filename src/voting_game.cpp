@@ -63,12 +63,10 @@ vector<double> VotingGame::banzhafUnoDp() {
 
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
-    cout << i << ' ' << flush;
     sum += sums[i] = countSwingsColumn(right, left, weights[i]);
     if (i > 0) {
       addToColumnInplace(right, weights[i]);
       removeFromColumnInplace(left, weights[i - 1]);
-      cout << right.rep.length() << ' ' << left.rep.length() << endl;
     }
   }
 
@@ -99,8 +97,8 @@ vector<double> VotingGame::shapley() {
 }
 
 double VotingGame::shapley(int player) {
-  Polynomial2D tab = mergeRecShapleyDense(0, players - 1, maxPlayers) * mergeRecShapleyDense(player + 1, players - 1, maxPlayers);
-  tab.shrink(quota, maxPlayers);
+  Polynomial2D tab = mergeRecShapleyDense(0, player - 1, maxPlayers) * mergeRecShapleyDense(player + 1, players - 1, maxPlayers);
+  tab.shrink(quota, maxPlayers+1);
   ZZ swings = countSwingsTable(tab, weights[player]);
   return normalizeRawShapley(vector<ZZ>{swings})[0];
 }
@@ -114,7 +112,6 @@ vector<double> VotingGame::shapleyUnoDp() {
     mapping.push_back(i);
     newWeights.push_back(weights[i]);
   }
-  cout << "after reducing: " << newWeights.size() << ' ' << newQuota << endl;
   VotingGame reducedGame(newWeights, newQuota);
   vector<double> reducedRes;
   reducedRes = reducedGame.shapleyUnoDpHelper();
@@ -126,7 +123,6 @@ vector<double> VotingGame::shapleyUnoDp() {
 }
 
 vector<double> VotingGame::shapleyUnoDpHelper() {
-  cout << "players: " << players << ", quota: " << quota << endl;
   vector<ZZ> sums = vector<ZZ>(players, ZZ(0));
 
   vector<vector<ZZ>> left = vector<vector<ZZ>>(players, vector<ZZ>(quota, ZZ(0)));
@@ -141,15 +137,13 @@ vector<double> VotingGame::shapleyUnoDpHelper() {
 
   // fill up left
   auto temp = mergeRecShapleyDense(0, players - 2, players);
-  for (int i = 0; i < players - 1; ++i) {
+  for (int i = 0; i < players; ++i) {
     for (int j = 0; j < quota; ++j) {
       left[i][j] = temp.get(j, i);
     }
   }
 
   for (int i = players - 1; i >= 0 ; --i) {
-    cout << i << ' ' << flush;
-
     // compute prefix for right
     for (int j = 0; j < players; ++ j) {
       rightPf[j][0] = right[j][0];
@@ -186,8 +180,6 @@ vector<double> VotingGame::shapleyUnoDpHelper() {
       }
     }
   }
-  cout << endl;
-
   return normalizeRawShapley(sums);
 }
 
@@ -207,7 +199,7 @@ ll VotingGame::reduceDummyPlayers() {
 
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
-    if (!banzhaf(i)) {
+    if (banzhaf(i) == 0) {
       const ll curW = weights[i];
       while (w[curW].size()) {
         weights[w[curW].back()] = 0;
@@ -266,10 +258,8 @@ vector<double> VotingGame::shapleyNew() {
   vector<double> res(players);
   ZZ f = factorial(players);
   for (int i = 0; i < players; ++i) {
-    cout << i << ' ' << flush;
     res[i] = shapley(i);
   }
-  cout << endl;
   return res;
 }
 
@@ -309,7 +299,7 @@ Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int depth) {
 
     auto res = mergeRecShapleyDense(st, (st + en) / 2, depth + 1);
     res *= mergeRecShapleyDense((st + en) / 2 + 1, en, depth + 1);
-    res.shrink(quota, maxPlayers);
+    res.shrink(quota, maxPlayers+1);
 
     return res;
 
@@ -355,8 +345,6 @@ void VotingGame::precompMaxPlayers() {
     if (cumSum > quota - 1) break;
     else maxPlayers ++;
   }
-  //maxPlayers = players - 1;
-  cout << "maxPlayers: " << maxPlayers << endl;
 }
 
 const vector<ll> & VotingGame::getWeights() const {

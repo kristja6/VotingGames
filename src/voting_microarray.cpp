@@ -146,6 +146,5 @@ double VotingMicroarray::avgMatrixVal(const matrix &mtx) {
 
 bool VotingMicroarray::predict(const vector<int> &coal) {
   double val = v(coal);
-  cout << "value: " << val << ' ' << ", avg special: " << avgSpecialVal << ' ' << "avg control: " << avgControlVal << ' ' << coal.size() << endl;
   return abs(val - avgSpecialVal) < abs(val - avgControlVal);
 }

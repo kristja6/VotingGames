@@ -1,9 +1,9 @@
 import random
 import math
-n = 40000
-q = 100000
+n = 100
+q = 50
 mx = 10
-mn = 1
+mn = 0
 print(n, q)
 
 for i in range(n):

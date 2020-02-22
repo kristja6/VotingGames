@@ -27,7 +27,7 @@ SOURCES     := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS     := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 
 #Defauilt Make
-all: resources $(TARGET)
+all: resources $(TARGET) test
 
 todo:
 	echo " ----- TODO ----- "
@@ -73,3 +73,6 @@ $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
 
 #Non-File Targets
 .PHONY: all remake clean cleaner resources
+
+test: resources $(TARGET)
+	./test.py
