@@ -77,6 +77,7 @@ int main(int argc, const char ** argv) {
     } else if (args.has("normal")) {
       if (args.has("new")) printVec(VotingGame(instance.first, instance.second).shapleyNew());
       if (args.has("new-for-each")) printVec(VotingGame(instance.first, instance.second).shapleyNewForEach());
+      if (args.has("new-dp")) printVec(VotingGame(instance.first, instance.second).shapleyNewDp());
       if (args.has("uno")) printVec(VotingGame(instance.first, instance.second).shapleyUnoDp());
     }
   } else if (args.has("banzhaf")) {

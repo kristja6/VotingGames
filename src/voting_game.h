@@ -25,6 +25,7 @@ class VotingGame : public CoalGame {
   // TODO: TIME
   virtual vector<double> shapleyNew();
   virtual vector<double> shapleyNewForEach();
+  virtual vector<double> shapleyNewDp();
 
   const vector<ll> & getWeights() const;
   ll getQuota() const;
