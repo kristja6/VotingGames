@@ -74,6 +74,7 @@ int main(int argc, const char ** argv) {
     if (args.has("opt")) {
       if (args.has("new-only-convolution")) printVec(VotingNonunique(instance.first, instance.second).shapleyNew());
       if (args.has("new-for-each")) printVec(VotingNonunique(instance.first, instance.second).shapleyNewForEachPlayer());
+      if (args.has("new-dp")) printVec(VotingNonunique(instance.first, instance.second).shapleyNewDp());
     } else if (args.has("normal")) {
       if (args.has("new")) printVec(VotingGame(instance.first, instance.second).shapleyNew());
       if (args.has("new-for-each")) printVec(VotingGame(instance.first, instance.second).shapleyNewForEach());

@@ -275,3 +275,45 @@ SparsePolynomial2D VotingNonunique::mergeRecShapleySparse(int st, int en) {
   return r1 * r2;
 }
 
+vector<double> VotingNonunique::shapleyNewDp() {
+  unordered_map<ll,ZZ> sums;
+  vector<vector<ZZ>> left = vector<vector<ZZ>>(players, vector<ZZ>(2*quota, ZZ(0)));
+
+  ll oldm = maxPlayers;
+  maxPlayers = players; // TODO: make this cleaner
+  quota *= 2; // TODO: make this cleaner
+  auto temp = mergeRecShapley(0, uniqueWeights.size() - 1);
+
+  for (int i = 0; i < players; ++i) {
+    for (int j = 0; j < quota; ++j) {
+      left[i][j] = temp.get(j, i);
+    }
+  }
+  maxPlayers = oldm;
+  quota /= 2;
+
+  for (int i = 0; i < players; ++ i) {
+    if (sums.find(weights[i]) != sums.end()) continue;
+    auto cpy = left;
+    // remove player i from cpy
+    for (int j = 1; j < players; ++j) {
+      for (int k = weights[i]; k < 2*quota; ++k) {
+        cpy[j][k] -= cpy[j - 1][k - weights[i]];
+      }
+    }
+    // compute sum for player i
+    for (int j = 0; j < players; ++ j) {
+      ZZ curCount;
+      for (int k = max(0ll, quota - weights[i]); k < quota; ++ k) {
+        curCount += cpy[j][k];
+      }
+      sums[weights[i]] += curCount * factorial(j) * factorial(players - j - 1);
+    }
+  }
+  vector<ZZ> res(players);
+  for (int i = 0; i < players; ++i) {
+    res[i] = sums[weights[i]];
+  }
+  return normalizeRawShapley(res);
+}
+

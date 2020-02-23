@@ -26,6 +26,7 @@ public:
 
   vector<double> banzhafNewOnlyConvolution();
   vector<double> banzhafNewWithDeconvolution(); // TODO: would be the best if I could find fast polynomial division
+  vector<double> shapleyNewDp();
 
 protected:
   // Banzhaf methods

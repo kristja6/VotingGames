@@ -371,11 +371,11 @@ vector<double> VotingGame::shapleyNewDp() {
   vector<ZZ> sums = vector<ZZ>(players, ZZ(0));
   vector<vector<ZZ>> left = vector<vector<ZZ>>(players, vector<ZZ>(2*quota, ZZ(0)));
 
-  // fill up left
   ll oldm = maxPlayers;
   maxPlayers = players; // TODO: make this cleaner
   quota *= 2; // TODO: add max of all weights
   auto temp = mergeRecShapleyDense(0, players - 1, players);
+
   for (int i = 0; i < players; ++i) {
     for (int j = 0; j < quota; ++j) {
       left[i][j] = temp.get(j, i);

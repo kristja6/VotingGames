@@ -13,6 +13,7 @@ arguments_bz = [
 arguments_sh = [
     "--shapley --opt --new-for-each"
     , "--shapley --opt --new-only-convolution"
+    , "--shapley --opt --new-dp"
     , "--shapley --normal --new"
     , "--shapley --normal --uno"
     , "--shapley --normal --new-dp"
