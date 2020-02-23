@@ -96,6 +96,14 @@ vector<double> VotingGame::shapley() {
   return shapleyUnoDp();
 }
 
+vector<double> VotingGame::shapleyNewForEach() {
+  vector<double> res(players);
+  for (int i = 0; i < players; ++ i) {
+    res[i] = shapley(i);
+  }
+  return res;
+}
+
 double VotingGame::shapley(int player) {
   Polynomial2D tab = mergeRecShapleyDense(0, player - 1, maxPlayers) * mergeRecShapleyDense(player + 1, players - 1, maxPlayers);
   tab.shrink(quota, maxPlayers+1);
@@ -136,7 +144,10 @@ vector<double> VotingGame::shapleyUnoDpHelper() {
   }
 
   // fill up left
+  ll oldm = maxPlayers;
+  maxPlayers = players - 1; // TODO: make this cleaner
   auto temp = mergeRecShapleyDense(0, players - 2, players);
+  maxPlayers = oldm;
   for (int i = 0; i < players; ++i) {
     for (int j = 0; j < quota; ++j) {
       left[i][j] = temp.get(j, i);
@@ -199,7 +210,7 @@ ll VotingGame::reduceDummyPlayers() {
 
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
-    if (banzhaf(i) == 0) {
+    if (false) { // TODO: reduce dummy players here
       const ll curW = weights[i];
       while (w[curW].size()) {
         weights[w[curW].back()] = 0;
@@ -237,6 +248,7 @@ ZZX VotingGame::columnWithOne(int weight) {
 double VotingGame::banzhaf(int player) {
   if (!weights[player]) return 0;
   // TODO: must use number of subsets as the denominator
+  setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   BigNum swings = countSwingsColumn(mergeRecBanzhaf(0, player - 1), mergeRecBanzhaf(player + 1, players - 1), weights[player]);
   return normalizeRawBanzhaf(vector<ZZ>{swings})[0];
 }
@@ -291,7 +303,7 @@ ZZ VotingGame::countSwingsTable(const SparsePolynomial2D & a, int weight) {
 
 Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int depth) {
   if (en < 0 || st > en) return emptyTable();
-  if (depth < cutoffDepth) { // DENSE
+  if (depth < cutoffDepth || true) { // DENSE
     if (st == en) {
       Polynomial2D res = tableWithOne(weights[st]);
       return res;
