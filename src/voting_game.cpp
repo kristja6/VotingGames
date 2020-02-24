@@ -352,7 +352,6 @@ void VotingGame::precompMaxPlayers() {
   maxPlayers = 1;
   ll cumSum = 0;
   for (size_t i = 0; i < wc.size(); ++ i) {
-    if (!wc[i]) continue;
     cumSum += wc[i];
     if (cumSum > quota - 1) break;
     else maxPlayers ++;
@@ -403,4 +402,3 @@ vector<double> VotingGame::shapleyNewDp() {
   }
   return normalizeRawShapley(sums);
 }
-
