@@ -7,7 +7,14 @@ VotingGame::VotingGame(const vector<ll> &weights, long long int quota) :
     CoalGame(weights.size()), weights(weights), quota(quota) {
   cutoffDepth = getCutoffDepth();
   nonzeroPlayers = players;
-  for (int i = 0; i < players; ++ i) if (!weights[i]) nonzeroPlayers --;
+  maxWeight = 0;
+  for (int i = 0; i < players; ++ i) {
+    assert(this->weights[i] >= 0);
+    this->weights[i] = min(quota, this->weights[i]);
+    maxWeight = max(maxWeight, (int)this->weights[i]);
+    if (!this->weights[i]) nonzeroPlayers --;
+  }
+
   precompMaxPlayers();
 }
 

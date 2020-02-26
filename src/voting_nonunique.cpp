@@ -43,7 +43,7 @@ void VotingNonunique::banzhafRec(int first, int last, ZZX pf) {
   }
 
   ZZX old = pf;
-  pf *= banzhafMergeRec(first, mid);
+  pf *= mergeRecBanzhaf(first, mid);
   cutPolynom(pf, quota);
 
   banzhafRec(mid + 1, last, pf);
@@ -72,7 +72,7 @@ vector<double> VotingNonunique::banzhafNewWithDeconvolution() {
   ZZX right = emptyColumn();
   ZZX left(uniqueWeights.size());
 
-  left = banzhafMergeRec(0, uniqueWeights.size() - 2);
+  left = mergeRecBanzhaf(0, uniqueWeights.size() - 2);
 
   // get results for all players
   ZZ sum(0);
@@ -121,13 +121,13 @@ void VotingNonunique::removeFromColumn(ZZX &a, ll weight, ll count) {
   a = reverse(a, a.rep.length() - 1);
 }
 
-ZZX VotingNonunique::banzhafMergeRec(int st, int en) {
+ZZX VotingNonunique::mergeRecBanzhaf(int st, int en) {
   if (en < 0 || st >= players) return emptyColumn();
   if (st == en) {
     ZZX res = columnWithOne(uniqueWeights[st], weightCount[st]);
     return res;
   }
-  ZZX res = banzhafMergeRec(st, (st + en) / 2) * banzhafMergeRec((st + en) / 2 + 1, en);
+  ZZX res = mergeRecBanzhaf(st, (st + en) / 2) * mergeRecBanzhaf((st + en) / 2 + 1, en);
   cutPolynom(res, quota);
 
   return res;
@@ -315,5 +315,43 @@ vector<double> VotingNonunique::shapleyNewDp() {
     res[i] = sums[weights[i]];
   }
   return normalizeRawShapley(res);
+}
+
+vector<double> VotingNonunique::banzhafNewDp() {
+  unordered_map<ll,ZZ> sums;
+  vector<ZZ> left = vector<ZZ>(quota + maxWeight, ZZ(0));
+
+  ll oldm = maxPlayers;
+  maxPlayers = players; // TODO: make this cleaner
+  quota = quota + maxWeight; // TODO: make this cleaner
+  auto temp = mergeRecBanzhaf(0, uniqueWeights.size() - 1);
+  //cout << temp << endl;
+
+  maxPlayers = oldm;
+  quota -= maxWeight;
+
+  for (int i = 0; i < quota + maxWeight; ++i) {
+    left[i] = coeff(temp, i);
+  }
+
+  for (int i = 0; i < players; ++ i) {
+    if (sums.find(weights[i]) != sums.end()) continue;
+    auto cpy = left;
+    // remove player i from cpy
+    for (int k = weights[i]; k < quota + weights[i]; ++k) {
+      cpy[k] -= cpy[k - weights[i]];
+    }
+    // compute sum for player i
+    ZZ curCount;
+    for (int k = max(0ll, quota - weights[i]); k < quota; ++ k) {
+      curCount += cpy[k];
+    }
+    sums[weights[i]] = curCount;
+  }
+  vector<ZZ> res(players);
+  for (int i = 0; i < players; ++i) {
+    res[i] = sums[weights[i]];
+  }
+  return normalizeRawBanzhaf(res);
 }
 

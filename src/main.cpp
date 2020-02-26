@@ -85,6 +85,7 @@ int main(int argc, const char ** argv) {
     if (args.has("opt")) {
       if (args.has("new-only-convolution")) printVec(VotingNonunique(instance.first, instance.second).banzhafNewOnlyConvolution());
       if (args.has("new-with-deconvolution")) printVec(VotingNonunique(instance.first, instance.second).banzhafNewWithDeconvolution());
+      if (args.has("new-dp")) printVec(VotingNonunique(instance.first, instance.second).banzhafNewDp());
     } else if (args.has("normal")) {
       if (args.has("uno")) printVec(VotingGame(instance.first, instance.second).banzhafUnoDp());
       if (args.has("naive")) printVec(VotingGame(instance.first, instance.second).banzhafNaiveDp());

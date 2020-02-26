@@ -23,10 +23,11 @@ public:
 
   virtual vector<double> shapleyNew() override;
   vector<double> shapleyNewForEachPlayer();
+  vector<double> shapleyNewDp() override;
 
   vector<double> banzhafNewOnlyConvolution();
   vector<double> banzhafNewWithDeconvolution(); // TODO: would be the best if I could find fast polynomial division
-  vector<double> shapleyNewDp();
+  vector<double> banzhafNewDp();
 
 protected:
   // Banzhaf methods
@@ -35,7 +36,7 @@ protected:
   void addToColumnInplace(ZZX & a, ll weight, ll count);
 
   void banzhafRec(int first, int last, ZZX pf);
-  ZZX banzhafMergeRec(int st, int en);
+  ZZX mergeRecBanzhaf(int st, int en) override;
 
   // Shapley methods
   Polynomial2D tableWithOne(ll weight, ll count);

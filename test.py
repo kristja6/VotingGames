@@ -5,9 +5,10 @@ from termcolor import colored
 command = "/home/maty/Dropbox/FEL/diplomka/package/CoopGame/bin/coal-game"
 arguments_bz = [
     "--banzhaf --normal --naive"
+    , "--banzhaf --normal --uno"
     , "--banzhaf --opt --new-only-convolution"
     ,"--banzhaf --opt --new-with-deconvolution"
-    , "--banzhaf --normal --uno"
+    ,"--banzhaf --opt --new-dp"
     ]
 
 arguments_sh = [

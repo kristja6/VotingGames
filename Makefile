@@ -27,7 +27,9 @@ SOURCES     := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS     := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 
 #Defauilt Make
-all: resources $(TARGET) test
+all: build test
+
+build: resources $(TARGET)
 
 todo:
 	echo " ----- TODO ----- "

@@ -56,6 +56,7 @@ protected:
 
   int maxPlayers;
   int nonzeroPlayers;
+  int maxWeight;
 
   // Defines the game
   vector<ll> weights;
