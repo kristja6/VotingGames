@@ -16,6 +16,31 @@ rollingShapley(emptyTable()) {
       weightCount.push_back(1);
     } else weightCount.back() ++;
   }
+  // TODO: put into separate function
+  // balance counts of weights by pairing small with large
+  std::set<pair<int,int>> pr;
+  for (int i = 0; i < uniqueWeights.size(); ++ i) {
+    pr.insert({weightCount[i], uniqueWeights[i]});
+  }
+  vector<pair<int,int>> res;
+  int turn = 0;
+  while (pr.size()) {
+    if (turn%2) {
+      res.push_back(*pr.begin());
+      pr.erase(pr.begin());
+    } else {
+      res.push_back(*pr.rbegin());
+      pr.erase(--pr.end());
+    }
+    turn ++;
+  }
+  dbg << "order of weights: ";
+  for (int i = 0; i < uniqueWeights.size(); ++ i) {
+    dbg << res[i].second << ' ';
+    uniqueWeights[i] = res[i].second;
+    weightCount[i] = res[i].first;
+  }
+  dbg << endl;
 }
 
 ZZX VotingNonunique::columnWithOne(ll weight, ll count) {
@@ -64,7 +89,11 @@ vector<double> VotingNonunique::banzhafNewOnlyConvolution() {
 }
 
 vector<double> VotingNonunique::banzhaf() {
-  return banzhafNewOnlyConvolution();
+  return banzhafNewDp();
+}
+
+vector<double> VotingNonunique::banzhaf(const vector<int> & p) {
+  return banzhafNewDp(p);
 }
 
 vector<double> VotingNonunique::banzhafNewWithDeconvolution() {
@@ -178,7 +207,7 @@ vector<double> VotingNonunique::shapleyNew() {
 }
 
 vector<double> VotingNonunique::shapley() {
-  return shapleyNew();
+  return shapleyNewDp();
 }
 
 void VotingNonunique::shapleyMergeRec(int first, int last, const Polynomial2D &pf) {
@@ -215,7 +244,8 @@ void VotingNonunique::addToTableInplace(SparsePolynomial2D &a, ll weight, ll cou
 }
 
 Polynomial2D VotingNonunique::tableWithOne(ll weight, ll count) {
-  Polynomial2D res(weight * count + 1, min((int)count + 1, maxPlayers + 1));
+  Polynomial2D res(min(weight * count + 1, quota), min((int)count + 1, maxPlayers + 1));
+  dbg << "one: " << weight << ' ' << count << endl;
   ZZ nck(1);
   for (int i = 0; i <= min((int)count, maxPlayers+1); ++i) {
     if (i*weight >= quota) break;
@@ -223,6 +253,7 @@ Polynomial2D VotingNonunique::tableWithOne(ll weight, ll count) {
     nck *= (count - i);
     nck /= (i + 1);
   }
+  dbg << "done" << endl;
   return res;
 }
 
@@ -239,14 +270,14 @@ SparsePolynomial2D VotingNonunique::tableWithOneSparse(ll weight, ll count) {
 }
 
 Polynomial2D VotingNonunique::mergeRecShapley(int st, int en) {
+  dbg << st << ' ' << en << endl;
   if (en < 0 || st > en) return VotingGame::emptyTable();
   if (st == en) {
-    Polynomial2D res = tableWithOne(uniqueWeights[st], weightCount[st]);
-    return res;
+    return tableWithOne(uniqueWeights[st], weightCount[st]);
   }
   Polynomial2D res = mergeRecShapley(st, (st + en)/2) * mergeRecShapley((st + en)/2 + 1, en);
   res.shrink(quota, maxPlayers+1);
-
+  dbg << "DONE: " << st << ' ' << en << endl;
   return res;
 }
 
@@ -274,35 +305,53 @@ SparsePolynomial2D VotingNonunique::mergeRecShapleySparse(int st, int en) {
   auto r2 = mergeRecShapleySparse((st + en) / 2 + 1, en);
   return r1 * r2;
 }
-
 vector<double> VotingNonunique::shapleyNewDp() {
+  vector<int> p(players);
+  for (int i = 0; i < players; ++i) p[i] = i;
+  return shapleyNewDp(p);
+}
+
+vector<double> VotingNonunique::shapleyNewDp(const vector<int> & p) {
   unordered_map<ll,ZZ> sums;
-  vector<vector<ZZ>> left = vector<vector<ZZ>>(players, vector<ZZ>(2*quota, ZZ(0)));
+  vector<vector<ZZ>> left = vector<vector<ZZ>>(maxPlayersAll, vector<ZZ>(quota + maxWeight, ZZ(0)));
 
   ll oldm = maxPlayers;
-  maxPlayers = players; // TODO: make this cleaner
-  quota *= 2; // TODO: make this cleaner
-  auto temp = mergeRecShapley(0, uniqueWeights.size() - 1);
+  maxPlayers = maxPlayersAll; // TODO: make this cleaner
+  //maxPlayers = players; // TODO: make this cleaner
+  quota += maxWeight; // TODO: make this cleaner
 
-  for (int i = 0; i < players; ++i) {
+  dbg << "dist vals << " << uniqueWeights.size() << endl;
+  dbg << "maxPlayers << " << maxPlayers << endl;
+  dbg << "maxPlayers all: " << maxPlayersAll << endl;
+  dbg << "players: " << players << endl;
+  dbg << "about " << ((ll)quota * maxPlayersAll * maxPlayersAll)/1024/1024 << "MB" << endl;
+
+  dbg << "A" << endl;
+  Polynomial2D * temp = new Polynomial2D(mergeRecShapley(0, uniqueWeights.size() - 1));
+  dbg << "B" << endl;
+
+  for (int i = 0; i < maxPlayersAll; ++i) {
     for (int j = 0; j < quota; ++j) {
-      left[i][j] = temp.get(j, i);
+      left[i][j] = temp->get(j, i);
+      temp->set(j, i, 0);
     }
   }
+  delete temp;
   maxPlayers = oldm;
-  quota /= 2;
+  quota -= maxWeight;
 
-  for (int i = 0; i < players; ++ i) {
+  for (int idx = 0; idx < p.size(); ++ idx) {
+    const int i = p[idx];
     if (sums.find(weights[i]) != sums.end()) continue;
     auto cpy = left;
     // remove player i from cpy
-    for (int j = 1; j < players; ++j) {
-      for (int k = weights[i]; k < 2*quota; ++k) {
+    for (int j = 1; j < maxPlayersAll; ++j) {
+      for (int k = weights[i]; k < quota + weights[i]; ++k) {
         cpy[j][k] -= cpy[j - 1][k - weights[i]];
       }
     }
     // compute sum for player i
-    for (int j = 0; j < players; ++ j) {
+    for (int j = 0; j < maxPlayersAll; ++ j) {
       ZZ curCount;
       for (int k = max(0ll, quota - weights[i]); k < quota; ++ k) {
         curCount += cpy[j][k];
@@ -310,14 +359,14 @@ vector<double> VotingNonunique::shapleyNewDp() {
       sums[weights[i]] += curCount * factorial(j) * factorial(players - j - 1);
     }
   }
-  vector<ZZ> res(players);
+  vector<ZZ> res(players, ZZ(0));
   for (int i = 0; i < players; ++i) {
     res[i] = sums[weights[i]];
   }
   return normalizeRawShapley(res);
 }
 
-vector<double> VotingNonunique::banzhafNewDp() {
+vector<double> VotingNonunique::banzhafNewDp(const vector<int> & p) {
   unordered_map<ll,ZZ> sums;
   vector<ZZ> left = vector<ZZ>(quota + maxWeight, ZZ(0));
 
@@ -334,7 +383,8 @@ vector<double> VotingNonunique::banzhafNewDp() {
     left[i] = coeff(temp, i);
   }
 
-  for (int i = 0; i < players; ++ i) {
+  for (int idx = 0; idx < p.size(); ++ idx) {
+    const int i = p[idx];
     if (sums.find(weights[i]) != sums.end()) continue;
     auto cpy = left;
     // remove player i from cpy
@@ -348,10 +398,16 @@ vector<double> VotingNonunique::banzhafNewDp() {
     }
     sums[weights[i]] = curCount;
   }
-  vector<ZZ> res(players);
+  vector<ZZ> res(players, ZZ(0));
   for (int i = 0; i < players; ++i) {
     res[i] = sums[weights[i]];
   }
   return normalizeRawBanzhaf(res);
+}
+
+vector<double> VotingNonunique::banzhafNewDp() {
+  vector<int> p(players);
+  for (int i = 0; i < players; ++ i) p[i] = i;
+  return banzhafNewDp(p);
 }
 

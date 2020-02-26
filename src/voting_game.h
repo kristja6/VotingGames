@@ -55,6 +55,7 @@ protected:
   ll reduceDummyPlayers();
 
   int maxPlayers;
+  int maxPlayersAll;
   int nonzeroPlayers;
   int maxWeight;
 

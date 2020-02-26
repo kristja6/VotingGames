@@ -20,14 +20,17 @@ public:
   double shapley(int player) override;
   vector<double> shapley() override;
   vector<double> banzhaf() override;
+  vector<double> banzhaf(const vector<int> &);
 
   virtual vector<double> shapleyNew() override;
   vector<double> shapleyNewForEachPlayer();
   vector<double> shapleyNewDp() override;
+  vector<double> shapleyNewDp(const vector<int> &);
 
   vector<double> banzhafNewOnlyConvolution();
   vector<double> banzhafNewWithDeconvolution(); // TODO: would be the best if I could find fast polynomial division
   vector<double> banzhafNewDp();
+  vector<double> banzhafNewDp(const vector<int> &);
 
 protected:
   // Banzhaf methods

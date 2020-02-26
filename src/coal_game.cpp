@@ -178,7 +178,7 @@ vector<double> CoalGame::normalizeRawBanzhaf(const vector<BigNum> &sums) {
       res[i] = conv<double>(conv<RR>(sums[i]) / conv<RR>(max(ZZ(1), swingVotes)));
     }
   } else if (banzhafDenominator == BANZHAF_DENOM_SUBSETS) {
-    RR subsets = power(RR(2), players - 1);
+    RR subsets = power(RR(2), players);
     for (size_t i = 0; i < sums.size(); ++ i) {
       res[i] = conv<double>(conv<RR>(sums[i]) / subsets);
     }

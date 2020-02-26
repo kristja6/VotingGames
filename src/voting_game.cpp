@@ -100,7 +100,7 @@ void VotingGame::removeFromColumnInplace(ZZX &a, ll weight) {
 }
 
 vector<double> VotingGame::shapley() {
-  return shapleyUnoDp();
+  return shapleyNewDp();
 }
 
 vector<double> VotingGame::shapleyNewForEach() {
@@ -356,13 +356,16 @@ int VotingGame::getCutoffDepth() {
 void VotingGame::precompMaxPlayers() {
   auto wc = weights;
   sort(wc.begin(), wc.end());
+  maxPlayersAll = 1;
   maxPlayers = 1;
   ll cumSum = 0;
   for (size_t i = 0; i < wc.size(); ++ i) {
     cumSum += wc[i];
-    if (cumSum > quota - 1) break;
-    else maxPlayers ++;
+    if (cumSum <= quota - 1) maxPlayers ++;
+    if (cumSum <= quota - 1 + maxWeight) maxPlayersAll ++;
   }
+  maxPlayers = min(maxPlayers, players);
+  maxPlayersAll = min(maxPlayersAll, players);
 }
 
 const vector<ll> & VotingGame::getWeights() const {

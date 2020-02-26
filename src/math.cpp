@@ -304,15 +304,13 @@ void Polynomial2D::print() const {
 
 void Polynomial2D::resize(int nrows, int ncolumns) {
   ZZX ndata;
-  ndata.SetMaxLength(nrows * ncolumns);
+  ndata.SetLength(nrows * ncolumns);
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < columns; ++j) {
-      SetCoeff(ndata, i*ncolumns + j, get(i, j));
-    }
-    for (int j = columns; j < ncolumns; ++j) {
-      SetCoeff(ndata, i*ncolumns + j, 0);
+      ndata[i*ncolumns + j] = get(i, j);
     }
   }
+  ndata.normalize();
   rows = nrows;
   columns = ncolumns;
   data = move(ndata);

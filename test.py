@@ -30,7 +30,8 @@ files = [
 
 add = 0
 error = False
-for arguments in [arguments_bz, arguments_sh]: 
+#for arguments in [arguments_bz, arguments_sh]: 
+for arguments in [arguments_bz]: 
   for input_file in files:
     cnt = add
 

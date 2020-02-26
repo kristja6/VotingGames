@@ -9,7 +9,6 @@ SumOfVoting::SumOfVoting(const vector<vector<ll>> &weights, const vector<ll> &qu
   assert(weights.size() == quotas.size());
   for (size_t i = 0; i < weights.size(); ++i) {
     gamesNonunique.push_back(VotingNonunique(weights[i], quotas[i]));
-    cout << "adding game " << i << endl;
     gamesUnique.push_back(VotingGame(weights[i], quotas[i]));
   }
   players = weights[0].size();
@@ -76,8 +75,15 @@ vector<double> SumOfVoting::shapleyTop(int topN) {
 
 vector<double> SumOfVoting::banzhafTop(int topN) {
   auto pl = getTopPlayers(getWeights(), topN);
-  vector<double> res(players, -1); // TODO: this is messy
-  for (auto i: pl) res[i] = banzhaf(i);
+  vector<double> res(players, 0); // TODO: this is messy
+  for (size_t i = 0; i < gamesNonunique.size(); ++i) {
+    dbg << i << ' ' << flush; // TODO: probably remove in final version
+    auto cur = gamesNonunique[i].banzhaf(pl);
+    for (size_t j = 0; j < cur.size(); ++j) {
+      res[j] += cur[j];
+    }
+  }
+  dbg << endl;
   return res;
 }
 
@@ -92,7 +98,7 @@ vector<int> SumOfVoting::getTopPlayers(const vector<vector<ll>> &weights, int nu
     if ((int)i >= numberOfTopPlayers && i > 0 && pl[i-1] < pl[i]) break;
     res.push_back(pl[i].idx);
   }
-  cout << "size: " << res.size() << endl;
+  dbg << "size: " << res.size() << endl;
   return res;
 }
 
