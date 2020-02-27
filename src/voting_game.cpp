@@ -1,6 +1,5 @@
 #include "voting_game.h"
 #include "math.h"
-#include "types.h"
 #include "voting_nonunique.h"
 #include <NTL/RR.h>
 
@@ -257,7 +256,7 @@ double VotingGame::banzhaf(int player) {
   if (!weights[player]) return 0;
   // TODO: must use number of subsets as the denominator
   setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
-  BigNum swings = countSwingsColumn(mergeRecBanzhaf(0, player - 1), mergeRecBanzhaf(player + 1, players - 1), weights[player]);
+  ZZ swings = countSwingsColumn(mergeRecBanzhaf(0, player - 1), mergeRecBanzhaf(player + 1, players - 1), weights[player]);
   return normalizeRawBanzhaf(vector<ZZ>{swings})[0];
 }
 

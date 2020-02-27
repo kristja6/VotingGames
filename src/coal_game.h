@@ -3,7 +3,6 @@
 
 #include <bits/stdc++.h>
 #include "math.h"
-#include "types.h"
 #define BANZHAF_DENOM_SUBSETS 0
 #define BANZHAF_DENOM_WINNING 1
 #define BANZHAF_DENOM_NONE 2
@@ -59,9 +58,9 @@ protected:
   int banzhafDenominator = BANZHAF_DENOM_WINNING; // TODO: use winning by defualt
   //int banzhafDenominator = BANZHAF_DENOM_SUBSETS;
 
-  vector<double> normalizeRawBanzhaf(const vector<BigNum> &sums);
-  vector<double> normalizeRawShapley(const vector<BigNum> &sums);
-  vector<double> normalizeShapleyCounts(const vector<BigNum> &sums);
+  vector<double> normalizeRawBanzhaf(const vector<ZZ> &sums);
+  vector<double> normalizeRawShapley(const vector<ZZ> &sums);
+  vector<double> normalizeShapleyCounts(const vector<ZZ> &sums);
 
   vector<int> bestCoal;
   double bestValue;

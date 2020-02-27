@@ -168,11 +168,11 @@ int CoalGame::getPlayers() const {
   return players;
 }
 
-vector<double> CoalGame::normalizeRawBanzhaf(const vector<BigNum> &sums) {
+vector<double> CoalGame::normalizeRawBanzhaf(const vector<ZZ> &sums) {
   vector<double> res(sums.size());
   if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
-    BigNum swingVotes(0);
-    vector<BigNum> cpy = sums;
+    ZZ swingVotes(0);
+    vector<ZZ> cpy = sums;
     for (auto & i: sums) swingVotes += i;
     for (size_t i = 0; i < sums.size(); ++ i) {
       res[i] = conv<double>(conv<RR>(sums[i]) / conv<RR>(max(ZZ(1), swingVotes)));
@@ -186,7 +186,7 @@ vector<double> CoalGame::normalizeRawBanzhaf(const vector<BigNum> &sums) {
   return res;
 }
 
-vector<double> CoalGame::normalizeRawShapley(const vector<BigNum> &sums) {
+vector<double> CoalGame::normalizeRawShapley(const vector<ZZ> &sums) {
   vector<double> res(sums.size());
   for (size_t i = 0; i < sums.size(); ++i) {
     res[i] = conv<double>(conv<RR>(sums[i]) / conv<RR>(factorial(players)));
@@ -194,7 +194,7 @@ vector<double> CoalGame::normalizeRawShapley(const vector<BigNum> &sums) {
   return res;
 }
 
-vector<double> CoalGame::normalizeShapleyCounts(const vector<BigNum> &sums) {
+vector<double> CoalGame::normalizeShapleyCounts(const vector<ZZ> &sums) {
   vector<double> res(sums.size());
   for (size_t i = 0; i < sums.size(); ++i) {
     res[i] = conv<double>(conv<RR>(sums[i] * factorial(i) * factorial(players - 1 - i)) / conv<RR>(factorial(players)));
