@@ -34,13 +34,10 @@ rollingShapley(emptyTable()) {
     }
     turn ++;
   }
-  dbg << "order of weights: ";
   for (int i = 0; i < uniqueWeights.size(); ++ i) {
-    dbg << res[i].second << ' ';
     uniqueWeights[i] = res[i].second;
     weightCount[i] = res[i].first;
   }
-  dbg << endl;
 }
 
 ZZX VotingNonunique::columnWithOne(ll weight, ll count) {
@@ -275,10 +272,13 @@ Polynomial2D VotingNonunique::mergeRecShapley(int st, int en) {
   if (st == en) {
     return tableWithOne(uniqueWeights[st], weightCount[st]);
   }
-  Polynomial2D res = mergeRecShapley(st, (st + en)/2) * mergeRecShapley((st + en)/2 + 1, en);
-  res.shrink(quota, maxPlayers+1);
+  //Polynomial2D res = mergeRecShapley(st, (st + en)/2) * mergeRecShapley((st + en)/2 + 1, en);
+  Polynomial2D a = mergeRecShapley(st, (st + en)/2);
+  Polynomial2D b = mergeRecShapley((st + en)/2 + 1, en);
+  a.efficientMul(b);
+  a.shrink(quota, maxPlayers+1);
   dbg << "DONE: " << st << ' ' << en << endl;
-  return res;
+  return a;
 }
 
 SparsePolynomial2D VotingNonunique::sparseWithOne(int weight, int count) {

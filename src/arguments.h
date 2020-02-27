@@ -22,6 +22,7 @@ struct Arguments {
   string inputFileName;
   bool has(const string & arg) { return namedArguments.count(arg); }
   std::set<string> namedArguments;
+  int topPlayers;
 };
 
 pair<vector<ll>, ll> readVotingGameInstance();;

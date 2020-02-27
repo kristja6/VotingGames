@@ -355,6 +355,14 @@ void Polynomial2D::shrink(int nr, int nc) {
   }
 }
 
+void Polynomial2D::efficientMul(Polynomial2D &a) {
+  int nrows = a.rows + rows - 1;
+  int ncolumns = a.columns + columns - 1;
+  resize(nrows, ncolumns);
+  a.resize(nrows, ncolumns);
+  data *= a.data;
+}
+
 void printVec(const vector<LogNum> &a) {
   for (auto i: a) cout << i << ' ';
   cout << endl << endl;

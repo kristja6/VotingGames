@@ -6,7 +6,7 @@
 
 bool Arguments::ReadArguments(int argc, const char **argv) {
   if (argc <= 1) return false;
-  for (int i = 1; i < argc; ++i) {
+  /*for (int i = 1; i < argc; ++i) {
     if (argv[i][0] == '-') { // a switch argument
       size_t len = strlen(argv[i]);
       for (int j = 1; j < (int)len; ++j) {
@@ -25,6 +25,20 @@ bool Arguments::ReadArguments(int argc, const char **argv) {
     } else { // is the optimized function
       inputFileName = string(argv[i]);
     }
+  }*/
+  string allArgs;
+  for (int i = 1; i < argc; ++ i) {
+    allArgs += string(argv[i]) + " ";
+  }
+  stringstream str(allArgs);
+  while (str) {
+    string cur;
+    str >> cur;
+    if (cur.size() < 2) continue;
+    cur = cur.substr(2);
+    if (cur == "top") {
+      str >> topPlayers;
+    } else namedArguments.insert(cur);
   }
   return true;
 }

@@ -168,6 +168,7 @@ struct Polynomial2D {
   void print() const;
   void cutRows(int r);
   void shrink(int nr, int nc);
+  void efficientMul(Polynomial2D & a);
 private:
   void resize(int nrows, int ncolumns);
 };
