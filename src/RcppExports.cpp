@@ -213,16 +213,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP _CoopGame_rcpp_hello_world() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello_world());
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_CoopGame_votingBanzhaf", (DL_FUNC) &_CoopGame_votingBanzhaf, 2},
@@ -242,7 +232,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_CoopGame_sumOfVotingBanzhaf", (DL_FUNC) &_CoopGame_sumOfVotingBanzhaf, 2},
     {"_CoopGame_sumOfVotingShapley", (DL_FUNC) &_CoopGame_sumOfVotingShapley, 2},
     {"_CoopGame_sumOfVotingValue", (DL_FUNC) &_CoopGame_sumOfVotingValue, 3},
-    {"_CoopGame_rcpp_hello_world", (DL_FUNC) &_CoopGame_rcpp_hello_world, 0},
     {NULL, NULL, 0}
 };
 

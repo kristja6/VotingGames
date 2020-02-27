@@ -192,10 +192,6 @@ ZZ factorial(int n) {
   return factorial(n);
 }
 
-ZZ choose(int n, int k) {
-  return ZZ();
-}
-
 ZZ Polynomial2D::get(int row, int column) const {
   return coeff(data, row*columns + column);
 }

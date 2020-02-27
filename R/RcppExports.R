@@ -69,7 +69,3 @@ sumOfVotingValue <- function(weights, quotas, coal) {
     .Call(`_CoopGame_sumOfVotingValue`, weights, quotas, coal)
 }
 
-rcpp_hello_world <- function() {
-    .Call(`_CoopGame_rcpp_hello_world`)
-}
-
