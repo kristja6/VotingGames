@@ -1,9 +1,10 @@
 #include "voting_game.h"
 #include "math.h"
 #include "types.h"
+#include "voting_nonunique.h"
 #include <NTL/RR.h>
 
-VotingGame::VotingGame(const vector<ll> &weights, long long int quota) :
+VotingGame::VotingGame(const vector<int> &weights, int quota) :
     CoalGame(weights.size()), weights(weights), quota(quota) {
   cutoffDepth = getCutoffDepth();
   nonzeroPlayers = players;
@@ -30,7 +31,7 @@ ZZX VotingGame::emptyColumn() {
   return res;
 }
 
-ZZ VotingGame::countSwingsColumn(const ZZX & a, const ZZX & b, ll weight) {
+ZZ VotingGame::countSwingsColumn(const ZZX & a, const ZZX & b, int weight) {
   ZZ res(0);
   if (!weight) return res;
   vector<ZZ> prefixSum(quota, ZZ(0));
@@ -84,14 +85,14 @@ vector<double> VotingGame::banzhaf() {
   return banzhafUnoDp();
 }
 
-void VotingGame::addToColumnInplace(ZZX &a, ll weight) {
+void VotingGame::addToColumnInplace(ZZX &a, int weight) {
   if (!weight) return;
-  for (int i = min(quota, (ll)(a.rep.length() + weight - 1)); i >= weight; --i) {
+  for (int i = min(quota, (int)(a.rep.length() + weight - 1)); i >= weight; --i) {
     SetCoeff(a, i, coeff(a, i) + coeff(a, i - weight));
   }
 }
 
-void VotingGame::removeFromColumnInplace(ZZX &a, ll weight) {
+void VotingGame::removeFromColumnInplace(ZZX &a, int weight) {
   if (!weight) return;
   for (int i = weight; i < a.rep.length(); ++i) {
     SetCoeff(a, i, coeff(a, i) - coeff(a, i - weight));
@@ -100,7 +101,7 @@ void VotingGame::removeFromColumnInplace(ZZX &a, ll weight) {
 }
 
 vector<double> VotingGame::shapley() {
-  return shapleyNewDp();
+  return VotingNonunique(weights, quota).shapley();
 }
 
 vector<double> VotingGame::shapleyNewForEach() {
@@ -120,8 +121,8 @@ double VotingGame::shapley(int player) {
 
 vector<double> VotingGame::shapleyUnoDp() {
   vector<int> mapping;
-  vector<ll> newWeights;
-  ll newQuota = reduceDummyPlayers();
+  vector<int> newWeights;
+  int newQuota = reduceDummyPlayers();
   for (int i = 0; i < players; ++i) {
     if (weights[i] == 0) continue;
     mapping.push_back(i);
@@ -151,9 +152,9 @@ vector<double> VotingGame::shapleyUnoDpHelper() {
   }
 
   // fill up left
-  ll oldm = maxPlayers;
+  int oldm = maxPlayers;
   maxPlayers = players; // TODO: make this cleaner
-  auto temp = mergeRecShapleyDense(0, players - 2, players);
+  auto temp = mergeRecShapleyDense(0, players - 2, players); // TODO: use original like in Uno
   maxPlayers = oldm;
   for (int i = 0; i < players; ++i) {
     for (int j = 0; j < quota; ++j) {
@@ -201,9 +202,9 @@ vector<double> VotingGame::shapleyUnoDpHelper() {
   return normalizeRawShapley(sums);
 }
 
-ll VotingGame::reduceDummyPlayers() {
-  ll reducedQuota = quota;
-  map<ll, vector<int>> w;
+int VotingGame::reduceDummyPlayers() {
+  int reducedQuota = quota;
+  map<int, vector<int>> w;
   for (int i = 0; i < players; ++i) {
     w[weights[i]].push_back(i);
   }
@@ -218,7 +219,7 @@ ll VotingGame::reduceDummyPlayers() {
   // get results for all players
   for (int i = players - 1; i >= 0; --i) {
     if (false) { // TODO: reduce dummy players here
-      const ll curW = weights[i];
+      const int curW = weights[i];
       while (w[curW].size()) {
         weights[w[curW].back()] = 0;
         w[curW].pop_back();
@@ -358,7 +359,7 @@ void VotingGame::precompMaxPlayers() {
   sort(wc.begin(), wc.end());
   maxPlayersAll = 1;
   maxPlayers = 1;
-  ll cumSum = 0;
+  int cumSum = 0;
   for (size_t i = 0; i < wc.size(); ++ i) {
     cumSum += wc[i];
     if (cumSum <= quota - 1) maxPlayers ++;
@@ -368,47 +369,10 @@ void VotingGame::precompMaxPlayers() {
   maxPlayersAll = min(maxPlayersAll, players);
 }
 
-const vector<ll> & VotingGame::getWeights() const {
+const vector<int> & VotingGame::getWeights() const {
   return weights;
 }
 
-ll VotingGame::getQuota() const {
+int VotingGame::getQuota() const {
   return quota;
-}
-
-vector<double> VotingGame::shapleyNewDp() {
-  vector<ZZ> sums = vector<ZZ>(players, ZZ(0));
-  vector<vector<ZZ>> left = vector<vector<ZZ>>(players, vector<ZZ>(2*quota, ZZ(0)));
-
-  ll oldm = maxPlayers;
-  maxPlayers = players; // TODO: make this cleaner
-  quota *= 2; // TODO: add max of all weights
-  auto temp = mergeRecShapleyDense(0, players - 1, players);
-
-  for (int i = 0; i < players; ++i) {
-    for (int j = 0; j < quota; ++j) {
-      left[i][j] = temp.get(j, i);
-    }
-  }
-  maxPlayers = oldm;
-  quota /= 2;
-
-  for (int i = 0; i < players; ++ i) {
-    auto cpy = left;
-    // remove player i from cpy
-    for (int j = 1; j < players; ++j) {
-      for (int k = weights[i]; k < 2*quota; ++k) {
-        cpy[j][k] -= cpy[j - 1][k - weights[i]];
-      }
-    }
-    // compute sum for player i
-    for (int j = 0; j < players; ++ j) {
-      ZZ curCount;
-      for (int k = max(0ll, quota - weights[i]); k < quota; ++ k) {
-        curCount += cpy[j][k];
-      }
-      sums[i] += curCount * factorial(j) * factorial(players - j - 1);
-    }
-  }
-  return normalizeRawShapley(sums);
 }

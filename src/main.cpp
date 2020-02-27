@@ -8,7 +8,7 @@
 
 void example1() {
   cout << "Monte carlo" << endl;
-  const vector<ll> w = vector<ll>{4, 8, 20, 32, 44};
+  const vector<int> w = vector<int>{4, 8, 20, 32, 44};
   CoalGame game(5,  [w] (const vector<int> & players) {
     int sum = 0;
     for (int player : players) {
@@ -26,7 +26,7 @@ void example1() {
 
 void example2() {
   cout << "DP" << endl;
-  VotingGame game(vector<ll>{4, 8, 0, 20, 32, 0, 44, 1}, 54);
+  VotingGame game(vector<int>{4, 8, 0, 20, 32, 0, 44, 1}, 54);
   cout << "Banzhaf: " << endl;
   printVec(game.banzhaf());
   cout << "Shapley: " << endl;
@@ -35,7 +35,7 @@ void example2() {
 
 void example3() {
   cout << "Enumeration" << endl;
-  const vector<ll> w = vector<ll>{4, 8, 20, 32, 44};
+  const vector<int> w = vector<int>{4, 8, 20, 32, 44};
   CoalGame game(5,  [w] (const vector<int> & players) {
     int sum = 0;
     for (int player : players) {
@@ -52,8 +52,8 @@ void example3() {
 
 void testInteractionIndex() {
   cout << "Interaction index" << endl;
-  //VotingGame game(5, vector<ll>{4, 8, 20, 32, 44}, 54);
-  VotingGame game(vector<ll>{4, 4, 4, 4, 1, 1, 1, 1}, 8);
+  //VotingGame game(5, vector<int>{4, 8, 20, 32, 44}, 54);
+  VotingGame game(vector<int>{4, 4, 4, 4, 1, 1, 1, 1}, 8);
   printVec(game.banzhaf());
   for (int i = 0; i < game.players; ++i) {
     for (int j = 0; j < game.players; ++j) {
@@ -78,7 +78,6 @@ int main(int argc, const char ** argv) {
     } else if (args.has("normal")) {
       if (args.has("new")) printVec(VotingGame(instance.first, instance.second).shapleyNew());
       if (args.has("new-for-each")) printVec(VotingGame(instance.first, instance.second).shapleyNewForEach());
-      if (args.has("new-dp")) printVec(VotingGame(instance.first, instance.second).shapleyNewDp());
       if (args.has("uno")) printVec(VotingGame(instance.first, instance.second).shapleyUnoDp());
     }
   } else if (args.has("banzhaf")) {

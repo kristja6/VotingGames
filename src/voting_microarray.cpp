@@ -23,12 +23,12 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
   //cout << "fitting" << endl;
   for (int j = 0; j < samples; ++j) {
     //cout << "game number " << j << endl;
-    vector<ll> weights(genes);
+    vector<int> weights(genes);
     int sum = 0;
     for (int i = 0; i < genes; ++i) {
       //sum += weights[i] = round(fabs(special[i][j] - avgControl[i]));
       // TODO: try different methods to choose weights
-      ll t = round(fabs(special[i][j] - avgControl[i]));
+      int t = round(fabs(special[i][j] - avgControl[i]));
       //if (t <= 2) t = 0;
       sum += weights[i] = t;
     }
@@ -63,10 +63,10 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
 
 
     // TODO: make this more rigorous (normalize by number of control/special, find the actual optimal interval
-    ll wrong = control[0].size();
-    ll bestWrong = wrong;
-    ll firstIdx = 0;
-    ll lastIdx = sumsOfWeights.size() - 1;
+    int wrong = control[0].size();
+    int bestWrong = wrong;
+    int firstIdx = 0;
+    int lastIdx = sumsOfWeights.size() - 1;
     for (size_t i = 0; i < sumsOfWeights.size(); ++i) {
       //cout << fixed << "(" << sumsOfWeights[i].first << ", " << sumsOfWeights[i].second << ", " << wrong << ") " << endl;
       if (!sumsOfWeights[i].second) wrong --;
@@ -79,7 +79,7 @@ VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control)
         lastIdx = i;
       }
     }
-    ll quota = (sumsOfWeights[firstIdx].first + sumsOfWeights[min(lastIdx + 1, (ll)sumsOfWeights.size() - 1)].first)/2;
+    int quota = (sumsOfWeights[firstIdx].first + sumsOfWeights[min(lastIdx + 1, (int)sumsOfWeights.size() - 1)].first)/2;
     vector<double> sortedWeights(sumsOfWeights.size());
     for (size_t i = 0; i < sortedWeights.size(); ++i) {
       sortedWeights[i] = sumsOfWeights[i].first;

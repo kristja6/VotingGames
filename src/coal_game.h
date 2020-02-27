@@ -4,7 +4,6 @@
 #include <bits/stdc++.h>
 #include "math.h"
 #include "types.h"
-//#define ll long long
 #define BANZHAF_DENOM_SUBSETS 0
 #define BANZHAF_DENOM_WINNING 1
 #define BANZHAF_DENOM_NONE 2
@@ -12,7 +11,6 @@
 #define dbg cerr
 
 using namespace std;
-using ll = long long;
 using namespace NTL;
 
 // type of weights
@@ -34,8 +32,8 @@ public:
   virtual double banzhaf(int player);
 
   // ---------- Monte Carlo methods -----------
-  vector<double> shapleyMonteCarlo(ll iters);
-  vector<double> banzhafMonteCarlo(ll iters);
+  vector<double> shapleyMonteCarlo(int iters);
+  vector<double> banzhafMonteCarlo(int iters);
 
   // ------------ Enumeration ------------------
   vector<double> banzhafEnum();

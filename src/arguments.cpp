@@ -43,11 +43,11 @@ bool Arguments::ReadArguments(int argc, const char **argv) {
   return true;
 }
 
-pair<vector<ll>, ll> readVotingGameInstance() {
-  pair<vector<ll>, ll> res;
+pair<vector<int>, int> readVotingGameInstance() {
+  pair<vector<int>, int> res;
   int n;
   cin >> n;
-  res.first = vector<ll>(n);
+  res.first = vector<int>(n);
   cin >> res.second;
   for (int i = 0; i < n; ++i) {
     cin >> res.first[i];

@@ -19,8 +19,8 @@ vector<vector<int>> matrixToVectorsInt(const NumericMatrix & mtx) {
   return m;
 }
 
-vector<vector<ll>> matrixToVectorsLong(const NumericMatrix & mtx) {
-  vector<vector<ll>> m(mtx.nrow(), vector<ll>(mtx.ncol()));
+vector<vector<int>> matrixToVectorsLong(const NumericMatrix & mtx) {
+  vector<vector<int>> m(mtx.nrow(), vector<int>(mtx.ncol()));
   for (int i = 0; i < mtx.nrow(); ++i) {
     for (int j = 0; j < mtx.ncol(); ++j) {
       m[i][j] = mtx[i + j*mtx.nrow()];
@@ -50,23 +50,23 @@ NumericMatrix vectorsToMatrix(const vector<vector<int>> & mtx) {
 }
 
 // [[Rcpp::export]]
-NumericVector votingBanzhaf(const NumericVector & weights, const long long int quota) {
+NumericVector votingBanzhaf(const NumericVector & weights, const int quota) {
   vector<double> res;
-  VotingNonunique game(vector<long long int>(weights.begin(), weights.end()), quota);
+  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
   res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
-NumericVector votingShapley(const IntegerVector & weights, const long long int quota) {
-  VotingNonunique game(vector<long long int>(weights.begin(), weights.end()), quota);
+NumericVector votingShapley(const IntegerVector & weights, const int quota) {
+  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
-double votingVal(const IntegerVector & weights, const long long int quota, const IntegerVector & coal) {
-  VotingNonunique game(vector<long long int>(weights.begin(), weights.end()), quota);
+double votingVal(const IntegerVector & weights, const int quota, const IntegerVector & coal) {
+  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
   return game.v(vector<int>(coal.begin(), coal.end()));
 }
 
@@ -147,21 +147,21 @@ bool votingMicroarrayPredict(const NumericMatrix &special, const NumericMatrix &
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingBanzhaf(const NumericMatrix & weights, const NumericVector & quotas) {
-  SumOfVoting game(matrixToVectorsLong(weights), vector<ll>(quotas.begin(), quotas.end()));
+  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingShapley(const NumericMatrix & weights, const NumericVector & quotas) {
-  SumOfVoting game(matrixToVectorsLong(weights), vector<ll>(quotas.begin(), quotas.end()));
+  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 double sumOfVotingValue(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & coal) {
-  SumOfVoting game(matrixToVectorsLong(weights), vector<ll>(quotas.begin(), quotas.end()));
+  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
   return game.v(vector<int>(coal.begin(), coal.end()));
 }
 

@@ -6,37 +6,37 @@
 using namespace Rcpp;
 
 // votingBanzhaf
-NumericVector votingBanzhaf(const NumericVector& weights, const long long int quota);
+NumericVector votingBanzhaf(const NumericVector& weights, const int quota);
 RcppExport SEXP _CoopGame_votingBanzhaf(SEXP weightsSEXP, SEXP quotaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericVector& >::type weights(weightsSEXP);
-    Rcpp::traits::input_parameter< const long long int >::type quota(quotaSEXP);
+    Rcpp::traits::input_parameter< const int >::type quota(quotaSEXP);
     rcpp_result_gen = Rcpp::wrap(votingBanzhaf(weights, quota));
     return rcpp_result_gen;
 END_RCPP
 }
 // votingShapley
-NumericVector votingShapley(const IntegerVector& weights, const long long int quota);
+NumericVector votingShapley(const IntegerVector& weights, const int quota);
 RcppExport SEXP _CoopGame_votingShapley(SEXP weightsSEXP, SEXP quotaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const IntegerVector& >::type weights(weightsSEXP);
-    Rcpp::traits::input_parameter< const long long int >::type quota(quotaSEXP);
+    Rcpp::traits::input_parameter< const int >::type quota(quotaSEXP);
     rcpp_result_gen = Rcpp::wrap(votingShapley(weights, quota));
     return rcpp_result_gen;
 END_RCPP
 }
 // votingVal
-double votingVal(const IntegerVector& weights, const long long int quota, const IntegerVector& coal);
+double votingVal(const IntegerVector& weights, const int quota, const IntegerVector& coal);
 RcppExport SEXP _CoopGame_votingVal(SEXP weightsSEXP, SEXP quotaSEXP, SEXP coalSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const IntegerVector& >::type weights(weightsSEXP);
-    Rcpp::traits::input_parameter< const long long int >::type quota(quotaSEXP);
+    Rcpp::traits::input_parameter< const int >::type quota(quotaSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type coal(coalSEXP);
     rcpp_result_gen = Rcpp::wrap(votingVal(weights, quota, coal));
     return rcpp_result_gen;

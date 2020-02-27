@@ -21,9 +21,9 @@ double CoalGame::banzhaf(int player) {
   return banzhaf()[player];
 }
 
-vector<double> CoalGame::shapleyMonteCarlo(ll iters) {
+vector<double> CoalGame::shapleyMonteCarlo(int iters) {
   vector<LogNum> sh(players);
-  for (ll it = 0; it < iters; ++ it) {
+  for (int it = 0; it < iters; ++ it) {
     vector<int> pi = random_perm(players);
     vector<int> cur;
     for (int i = 0; i < players; ++ i) {
@@ -36,12 +36,12 @@ vector<double> CoalGame::shapleyMonteCarlo(ll iters) {
   return toNormal(sh);
 }
 
-vector<double> CoalGame::banzhafMonteCarlo(ll iters) {
+vector<double> CoalGame::banzhafMonteCarlo(int iters) {
   vector<ZZ> bz(players);
   vector<int> appears(players);
   double swingVotes = 0;
 
-  for (ll it = 0; it < iters; ++it) {
+  for (int it = 0; it < iters; ++it) {
     vector<int> s = random_subset(players);
     vector<int> cur = s;
     for (int i = s.size() - 1; i >= 0; --i) {

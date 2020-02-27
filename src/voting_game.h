@@ -7,8 +7,7 @@
 class VotingGame : public CoalGame {
   public:
 
-  using ll = long long;
-  VotingGame(const vector<ll> &weights, long long int quota);
+  VotingGame(const vector<int> &weights, int quota);
   double v(const vector<int> & coalition) override;
 
   virtual vector<double> banzhaf() override;
@@ -25,17 +24,16 @@ class VotingGame : public CoalGame {
   // TODO: TIME
   virtual vector<double> shapleyNew();
   virtual vector<double> shapleyNewForEach();
-  virtual vector<double> shapleyNewDp();
 
-  const vector<ll> & getWeights() const;
-  ll getQuota() const;
+  const vector<int> & getWeights() const;
+  int getQuota() const;
 
 protected:
   // Banzhaf methods
   ZZX emptyColumn();
-  void addToColumnInplace(ZZX &a, ll weight);
-  ZZ countSwingsColumn(const ZZX & a, const ZZX & b, ll weight);
-  void removeFromColumnInplace(ZZX &a, ll weight);
+  void addToColumnInplace(ZZX &a, int weight);
+  ZZ countSwingsColumn(const ZZX & a, const ZZX & b, int weight);
+  void removeFromColumnInplace(ZZX &a, int weight);
   ZZX columnWithOne(int weight);
   ZZ countSwingsTable(const Polynomial2D & a, int weight);
   ZZ countSwingsTable(const SparsePolynomial2D & a, int weight);
@@ -52,7 +50,7 @@ protected:
 
   // Common methods
   void precompMaxPlayers();
-  ll reduceDummyPlayers();
+  int reduceDummyPlayers();
 
   int maxPlayers;
   int maxPlayersAll;
@@ -60,8 +58,8 @@ protected:
   int maxWeight;
 
   // Defines the game
-  vector<ll> weights;
-  ll quota;
+  vector<int> weights;
+  int quota;
 
 
 private:

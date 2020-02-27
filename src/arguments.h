@@ -25,7 +25,7 @@ struct Arguments {
   int topPlayers;
 };
 
-pair<vector<ll>, ll> readVotingGameInstance();;
+pair<vector<int>, int> readVotingGameInstance();;
 
 
 #endif //COAL_GAME_ARGUMENTS_H
