@@ -46,15 +46,11 @@ protected:
   // Shapley methods
   Polynomial2D tableWithOne(int weight, int count);
   Polynomial2D tableWithOne(int weight, int count, int, int);
-  SparsePolynomial2D tableWithOneSparse(int weight, int count);
   void addToTableInplace(Polynomial2D & a, int weight, int count);
-  void addToTableInplace(SparsePolynomial2D & a, int weight, int count);
   void removeFromColumn(ZZX &a, int weight, int count);
 
   Polynomial2D mergeRecShapley(int st, int en);
   Polynomial2D mergeRecShapley(int st, int en, int maxPlayers, int quota);
-  SparsePolynomial2D mergeRecShapleySparse(int st, int en) override;
-  SparsePolynomial2D sparseWithOne(int weight, int count);
   void shapleyMergeRec(int first, int last, const Polynomial2D &pf);
 
 

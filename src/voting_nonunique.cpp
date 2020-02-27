@@ -243,11 +243,6 @@ void VotingNonunique::addToTableInplace(Polynomial2D &a, int weight, int count) 
   a.shrink(quota, maxPlayers+1);
 }
 
-void VotingNonunique::addToTableInplace(SparsePolynomial2D &a, int weight, int count) {
-  if (!weight || !count) return;
-  a *= tableWithOneSparse(weight, count);
-}
-
 Polynomial2D VotingNonunique::tableWithOne(int weight, int count) {
   return tableWithOne(weight, count, maxPlayers, quota);
 }
@@ -258,18 +253,6 @@ Polynomial2D VotingNonunique::tableWithOne(int weight, int count, int maxPlayers
   for (int i = 0; i <= min((int)count, maxPlayers+1); ++i) {
     if (i*weight >= quota) break;
     res.set(i*weight, i, nck);
-    nck *= (count - i);
-    nck /= (i + 1);
-  }
-  return res;
-}
-
-SparsePolynomial2D VotingNonunique::tableWithOneSparse(int weight, int count) {
-  SparsePolynomial2D res(quota, maxPlayers + 1);
-  ZZ nck(1);
-  for (int i = 0; i <= min((int)count, maxPlayers+1); ++i) {
-    if (i*weight >= quota) break;
-    res.data[{i*weight, i}] = nck;
     nck *= (count - i);
     nck /= (i + 1);
   }
@@ -292,30 +275,6 @@ Polynomial2D VotingNonunique::mergeRecShapley(int st, int en) {
   return mergeRecShapley(st, en, maxPlayers, quota);
 }
 
-SparsePolynomial2D VotingNonunique::sparseWithOne(int weight, int count) {
-  SparsePolynomial2D res(quota, maxPlayers+1);
-  ZZ nck(1);
-  for (int i = 0; i <= min(count, maxPlayers); ++ i) {
-    res.data[{i*weight, i}] = nck;
-    nck *= (count - i);
-    nck /= (i + 1);
-  }
-  return res;
-}
-
-SparsePolynomial2D VotingNonunique::mergeRecShapleySparse(int st, int en) {
-  if (en < 0 || st > en) {
-    SparsePolynomial2D res(quota, maxPlayers+1);
-    res.data[{0, 0}] = 1;
-    return res;
-  } else if (st == en) {
-    SparsePolynomial2D res = sparseWithOne(uniqueWeights[st], weightCount[st]);
-    return res;
-  }
-  auto r1 = mergeRecShapleySparse(st, (st + en) / 2);
-  auto r2 = mergeRecShapleySparse((st + en) / 2 + 1, en);
-  return r1 * r2;
-}
 vector<double> VotingNonunique::shapleyNewDp() {
   vector<int> p(players);
   for (int i = 0; i < players; ++i) p[i] = i;

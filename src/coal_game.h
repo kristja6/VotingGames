@@ -44,9 +44,9 @@ public:
   // NOTE: currently normalized by the number of possible coalitions without inputSubset
   double banzhafInteractionEnum(vector<int> inputSubset);
   // interates over subsets of 2^players - input_subset
-  ExtLogNum banzhafInteractionEnumRec1(int player, const std::set<int> & forbidden, vector<int> & curSubset, const vector<int> & inputSubset);
+  ZZ banzhafInteractionEnumRec1(int player, const std::set<int> & forbidden, vector<int> & curSubset, const vector<int> & inputSubset);
   // iterates over subsets of the input subset
-  ExtLogNum banzhafInteractionEnumRec2(int player, vector<int> &curSubset, const vector<int> &subset, int added = 0);
+  ZZ banzhafInteractionEnumRec2(int player, vector<int> &curSubset, const vector<int> &subset, int added = 0);
 
   void setBanzhafDenominator(int denom);
   virtual vector<int> optimalCoalitionOfFixedSize(int size);

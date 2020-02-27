@@ -36,7 +36,6 @@ protected:
   void removeFromColumnInplace(ZZX &a, int weight);
   ZZX columnWithOne(int weight);
   ZZ countSwingsTable(const Polynomial2D & a, int weight);
-  ZZ countSwingsTable(const SparsePolynomial2D & a, int weight);
 
   virtual ZZX mergeRecBanzhaf(int st, int en);
 
@@ -46,7 +45,6 @@ protected:
   vector<double> shapleyUnoDpHelper();
 
   Polynomial2D mergeRecShapleyDense(int st, int en, int depth = 1);
-  virtual SparsePolynomial2D mergeRecShapleySparse(int st, int en);
 
   // Common methods
   void precompMaxPlayers();

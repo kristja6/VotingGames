@@ -294,59 +294,19 @@ ZZ VotingGame::countSwingsTable(const Polynomial2D & a, int weight) {
   return res;
 }
 
-ZZ VotingGame::countSwingsTable(const SparsePolynomial2D & a, int weight) {
-  ZZ res(0);
-  vector<ZZ> temp(players);
-  for (const auto & i: a.data) {
-    if (i.first.first >= quota - weight && i.first.first < quota) {
-      temp[i.first.second] += i.second;
-    }
-  }
-  for (int i = 0; i < players; ++i) {
-    res += temp[i]*factorial(i) * factorial(players - i - 1);
-  }
-  return res;
-}
-
 Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int depth) {
   if (en < 0 || st > en) return emptyTable();
-  if (depth < cutoffDepth || true) { // DENSE
-    if (st == en) {
-      Polynomial2D res = tableWithOne(weights[st]);
-      return res;
-    }
-
-    auto res = mergeRecShapleyDense(st, (st + en) / 2, depth + 1);
-    res *= mergeRecShapleyDense((st + en) / 2 + 1, en, depth + 1);
-    res.shrink(quota, maxPlayers+1);
-
-    return res;
-
-  } else { // SPARSE
-    auto ret = mergeRecShapleySparse(st, en);
-    Polynomial2D res(quota, en - st + 2);
-    for (const auto &i: ret.data) {
-      res.set(i.first.first, i.first.second, i.second);
-    }
-    return res;
-  }
-}
-
-SparsePolynomial2D VotingGame::mergeRecShapleySparse(int st, int en) {
-  if (en < 0 || st > en) {
-    SparsePolynomial2D res(quota, maxPlayers + 1);
-    res.data[{0, 0}] = 1;
-    return res;
-  } else if (st == en) {
-    SparsePolynomial2D res(quota, maxPlayers + 1);
-    res.data[{0, 0}] = 1;
-    res.data[{weights[st], 1}] = 1;
+  else if (st == en) {
+    Polynomial2D res = tableWithOne(weights[st]);
     return res;
   }
 
-  auto r1 = mergeRecShapleySparse(st, (st + en) / 2);
-  auto r2 = mergeRecShapleySparse((st + en) / 2 + 1, en);
-  return r1 * r2;
+  auto res = mergeRecShapleyDense(st, (st + en) / 2, depth + 1);
+  res *= mergeRecShapleyDense((st + en) / 2 + 1, en, depth + 1);
+  res.shrink(quota, maxPlayers+1);
+
+  return res;
+
 }
 
 int VotingGame::getCutoffDepth() {

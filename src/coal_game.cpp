@@ -22,7 +22,7 @@ double CoalGame::banzhaf(int player) {
 }
 
 vector<double> CoalGame::shapleyMonteCarlo(int iters) {
-  vector<LogNum> sh(players);
+  vector<RR> sh(players);
   for (int it = 0; it < iters; ++ it) {
     vector<int> pi = random_perm(players);
     vector<int> cur;
@@ -32,8 +32,10 @@ vector<double> CoalGame::shapleyMonteCarlo(int iters) {
       sh[pi[i]] += v(cur);
     }
   }
-  for (int i = 0; i < players; ++ i) sh[i] /= iters;
-  return toNormal(sh);
+  for (int i = 0; i < players; ++ i) sh[i] /= iters; // TODO: make double here
+  vector<double> res(players);
+  for (int i = 0; i < players; ++ i) res[i] = conv<double>(sh[i]);
+  return res;
 }
 
 vector<double> CoalGame::banzhafMonteCarlo(int iters) {
@@ -100,7 +102,7 @@ void CoalGame::shapleyEnumRec(int player, vector<int> &coal) {
       double incr = withAll;
       swap(coal[i], coal.back());
       coal.pop_back();
-      logDec(incr, log(v(coal)));
+      incr -= v(coal);
       coal.push_back(pl);
       sums[pl] += incr * factorial(coal.size() - 1) * factorial(players - coal.size());
     }
@@ -120,32 +122,32 @@ double CoalGame::banzhafInteraction(vector<int> inputSubset) {
 double CoalGame::banzhafInteractionEnum(vector<int> inputSubset) {
   std::set<int> forbidden(inputSubset.begin(), inputSubset.end());
   vector<int> empty;
-  ExtLogNum res = banzhafInteractionEnumRec1(0, forbidden, empty, inputSubset);
-  res /= LogNum((players - inputSubset.size()) / log(2), true);
-  return res.norm();
+  ZZ res = banzhafInteractionEnumRec1(0, forbidden, empty, inputSubset);
+  res /= power(ZZ(2), players - inputSubset.size());
+  return 0; // TODO: return the real result
 }
 
-ExtLogNum CoalGame::banzhafInteractionEnumRec1(int player, const std::set<int> &forbidden, vector<int> &curSubset,
+ZZ CoalGame::banzhafInteractionEnumRec1(int player, const std::set<int> &forbidden, vector<int> &curSubset,
                                                const vector<int> &inputSubset) {
   while (forbidden.count(player)) player ++;
   if (player == players) {
     return banzhafInteractionEnumRec2(0, curSubset, inputSubset);
   }
-  ExtLogNum res = banzhafInteractionEnumRec1(player + 1, forbidden, curSubset, inputSubset);
+  ZZ res = banzhafInteractionEnumRec1(player + 1, forbidden, curSubset, inputSubset);
   curSubset.push_back(player);
   res += banzhafInteractionEnumRec1(player + 1, forbidden, curSubset, inputSubset);
   curSubset.pop_back();
   return res;
 }
 
-ExtLogNum CoalGame::banzhafInteractionEnumRec2(int player, vector<int> &curSubset, const vector<int> &subset, int added) {
+ZZ CoalGame::banzhafInteractionEnumRec2(int player, vector<int> &curSubset, const vector<int> &subset, int added) {
   if (player == (int)subset.size()) {
-    ExtLogNum res(v(curSubset));
+    ZZ res(v(curSubset));
     if ((subset.size() - added) % 2 == 1) res *= -1;
     return res;
   }
 
-  ExtLogNum res;
+  ZZ res;
   res += banzhafInteractionEnumRec2(player + 1, curSubset, subset, added);
   curSubset.push_back(subset[player]);
   res += banzhafInteractionEnumRec2(player + 1, curSubset, subset, added + 1);

@@ -24,28 +24,6 @@ pair<double, double> logAdd(pair<double, double> u, pair<double, double> v) {
   return {logAdd(u.first, v.first), logAdd(u.second, v.second)};
 }
 
-pair<vector<double>, double> logToPaddedNorm(const vector<double> &a) {
-  const double top = 0;
-  vector<double> res = a;
-  double mx = -INF;
-  for (auto & i: res) mx = max(i, mx);
-  //for (auto & i: res) i += (top - mx);
-  for (auto & i: res) {
-    i = exp(i + (top - mx));
-  }
-  return {res, mx - top};
-}
-
-pair<matrix, double> logToPaddedNorm(const matrix &a) {
-  const double top = 0;
-  matrix res = a;
-  double mx = -INF;
-  for (auto & i: res) for (auto & j: i) mx = max(j, mx);
-  //for (auto & i: res) i += (top - mx);
-  for (auto & i: res) for (auto & j: i) j = exp(j + (top - mx));
-  return {res, mx - top};
-}
-
 vector<double> & logToNorm(vector<double> &a) {
   for (double & i: a) i = exp(i);
   return a;
@@ -120,14 +98,6 @@ double logDec(double &a, double b) {
   return a = logSub(a, b);
 }
 
-vector<double> logToNormRes(const vector<double> &a) {
-  vector<double> res(a.size());
-  for (size_t i = 0; i < a.size(); ++i) {
-    res[i] = exp(a[i]);
-  }
-  return res;
-}
-
 matrix logToNormRes(const matrix &a) {
   matrix res = a;
   for (size_t i = 0; i < a.size(); ++i) {
@@ -167,43 +137,6 @@ double sd(const vector<double> &a) {
   return sd(a, mean(a));
 }
 
-LogSumMatrix::LogSumMatrix(size_t n, size_t m) : n(n), m(m), dif(vector<matrix>(2, matrix(n, vector<double>(m, -INF)))) {
-}
-
-void LogSumMatrix::addSubmatrix(size_t left, size_t right, size_t top, size_t bot, double val) {
-  left = max(left, size_t(0));
-  top = max(top, size_t(0));
-  /*right = min(right, m-1);
-  bot = min(bot, n-1);*/
-
-  logInc(dif[0][left][top], val);
-  if (bot + 1 < n) logInc(dif[1][left][bot + 1], val);
-
-  if(right + 1 < m) {
-    logInc(dif[1][right + 1][top], val);
-    if (bot + 1 < n) logInc(dif[0][right + 1][bot + 1], val);
-  }
-}
-
-matrix LogSumMatrix::getLogResInplace() {
-  // first spread along the columns
-  for (size_t i = 1; i < n; ++i) {
-    for (size_t j = 0; j < m; ++j) {
-      logInc(dif[0][i][j], dif[0][i-1][j]);
-      logDec(dif[0][i][j], dif[1][i][j]);
-    }
-  }
-
-  // now spread along the rows
-  for (size_t i = 0; i < n; ++i) {
-    for (size_t j = 1; j < m; ++j) {
-      logInc(dif[0][i][j], dif[0][i][j-1]);
-      logDec(dif[0][i][j], dif[1][i][j]);
-    }
-  }
-  return dif[0];
-}
-
 // random permutation of {0, 1, ..., n - 1}
 vector<int> random_perm(int n) {
   vector<int> res(n);
@@ -219,11 +152,6 @@ vector<int> random_subset(int n) {
     if (rand()&2) res.push_back(i);
   }
   return res;
-}
-
-double extendedLogToNorm(pair<double, double> a) {
-  double val = logSub(max(a.first, a.second), min(a.first, a.second));
-  return exp(a.first > a.second ? -val : val);
 }
 
 double median(vector<double> &a) {
@@ -251,19 +179,6 @@ void cutPolynom(ZZX &c, int maxLength) {
     c.SetLength(maxLength);
     c.normalize();
   }
-}
-
-ostream &operator<<(ostream &out, const LogNum &a) {
-  cout << a.v << "(" << a.norm() << ")" << endl;
-  return out;
-}
-
-vector<double> toNormal(const vector<LogNum> &a) {
-  vector<double> res(a.size());
-  for (size_t i = 0; i < a.size(); ++i) {
-    res[i] = a[i].norm();
-  }
-  return res;
 }
 
 vector<ZZ> factorialCache;
@@ -363,31 +278,6 @@ void Polynomial2D::efficientMul(Polynomial2D &a) {
   data *= a.data;
 }
 
-void printVec(const vector<LogNum> &a) {
-  for (auto i: a) cout << i << ' ';
-  cout << endl << endl;
-}
-
 ZZ nChooseK(int a, int b) {
   return (factorial(a) / factorial(b)) / factorial(a - b);
-}
-
-SparsePolynomial2D SparsePolynomial2D::operator*(const SparsePolynomial2D &o) const {
-  SparsePolynomial2D res(maxRows, maxColumns);
-  map<int,std::set<int>> tc;
-  for (const auto & i: data) {
-    for (const auto & j: o.data) {
-      if (i.first.first + j.first.first > maxRows) continue;
-      if (i.first.second + j.first.second > maxColumns) continue;
-      res.data[{i.first.first + j.first.first, i.first.second + j.first.second}] += i.second * j.second;
-      tc[i.first.second + j.first.second].insert(i.first.first + j.first.first);
-    }
-  }
-  return res;
-}
-
-SparsePolynomial2D &SparsePolynomial2D::operator*=(const SparsePolynomial2D &o) {
-  SparsePolynomial2D res = *this * o;
-  data = res.data;
-  return *this;
 }
