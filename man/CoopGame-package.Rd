@@ -3,26 +3,26 @@
 \alias{CoopGame}
 \docType{package}
 \title{
-  A short title line describing what the package does
+  Methods for coalitional games.
 }
 \description{
-  A more detailed description of what the package does. A length
-  of about one to five lines is recommended.
+  Compute Shapley and Banzhaf indices of coalitional games.
+  Contains advanced methods for Weighted voting games with integer weights.
+  Also contains methods for analyzing gene expressions data.
 }
 \details{
   This section should provide a more detailed overview of how to use the
   package, including the most important functions.
 }
 \author{
-Your Name, email optional.
+Matyáš Křišťan
 
-Maintainer: Your Name <your@email.com>
+Maintainer: Matyáš Křišťan <matyas.kristan@gmail.com>
 }
 \references{
-  This optional section can contain literature or other references for
-  background information.
+  TODO Link to the thesis.
 }
-\keyword{ package }
+\keyword{ coalitional games banzhaf shapley }
 \seealso{
   Optional links to other man pages
 }
