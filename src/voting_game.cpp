@@ -4,6 +4,7 @@
 #include <NTL/RR.h>
 #include <assert.h>
 #include <map>
+#include <algorithm>
 
 VotingGame::VotingGame(const vector<int> &weights, int quota) :
     CoalGame(weights.size()), weights(weights), quota(quota) {

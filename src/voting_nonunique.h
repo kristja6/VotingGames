@@ -9,6 +9,8 @@
 #include "coal_game.h"
 #include "voting_game.h"
 #include <NTL/ZZX.h>
+#include <unordered_map>
+
 using namespace NTL;
 
 class VotingNonunique : public VotingGame {

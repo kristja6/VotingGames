@@ -3,6 +3,7 @@
 //
 
 #include <assert.h>
+#include <algorithm>
 #include "sum_of_voting.h"
 #include "math.h"
 

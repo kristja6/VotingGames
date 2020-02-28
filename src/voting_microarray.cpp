@@ -2,6 +2,7 @@
 // Created by maty on 05/02/20.
 //
 
+#include <algorithm>
 #include "voting_microarray.h"
 
 VotingMicroarray::VotingMicroarray(const matrix &special, const matrix &control) : SumOfVoting(special.size())
