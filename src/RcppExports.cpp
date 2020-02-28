@@ -6,26 +6,56 @@
 using namespace Rcpp;
 
 // votingBanzhaf
-NumericVector votingBanzhaf(const NumericVector& weights, const int quota);
-RcppExport SEXP _CoopGame_votingBanzhaf(SEXP weightsSEXP, SEXP quotaSEXP) {
+NumericVector votingBanzhaf(const NumericVector& weights, const int quota, const IntegerVector& players, const String& denom);
+RcppExport SEXP _CoopGame_votingBanzhaf(SEXP weightsSEXP, SEXP quotaSEXP, SEXP playersSEXP, SEXP denomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericVector& >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< const int >::type quota(quotaSEXP);
-    rcpp_result_gen = Rcpp::wrap(votingBanzhaf(weights, quota));
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingBanzhaf(weights, quota, players, denom));
     return rcpp_result_gen;
 END_RCPP
 }
 // votingShapley
-NumericVector votingShapley(const IntegerVector& weights, const int quota);
-RcppExport SEXP _CoopGame_votingShapley(SEXP weightsSEXP, SEXP quotaSEXP) {
+NumericVector votingShapley(const IntegerVector& weights, const int quota, const IntegerVector& players);
+RcppExport SEXP _CoopGame_votingShapley(SEXP weightsSEXP, SEXP quotaSEXP, SEXP playersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const IntegerVector& >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< const int >::type quota(quotaSEXP);
-    rcpp_result_gen = Rcpp::wrap(votingShapley(weights, quota));
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingShapley(weights, quota, players));
+    return rcpp_result_gen;
+END_RCPP
+}
+// votingBanzhafTop
+NumericVector votingBanzhafTop(const NumericVector& weights, const int quota, const int topN, const String& denom);
+RcppExport SEXP _CoopGame_votingBanzhafTop(SEXP weightsSEXP, SEXP quotaSEXP, SEXP topNSEXP, SEXP denomSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const int >::type quota(quotaSEXP);
+    Rcpp::traits::input_parameter< const int >::type topN(topNSEXP);
+    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingBanzhafTop(weights, quota, topN, denom));
+    return rcpp_result_gen;
+END_RCPP
+}
+// votingShapleyTop
+NumericVector votingShapleyTop(const IntegerVector& weights, const int quota, const int topN);
+RcppExport SEXP _CoopGame_votingShapleyTop(SEXP weightsSEXP, SEXP quotaSEXP, SEXP topNSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const int >::type quota(quotaSEXP);
+    Rcpp::traits::input_parameter< const int >::type topN(topNSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingShapleyTop(weights, quota, topN));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -43,24 +73,27 @@ BEGIN_RCPP
 END_RCPP
 }
 // microarrayBanzhaf
-NumericVector microarrayBanzhaf(const NumericMatrix& mtx);
-RcppExport SEXP _CoopGame_microarrayBanzhaf(SEXP mtxSEXP) {
+NumericVector microarrayBanzhaf(const NumericMatrix& mtx, const IntegerVector& players, const String& denom);
+RcppExport SEXP _CoopGame_microarrayBanzhaf(SEXP mtxSEXP, SEXP playersSEXP, SEXP denomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type mtx(mtxSEXP);
-    rcpp_result_gen = Rcpp::wrap(microarrayBanzhaf(mtx));
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
+    rcpp_result_gen = Rcpp::wrap(microarrayBanzhaf(mtx, players, denom));
     return rcpp_result_gen;
 END_RCPP
 }
 // microarrayShapley
-NumericVector microarrayShapley(const NumericMatrix& mtx);
-RcppExport SEXP _CoopGame_microarrayShapley(SEXP mtxSEXP) {
+NumericVector microarrayShapley(const NumericMatrix& mtx, const IntegerVector& players);
+RcppExport SEXP _CoopGame_microarrayShapley(SEXP mtxSEXP, SEXP playersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type mtx(mtxSEXP);
-    rcpp_result_gen = Rcpp::wrap(microarrayShapley(mtx));
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    rcpp_result_gen = Rcpp::wrap(microarrayShapley(mtx, players));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -101,39 +134,43 @@ BEGIN_RCPP
 END_RCPP
 }
 // votingMicroarrayBanzhaf
-NumericVector votingMicroarrayBanzhaf(const NumericMatrix& special, const NumericMatrix& control);
-RcppExport SEXP _CoopGame_votingMicroarrayBanzhaf(SEXP specialSEXP, SEXP controlSEXP) {
+NumericVector votingMicroarrayBanzhaf(const NumericMatrix& special, const NumericMatrix& control, const IntegerVector& players, const String& denom);
+RcppExport SEXP _CoopGame_votingMicroarrayBanzhaf(SEXP specialSEXP, SEXP controlSEXP, SEXP playersSEXP, SEXP denomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type special(specialSEXP);
     Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
-    rcpp_result_gen = Rcpp::wrap(votingMicroarrayBanzhaf(special, control));
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingMicroarrayBanzhaf(special, control, players, denom));
     return rcpp_result_gen;
 END_RCPP
 }
 // votingMicroarrayBanzhafTop
-NumericVector votingMicroarrayBanzhafTop(const NumericMatrix& special, const NumericMatrix& control, int topN);
-RcppExport SEXP _CoopGame_votingMicroarrayBanzhafTop(SEXP specialSEXP, SEXP controlSEXP, SEXP topNSEXP) {
+NumericVector votingMicroarrayBanzhafTop(const NumericMatrix& special, const NumericMatrix& control, int topN, const String& denom);
+RcppExport SEXP _CoopGame_votingMicroarrayBanzhafTop(SEXP specialSEXP, SEXP controlSEXP, SEXP topNSEXP, SEXP denomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type special(specialSEXP);
     Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
     Rcpp::traits::input_parameter< int >::type topN(topNSEXP);
-    rcpp_result_gen = Rcpp::wrap(votingMicroarrayBanzhafTop(special, control, topN));
+    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingMicroarrayBanzhafTop(special, control, topN, denom));
     return rcpp_result_gen;
 END_RCPP
 }
 // votingMicroarrayShapley
-NumericVector votingMicroarrayShapley(const NumericMatrix& special, const NumericMatrix& control);
-RcppExport SEXP _CoopGame_votingMicroarrayShapley(SEXP specialSEXP, SEXP controlSEXP) {
+NumericVector votingMicroarrayShapley(const NumericMatrix& special, const NumericMatrix& control, const IntegerVector& players);
+RcppExport SEXP _CoopGame_votingMicroarrayShapley(SEXP specialSEXP, SEXP controlSEXP, SEXP playersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type special(specialSEXP);
     Rcpp::traits::input_parameter< const NumericMatrix& >::type control(controlSEXP);
-    rcpp_result_gen = Rcpp::wrap(votingMicroarrayShapley(special, control));
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    rcpp_result_gen = Rcpp::wrap(votingMicroarrayShapley(special, control, players));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -177,26 +214,56 @@ BEGIN_RCPP
 END_RCPP
 }
 // sumOfVotingBanzhaf
-NumericVector sumOfVotingBanzhaf(const NumericMatrix& weights, const NumericVector& quotas);
-RcppExport SEXP _CoopGame_sumOfVotingBanzhaf(SEXP weightsSEXP, SEXP quotasSEXP) {
+NumericVector sumOfVotingBanzhaf(const NumericMatrix& weights, const NumericVector& quotas, const IntegerVector& players, const String& denom);
+RcppExport SEXP _CoopGame_sumOfVotingBanzhaf(SEXP weightsSEXP, SEXP quotasSEXP, SEXP playersSEXP, SEXP denomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type quotas(quotasSEXP);
-    rcpp_result_gen = Rcpp::wrap(sumOfVotingBanzhaf(weights, quotas));
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
+    rcpp_result_gen = Rcpp::wrap(sumOfVotingBanzhaf(weights, quotas, players, denom));
     return rcpp_result_gen;
 END_RCPP
 }
 // sumOfVotingShapley
-NumericVector sumOfVotingShapley(const NumericMatrix& weights, const NumericVector& quotas);
-RcppExport SEXP _CoopGame_sumOfVotingShapley(SEXP weightsSEXP, SEXP quotasSEXP) {
+NumericVector sumOfVotingShapley(const NumericMatrix& weights, const NumericVector& quotas, const IntegerVector& players);
+RcppExport SEXP _CoopGame_sumOfVotingShapley(SEXP weightsSEXP, SEXP quotasSEXP, SEXP playersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type quotas(quotasSEXP);
-    rcpp_result_gen = Rcpp::wrap(sumOfVotingShapley(weights, quotas));
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    rcpp_result_gen = Rcpp::wrap(sumOfVotingShapley(weights, quotas, players));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sumOfVotingBanzhafTop
+NumericVector sumOfVotingBanzhafTop(const NumericMatrix& weights, const NumericVector& quotas, const int topN, const String& denom);
+RcppExport SEXP _CoopGame_sumOfVotingBanzhafTop(SEXP weightsSEXP, SEXP quotasSEXP, SEXP topNSEXP, SEXP denomSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type quotas(quotasSEXP);
+    Rcpp::traits::input_parameter< const int >::type topN(topNSEXP);
+    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
+    rcpp_result_gen = Rcpp::wrap(sumOfVotingBanzhafTop(weights, quotas, topN, denom));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sumOfVotingShapleyTop
+NumericVector sumOfVotingShapleyTop(const NumericMatrix& weights, const NumericVector& quotas, const int topN);
+RcppExport SEXP _CoopGame_sumOfVotingShapleyTop(SEXP weightsSEXP, SEXP quotasSEXP, SEXP topNSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type quotas(quotasSEXP);
+    Rcpp::traits::input_parameter< const int >::type topN(topNSEXP);
+    rcpp_result_gen = Rcpp::wrap(sumOfVotingShapleyTop(weights, quotas, topN));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -215,22 +282,26 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_CoopGame_votingBanzhaf", (DL_FUNC) &_CoopGame_votingBanzhaf, 2},
-    {"_CoopGame_votingShapley", (DL_FUNC) &_CoopGame_votingShapley, 2},
+    {"_CoopGame_votingBanzhaf", (DL_FUNC) &_CoopGame_votingBanzhaf, 4},
+    {"_CoopGame_votingShapley", (DL_FUNC) &_CoopGame_votingShapley, 3},
+    {"_CoopGame_votingBanzhafTop", (DL_FUNC) &_CoopGame_votingBanzhafTop, 4},
+    {"_CoopGame_votingShapleyTop", (DL_FUNC) &_CoopGame_votingShapleyTop, 3},
     {"_CoopGame_votingVal", (DL_FUNC) &_CoopGame_votingVal, 3},
-    {"_CoopGame_microarrayBanzhaf", (DL_FUNC) &_CoopGame_microarrayBanzhaf, 1},
-    {"_CoopGame_microarrayShapley", (DL_FUNC) &_CoopGame_microarrayShapley, 1},
+    {"_CoopGame_microarrayBanzhaf", (DL_FUNC) &_CoopGame_microarrayBanzhaf, 3},
+    {"_CoopGame_microarrayShapley", (DL_FUNC) &_CoopGame_microarrayShapley, 2},
     {"_CoopGame_microarrayValue", (DL_FUNC) &_CoopGame_microarrayValue, 2},
     {"_CoopGame_microarrayStrongestCoalition", (DL_FUNC) &_CoopGame_microarrayStrongestCoalition, 2},
     {"_CoopGame_expressionsToFeaturesStd", (DL_FUNC) &_CoopGame_expressionsToFeaturesStd, 2},
-    {"_CoopGame_votingMicroarrayBanzhaf", (DL_FUNC) &_CoopGame_votingMicroarrayBanzhaf, 2},
-    {"_CoopGame_votingMicroarrayBanzhafTop", (DL_FUNC) &_CoopGame_votingMicroarrayBanzhafTop, 3},
-    {"_CoopGame_votingMicroarrayShapley", (DL_FUNC) &_CoopGame_votingMicroarrayShapley, 2},
+    {"_CoopGame_votingMicroarrayBanzhaf", (DL_FUNC) &_CoopGame_votingMicroarrayBanzhaf, 4},
+    {"_CoopGame_votingMicroarrayBanzhafTop", (DL_FUNC) &_CoopGame_votingMicroarrayBanzhafTop, 4},
+    {"_CoopGame_votingMicroarrayShapley", (DL_FUNC) &_CoopGame_votingMicroarrayShapley, 3},
     {"_CoopGame_votingMicroarrayShapleyTop", (DL_FUNC) &_CoopGame_votingMicroarrayShapleyTop, 3},
     {"_CoopGame_votingMicroarrayValue", (DL_FUNC) &_CoopGame_votingMicroarrayValue, 3},
     {"_CoopGame_votingMicroarrayPredict", (DL_FUNC) &_CoopGame_votingMicroarrayPredict, 3},
-    {"_CoopGame_sumOfVotingBanzhaf", (DL_FUNC) &_CoopGame_sumOfVotingBanzhaf, 2},
-    {"_CoopGame_sumOfVotingShapley", (DL_FUNC) &_CoopGame_sumOfVotingShapley, 2},
+    {"_CoopGame_sumOfVotingBanzhaf", (DL_FUNC) &_CoopGame_sumOfVotingBanzhaf, 4},
+    {"_CoopGame_sumOfVotingShapley", (DL_FUNC) &_CoopGame_sumOfVotingShapley, 3},
+    {"_CoopGame_sumOfVotingBanzhafTop", (DL_FUNC) &_CoopGame_sumOfVotingBanzhafTop, 4},
+    {"_CoopGame_sumOfVotingShapleyTop", (DL_FUNC) &_CoopGame_sumOfVotingShapleyTop, 3},
     {"_CoopGame_sumOfVotingValue", (DL_FUNC) &_CoopGame_sumOfVotingValue, 3},
     {NULL, NULL, 0}
 };

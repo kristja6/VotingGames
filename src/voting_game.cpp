@@ -5,7 +5,6 @@
 
 VotingGame::VotingGame(const vector<int> &weights, int quota) :
     CoalGame(weights.size()), weights(weights), quota(quota) {
-  cutoffDepth = getCutoffDepth();
   nonzeroPlayers = players;
   maxWeight = 0;
   for (int i = 0; i < players; ++ i) {
@@ -309,10 +308,6 @@ Polynomial2D VotingGame::mergeRecShapleyDense(int st, int en, int depth) {
 
 }
 
-int VotingGame::getCutoffDepth() {
-  return round(log2(pow(players, 2.0/3.0)));
-}
-
 void VotingGame::precompMaxPlayers() {
   auto wc = weights;
   sort(wc.begin(), wc.end());
@@ -334,4 +329,16 @@ const vector<int> & VotingGame::getWeights() const {
 
 int VotingGame::getQuota() const {
   return quota;
+}
+
+vector<int> VotingGame::getTopPlayers(int topN) {
+  topN = max(topN, 1);
+  vector<int> p;
+  vector<pair<int, int>> weightIdx(players);
+  for (int i = 0; i < players; ++i) weightIdx[i].first = -weights[i], weightIdx[i].second = i;
+  sort(weightIdx.begin(), weightIdx.end());
+  while (p.size() < players && (p.size() < topN || weightIdx[p.size()] == weightIdx[p.size() - 1])) {
+    p.push_back(weightIdx[p.size()].second);
+  }
+  return p;
 }

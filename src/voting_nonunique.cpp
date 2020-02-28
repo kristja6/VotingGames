@@ -93,6 +93,10 @@ vector<double> VotingNonunique::banzhaf() {
   return banzhafNewDp();
 }
 
+vector<double> VotingNonunique::shapley(const vector<int> & p) {
+  return shapleyNewDp(p);
+}
+
 vector<double> VotingNonunique::banzhaf(const vector<int> & p) {
   return banzhafNewDp(p);
 }
@@ -346,9 +350,9 @@ vector<double> VotingNonunique::banzhafNewDp(const vector<int> & p) {
     }
     sums[weights[i]] = curCount;
   }
-  vector<ZZ> res(players, ZZ(0));
-  for (int i = 0; i < players; ++i) {
-    res[i] = sums[weights[i]];
+  vector<ZZ> res(players, ZZ(-1));
+  for (int i = 0; i < p.size(); ++i) {
+    res[p[i]] = sums[weights[p[i]]];
   }
   return normalizeRawBanzhaf(res);
 }
@@ -359,3 +363,11 @@ vector<double> VotingNonunique::banzhafNewDp() {
   return banzhafNewDp(p);
 }
 
+
+vector<double> VotingNonunique::banzhafTop(int topN) {
+  return VotingNonunique(weights, quota).banzhaf(getTopPlayers(topN));
+}
+
+vector<double> VotingNonunique::shapleyTop(int topN) {
+  return VotingNonunique(weights, quota).shapley(getTopPlayers(topN));
+}

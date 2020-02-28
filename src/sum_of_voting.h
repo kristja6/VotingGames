@@ -39,6 +39,7 @@ public:
   double shapley(int player);
   vector<double> shapleyTop(int topN);
   vector<double> banzhafTop(int topN);
+  void setBanzhafDenominator(int denom) override;
 
   // doesn't return less than numberOfTopPlayers
   vector<int> getTopPlayers(const vector<vector<int>> & weights, int numberOfTopPlayers);

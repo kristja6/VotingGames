@@ -48,7 +48,7 @@ public:
   // iterates over subsets of the input subset
   ZZ banzhafInteractionEnumRec2(int player, vector<int> &curSubset, const vector<int> &subset, int added = 0);
 
-  void setBanzhafDenominator(int denom);
+  virtual void setBanzhafDenominator(int denom);
   virtual vector<int> optimalCoalitionOfFixedSize(int size);
 
   int players;

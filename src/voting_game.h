@@ -36,6 +36,7 @@ protected:
   void removeFromColumnInplace(ZZX &a, int weight);
   ZZX columnWithOne(int weight);
   ZZ countSwingsTable(const Polynomial2D & a, int weight);
+  vector<int> getTopPlayers(int topN);
 
   virtual ZZX mergeRecBanzhaf(int st, int en);
 
@@ -61,10 +62,6 @@ protected:
 
 
 private:
-
-  vector<double> bbSums;
-  int cutoffDepth;
-  int getCutoffDepth();
 };
 
 #endif

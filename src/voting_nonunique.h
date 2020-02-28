@@ -21,6 +21,7 @@ public:
   vector<double> shapley() override;
   vector<double> banzhaf() override;
   vector<double> banzhaf(const vector<int> &);
+  vector<double> shapley(const vector<int> &);
 
   virtual vector<double> shapleyNew() override;
   vector<double> shapleyNewForEachPlayer();
@@ -31,6 +32,9 @@ public:
   vector<double> banzhafNewWithDeconvolution(); // TODO: would be the best if I could find fast polynomial division
   vector<double> banzhafNewDp();
   vector<double> banzhafNewDp(const vector<int> &);
+
+  virtual vector<double> banzhafTop(int topN);
+  virtual vector<double> shapleyTop(int);
 
 protected:
   // Banzhaf methods

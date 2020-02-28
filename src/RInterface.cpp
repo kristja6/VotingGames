@@ -1,9 +1,9 @@
-#include <string>
 #include <Rcpp.h>
 #include "voting_game.h"
 #include "microarray_game.h"
 #include "sum_of_voting.h"
 #include "voting_microarray.h"
+#include "RInterface.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -50,17 +50,34 @@ NumericMatrix vectorsToMatrix(const vector<vector<int>> & mtx) {
 }
 
 // [[Rcpp::export]]
-NumericVector votingBanzhaf(const NumericVector & weights, const int quota) {
+NumericVector votingBanzhaf(const NumericVector & weights, const int quota, const IntegerVector & players, const String & denom) {
   vector<double> res;
   VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
+  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
-NumericVector votingShapley(const IntegerVector & weights, const int quota) {
+NumericVector votingShapley(const IntegerVector & weights, const int quota, const IntegerVector & players) {
   VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
   auto res = game.shapley();
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+NumericVector votingBanzhafTop(const NumericVector & weights, const int quota, const int topN, const String & denom) {
+  vector<double> res;
+  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
+  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
+  res = game.banzhafTop(topN);
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+NumericVector votingShapleyTop(const IntegerVector & weights, const int quota, const int topN) {
+  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
+  auto res = game.shapleyTop(topN);
   return NumericVector(res.begin(), res.end());
 }
 
@@ -71,15 +88,16 @@ double votingVal(const IntegerVector & weights, const int quota, const IntegerVe
 }
 
 // [[Rcpp::export]]
-NumericVector microarrayBanzhaf(const NumericMatrix & mtx) {
+NumericVector microarrayBanzhaf(const NumericMatrix & mtx, const IntegerVector & players, const String & denom) {
   auto m = matrixToVectorsInt(mtx);
   MicroarrayGame game(m);
+  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
-NumericVector microarrayShapley(const NumericMatrix & mtx) {
+NumericVector microarrayShapley(const NumericMatrix & mtx, const IntegerVector & players) {
   MicroarrayGame game(matrixToVectorsInt(mtx));
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
@@ -105,21 +123,23 @@ NumericMatrix expressionsToFeaturesStd(const NumericMatrix & special, const Nume
 }
 
 // [[Rcpp::export]]
-NumericVector votingMicroarrayBanzhaf(const NumericMatrix &special, const NumericMatrix &control) {
+NumericVector votingMicroarrayBanzhaf(const NumericMatrix &special, const NumericMatrix &control, const IntegerVector & players, const String & denom) {
   VotingMicroarray game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
+  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
-NumericVector votingMicroarrayBanzhafTop(const NumericMatrix &special, const NumericMatrix &control, int topN) {
+NumericVector votingMicroarrayBanzhafTop(const NumericMatrix &special, const NumericMatrix &control, int topN, const String & denom) {
   VotingMicroarray game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
+  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhafTop(topN);
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
-NumericVector votingMicroarrayShapley(const NumericMatrix &special, const NumericMatrix &control) {
+NumericVector votingMicroarrayShapley(const NumericMatrix &special, const NumericMatrix &control, const IntegerVector & players) {
   VotingMicroarray game(matrixToVectorsDouble(special), matrixToVectorsDouble(control));
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
@@ -146,16 +166,32 @@ bool votingMicroarrayPredict(const NumericMatrix &special, const NumericMatrix &
 }
 
 // [[Rcpp::export]]
-NumericVector sumOfVotingBanzhaf(const NumericMatrix & weights, const NumericVector & quotas) {
+NumericVector sumOfVotingBanzhaf(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & players, const String & denom) {
   SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
+  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
-NumericVector sumOfVotingShapley(const NumericMatrix & weights, const NumericVector & quotas) {
+NumericVector sumOfVotingShapley(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & players) {
   SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
   auto res = game.shapley();
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+NumericVector sumOfVotingBanzhafTop(const NumericMatrix & weights, const NumericVector & quotas, const int topN, const String & denom) {
+  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
+  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
+  auto res = game.banzhafTop(topN);
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+NumericVector sumOfVotingShapleyTop(const NumericMatrix & weights, const NumericVector & quotas, const int topN) {
+  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
+  auto res = game.shapleyTop(topN);
   return NumericVector(res.begin(), res.end());
 }
 

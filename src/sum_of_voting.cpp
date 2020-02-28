@@ -25,26 +25,26 @@ double SumOfVoting::v(const vector<int> &coal) {
 vector<double> SumOfVoting::banzhaf() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
-    cout << i << ' ' << flush;
+    dbg << i << ' ' << flush;
     auto cur = gamesNonunique[i].banzhaf();
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];
     }
   }
-  cout << endl;
+  dbg << endl;
   return res;
 }
 
 vector<double> SumOfVoting::shapley() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
-    cout << i << ' ' << flush; // TODO: probably remove in final version
+    dbg << i << ' ' << flush; // TODO: probably remove in final version
     auto cur = gamesNonunique[i].shapley();
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];
     }
   }
-  cout << endl;
+  dbg << endl;
   return res;
 }
 
@@ -59,26 +59,33 @@ double SumOfVoting::banzhaf(int player) {
 double SumOfVoting::shapley(int player) {
   double res = 0;
   for (size_t i = 0; i < gamesUnique.size(); ++i) {
-    cout << i << flush;
+    dbg << i << ' ' << flush;
     res += gamesNonunique[i].shapley(player);
   }
-  cout << endl;
+  dbg << endl;
   return res;
 }
 
 vector<double> SumOfVoting::shapleyTop(int topN) {
   auto pl = getTopPlayers(getWeights(), topN);
   vector<double> res(players, -1); // TODO: this is messy
-  for (auto i: pl) res[i] = shapley(i);
+  for (auto i: pl) res[i] = 0;
+  for (size_t i = 0; i < gamesNonunique.size(); ++i) {
+    auto cur = gamesNonunique[i].shapley(pl);
+    for (auto j: pl) {
+      res[j] += cur[j];
+    }
+  }
   return res;
 }
 
 vector<double> SumOfVoting::banzhafTop(int topN) {
   auto pl = getTopPlayers(getWeights(), topN);
-  vector<double> res(players, 0); // TODO: this is messy
+  vector<double> res(players, -1); // TODO: this is messy
+  for (auto i: pl) res[i] = 0;
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     auto cur = gamesNonunique[i].banzhaf(pl);
-    for (size_t j = 0; j < cur.size(); ++j) {
+    for (auto j: pl) {
       res[j] += cur[j];
     }
   }
@@ -107,6 +114,14 @@ vector<vector<int>> SumOfVoting::getWeights() {
     }
   }
   return weights;
+}
+
+void SumOfVoting::setBanzhafDenominator(int denom) {
+  banzhafDenominator = denom;
+  for (int i = 0; i < gamesUnique.size(); ++ i) {
+    gamesUnique[i].setBanzhafDenominator(denom);
+    gamesNonunique[i].setBanzhafDenominator(denom);
+  }
 }
 
 PlayerWeights::PlayerWeights(const vector<int> &weights, int idx) : weights(weights), idx(idx) {}
