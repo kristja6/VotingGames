@@ -7,7 +7,7 @@
 
 #define INF (numeric_limits<double>::infinity())
 
-#include <bits/stdc++.h>
+#include <vector>
 #include <NTL/ZZX.h>
 using namespace NTL;
 #define matrix vector<vector<double>>

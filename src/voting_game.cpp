@@ -2,6 +2,8 @@
 #include "math.h"
 #include "voting_nonunique.h"
 #include <NTL/RR.h>
+#include <assert.h>
+#include <map>
 
 VotingGame::VotingGame(const vector<int> &weights, int quota) :
     CoalGame(weights.size()), weights(weights), quota(quota) {

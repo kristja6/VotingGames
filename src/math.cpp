@@ -2,6 +2,9 @@
 // Created by maty on 07/12/19.
 //
 
+#include <assert.h>
+#include <algorithm>
+#include <numeric>
 #include "math.h"
 
 double logAdd(double u, double v) {

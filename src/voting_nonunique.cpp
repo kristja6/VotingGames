@@ -4,6 +4,8 @@
 
 #include "voting_nonunique.h"
 #include <NTL/RR.h>
+#include <assert.h>
+#include <algorithm>
 
 VotingNonunique::VotingNonunique(const vector<int> & weights, int quota) : VotingGame(weights, quota),
 rollingShapley(emptyTable()) {

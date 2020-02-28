@@ -1,5 +1,8 @@
 #include "coal_game.h"
 #include <NTL/RR.h>
+#include <algorithm>
+#include <set>
+
 
 double CoalGame::v(const vector<int> &coalition) {
   return vFunc(coalition);

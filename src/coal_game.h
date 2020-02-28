@@ -1,7 +1,9 @@
 #ifndef __COAL_GAME_H__
 #define __COAL_GAME_H__
-
-#include <bits/stdc++.h>
+#include <vector>
+#include <string>
+#include <functional>
+#include <set>
 #include "math.h"
 #define BANZHAF_DENOM_SUBSETS 0
 #define BANZHAF_DENOM_WINNING 1

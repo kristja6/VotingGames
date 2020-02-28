@@ -5,7 +5,7 @@
 #ifndef COOPGAME_SUM_OF_VOTING_H
 #define COOPGAME_SUM_OF_VOTING_H
 
-#include <bits/stdc++.h>
+#include <vector>
 #include "voting_game.h"
 #include "voting_nonunique.h"
 

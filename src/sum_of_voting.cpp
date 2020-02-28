@@ -2,6 +2,7 @@
 // Created by maty on 04/01/20.
 //
 
+#include <assert.h>
 #include "sum_of_voting.h"
 #include "math.h"
 

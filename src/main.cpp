@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+#include <vector>
+#include <set>
 #include "coal_game.h"
 #include "voting_game.h"
 #include "math.h"

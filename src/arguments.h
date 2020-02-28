@@ -5,7 +5,8 @@
 #ifndef COAL_GAME_ARGUMENTS_H
 #define COAL_GAME_ARGUMENTS_H
 
-#include <bits/stdc++.h>
+#include <string>
+#include <vector>
 #include "coal_game.h"
 using namespace std;
 

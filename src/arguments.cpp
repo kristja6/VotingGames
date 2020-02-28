@@ -2,6 +2,7 @@
 // Created by maty on 06/12/19.
 //
 
+#include <sstream>
 #include "arguments.h"
 
 bool Arguments::ReadArguments(int argc, const char **argv) {
