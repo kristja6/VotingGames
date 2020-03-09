@@ -1,4 +1,5 @@
 library(CoopGame)
+
 #### Weighted voting games #####
 wvg = votingGame(c(4, 5, 6, 14, 16, 17, 25, 26, 35, 36), 55)
 shapley(wvg)
@@ -16,6 +17,5 @@ shapley(svg)
 shapleyTop(svg, 1)
 banzhaf(svg, denom = "subsets")
 banzhafTop(svg, 1)
-
 
 #### Microarray games ####
