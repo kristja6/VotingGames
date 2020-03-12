@@ -2,42 +2,42 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 votingBanzhaf <- function(weights, quota, players, denom) {
-    .Call(`_CoopGame_votingBanzhaf`, weights, quota, players, denom)
+    .Call(`_VotingGames_votingBanzhaf`, weights, quota, players, denom)
 }
 
 votingShapley <- function(weights, quota, players) {
-    .Call(`_CoopGame_votingShapley`, weights, quota, players)
+    .Call(`_VotingGames_votingShapley`, weights, quota, players)
 }
 
 votingBanzhafTop <- function(weights, quota, topN, denom) {
-    .Call(`_CoopGame_votingBanzhafTop`, weights, quota, topN, denom)
+    .Call(`_VotingGames_votingBanzhafTop`, weights, quota, topN, denom)
 }
 
 votingShapleyTop <- function(weights, quota, topN) {
-    .Call(`_CoopGame_votingShapleyTop`, weights, quota, topN)
+    .Call(`_VotingGames_votingShapleyTop`, weights, quota, topN)
 }
 
 votingVal <- function(weights, quota, coal) {
-    .Call(`_CoopGame_votingVal`, weights, quota, coal)
+    .Call(`_VotingGames_votingVal`, weights, quota, coal)
 }
 
 sumOfVotingBanzhaf <- function(weights, quotas, players, denom) {
-    .Call(`_CoopGame_sumOfVotingBanzhaf`, weights, quotas, players, denom)
+    .Call(`_VotingGames_sumOfVotingBanzhaf`, weights, quotas, players, denom)
 }
 
 sumOfVotingShapley <- function(weights, quotas, players) {
-    .Call(`_CoopGame_sumOfVotingShapley`, weights, quotas, players)
+    .Call(`_VotingGames_sumOfVotingShapley`, weights, quotas, players)
 }
 
 sumOfVotingBanzhafTop <- function(weights, quotas, topN, denom) {
-    .Call(`_CoopGame_sumOfVotingBanzhafTop`, weights, quotas, topN, denom)
+    .Call(`_VotingGames_sumOfVotingBanzhafTop`, weights, quotas, topN, denom)
 }
 
 sumOfVotingShapleyTop <- function(weights, quotas, topN) {
-    .Call(`_CoopGame_sumOfVotingShapleyTop`, weights, quotas, topN)
+    .Call(`_VotingGames_sumOfVotingShapleyTop`, weights, quotas, topN)
 }
 
 sumOfVotingValue <- function(weights, quotas, coal) {
-    .Call(`_CoopGame_sumOfVotingValue`, weights, quotas, coal)
+    .Call(`_VotingGames_sumOfVotingValue`, weights, quotas, coal)
 }
 

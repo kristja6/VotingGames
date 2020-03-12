@@ -1,6 +1,6 @@
-\name{CoopGame-package}
-\alias{CoopGame-package}
-\alias{CoopGame}
+\name{VotingGames-package}
+\alias{VotingGames-package}
+\alias{VotingGames}
 \docType{package}
 \title{
   Methods for coalitional games.

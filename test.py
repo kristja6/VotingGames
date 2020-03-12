@@ -2,7 +2,7 @@
 import csv, os, subprocess
 from termcolor import colored
 
-command = "/home/maty/Dropbox/FEL/diplomka/package/CoopGame/bin/coal-game"
+command = "/home/maty/Dropbox/FEL/diplomka/package/VotingGames/bin/coal-game"
 arguments_bz = [
     "--banzhaf --normal --naive"
     , "--banzhaf --normal --uno"

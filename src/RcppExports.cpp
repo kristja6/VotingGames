@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // votingBanzhaf
 NumericVector votingBanzhaf(const NumericVector& weights, const int quota, const IntegerVector& players, const String& denom);
-RcppExport SEXP _CoopGame_votingBanzhaf(SEXP weightsSEXP, SEXP quotaSEXP, SEXP playersSEXP, SEXP denomSEXP) {
+RcppExport SEXP _VotingGames_votingBanzhaf(SEXP weightsSEXP, SEXP quotaSEXP, SEXP playersSEXP, SEXP denomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,7 +21,7 @@ END_RCPP
 }
 // votingShapley
 NumericVector votingShapley(const IntegerVector& weights, const int quota, const IntegerVector& players);
-RcppExport SEXP _CoopGame_votingShapley(SEXP weightsSEXP, SEXP quotaSEXP, SEXP playersSEXP) {
+RcppExport SEXP _VotingGames_votingShapley(SEXP weightsSEXP, SEXP quotaSEXP, SEXP playersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -34,7 +34,7 @@ END_RCPP
 }
 // votingBanzhafTop
 NumericVector votingBanzhafTop(const NumericVector& weights, const int quota, const int topN, const String& denom);
-RcppExport SEXP _CoopGame_votingBanzhafTop(SEXP weightsSEXP, SEXP quotaSEXP, SEXP topNSEXP, SEXP denomSEXP) {
+RcppExport SEXP _VotingGames_votingBanzhafTop(SEXP weightsSEXP, SEXP quotaSEXP, SEXP topNSEXP, SEXP denomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -48,7 +48,7 @@ END_RCPP
 }
 // votingShapleyTop
 NumericVector votingShapleyTop(const IntegerVector& weights, const int quota, const int topN);
-RcppExport SEXP _CoopGame_votingShapleyTop(SEXP weightsSEXP, SEXP quotaSEXP, SEXP topNSEXP) {
+RcppExport SEXP _VotingGames_votingShapleyTop(SEXP weightsSEXP, SEXP quotaSEXP, SEXP topNSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -61,7 +61,7 @@ END_RCPP
 }
 // votingVal
 double votingVal(const IntegerVector& weights, const int quota, const IntegerVector& coal);
-RcppExport SEXP _CoopGame_votingVal(SEXP weightsSEXP, SEXP quotaSEXP, SEXP coalSEXP) {
+RcppExport SEXP _VotingGames_votingVal(SEXP weightsSEXP, SEXP quotaSEXP, SEXP coalSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -74,7 +74,7 @@ END_RCPP
 }
 // sumOfVotingBanzhaf
 NumericVector sumOfVotingBanzhaf(const NumericMatrix& weights, const NumericVector& quotas, const IntegerVector& players, const String& denom);
-RcppExport SEXP _CoopGame_sumOfVotingBanzhaf(SEXP weightsSEXP, SEXP quotasSEXP, SEXP playersSEXP, SEXP denomSEXP) {
+RcppExport SEXP _VotingGames_sumOfVotingBanzhaf(SEXP weightsSEXP, SEXP quotasSEXP, SEXP playersSEXP, SEXP denomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -88,7 +88,7 @@ END_RCPP
 }
 // sumOfVotingShapley
 NumericVector sumOfVotingShapley(const NumericMatrix& weights, const NumericVector& quotas, const IntegerVector& players);
-RcppExport SEXP _CoopGame_sumOfVotingShapley(SEXP weightsSEXP, SEXP quotasSEXP, SEXP playersSEXP) {
+RcppExport SEXP _VotingGames_sumOfVotingShapley(SEXP weightsSEXP, SEXP quotasSEXP, SEXP playersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -101,7 +101,7 @@ END_RCPP
 }
 // sumOfVotingBanzhafTop
 NumericVector sumOfVotingBanzhafTop(const NumericMatrix& weights, const NumericVector& quotas, const int topN, const String& denom);
-RcppExport SEXP _CoopGame_sumOfVotingBanzhafTop(SEXP weightsSEXP, SEXP quotasSEXP, SEXP topNSEXP, SEXP denomSEXP) {
+RcppExport SEXP _VotingGames_sumOfVotingBanzhafTop(SEXP weightsSEXP, SEXP quotasSEXP, SEXP topNSEXP, SEXP denomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -115,7 +115,7 @@ END_RCPP
 }
 // sumOfVotingShapleyTop
 NumericVector sumOfVotingShapleyTop(const NumericMatrix& weights, const NumericVector& quotas, const int topN);
-RcppExport SEXP _CoopGame_sumOfVotingShapleyTop(SEXP weightsSEXP, SEXP quotasSEXP, SEXP topNSEXP) {
+RcppExport SEXP _VotingGames_sumOfVotingShapleyTop(SEXP weightsSEXP, SEXP quotasSEXP, SEXP topNSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -128,7 +128,7 @@ END_RCPP
 }
 // sumOfVotingValue
 double sumOfVotingValue(const NumericMatrix& weights, const NumericVector& quotas, const IntegerVector& coal);
-RcppExport SEXP _CoopGame_sumOfVotingValue(SEXP weightsSEXP, SEXP quotasSEXP, SEXP coalSEXP) {
+RcppExport SEXP _VotingGames_sumOfVotingValue(SEXP weightsSEXP, SEXP quotasSEXP, SEXP coalSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -141,20 +141,20 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_CoopGame_votingBanzhaf", (DL_FUNC) &_CoopGame_votingBanzhaf, 4},
-    {"_CoopGame_votingShapley", (DL_FUNC) &_CoopGame_votingShapley, 3},
-    {"_CoopGame_votingBanzhafTop", (DL_FUNC) &_CoopGame_votingBanzhafTop, 4},
-    {"_CoopGame_votingShapleyTop", (DL_FUNC) &_CoopGame_votingShapleyTop, 3},
-    {"_CoopGame_votingVal", (DL_FUNC) &_CoopGame_votingVal, 3},
-    {"_CoopGame_sumOfVotingBanzhaf", (DL_FUNC) &_CoopGame_sumOfVotingBanzhaf, 4},
-    {"_CoopGame_sumOfVotingShapley", (DL_FUNC) &_CoopGame_sumOfVotingShapley, 3},
-    {"_CoopGame_sumOfVotingBanzhafTop", (DL_FUNC) &_CoopGame_sumOfVotingBanzhafTop, 4},
-    {"_CoopGame_sumOfVotingShapleyTop", (DL_FUNC) &_CoopGame_sumOfVotingShapleyTop, 3},
-    {"_CoopGame_sumOfVotingValue", (DL_FUNC) &_CoopGame_sumOfVotingValue, 3},
+    {"_VotingGames_votingBanzhaf", (DL_FUNC) &_VotingGames_votingBanzhaf, 4},
+    {"_VotingGames_votingShapley", (DL_FUNC) &_VotingGames_votingShapley, 3},
+    {"_VotingGames_votingBanzhafTop", (DL_FUNC) &_VotingGames_votingBanzhafTop, 4},
+    {"_VotingGames_votingShapleyTop", (DL_FUNC) &_VotingGames_votingShapleyTop, 3},
+    {"_VotingGames_votingVal", (DL_FUNC) &_VotingGames_votingVal, 3},
+    {"_VotingGames_sumOfVotingBanzhaf", (DL_FUNC) &_VotingGames_sumOfVotingBanzhaf, 4},
+    {"_VotingGames_sumOfVotingShapley", (DL_FUNC) &_VotingGames_sumOfVotingShapley, 3},
+    {"_VotingGames_sumOfVotingBanzhafTop", (DL_FUNC) &_VotingGames_sumOfVotingBanzhafTop, 4},
+    {"_VotingGames_sumOfVotingShapleyTop", (DL_FUNC) &_VotingGames_sumOfVotingShapleyTop, 3},
+    {"_VotingGames_sumOfVotingValue", (DL_FUNC) &_VotingGames_sumOfVotingValue, 3},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_CoopGame(DllInfo *dll) {
+RcppExport void R_init_VotingGames(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
