@@ -3,7 +3,6 @@
 #include "coal_game.h"
 #include "voting_game.h"
 #include "math.h"
-#include "microarray_game.h"
 #include "voting_nonunique.h"
 #include "arguments.h"
 

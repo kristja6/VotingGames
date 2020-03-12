@@ -21,50 +21,6 @@ votingVal <- function(weights, quota, coal) {
     .Call(`_CoopGame_votingVal`, weights, quota, coal)
 }
 
-microarrayBanzhaf <- function(mtx, players, denom) {
-    .Call(`_CoopGame_microarrayBanzhaf`, mtx, players, denom)
-}
-
-microarrayShapley <- function(mtx, players) {
-    .Call(`_CoopGame_microarrayShapley`, mtx, players)
-}
-
-microarrayValue <- function(mtx, coal) {
-    .Call(`_CoopGame_microarrayValue`, mtx, coal)
-}
-
-microarrayStrongestCoalition <- function(mtx, size) {
-    .Call(`_CoopGame_microarrayStrongestCoalition`, mtx, size)
-}
-
-expressionsToFeaturesStd <- function(special, control) {
-    .Call(`_CoopGame_expressionsToFeaturesStd`, special, control)
-}
-
-votingMicroarrayBanzhaf <- function(special, control, players, denom) {
-    .Call(`_CoopGame_votingMicroarrayBanzhaf`, special, control, players, denom)
-}
-
-votingMicroarrayBanzhafTop <- function(special, control, topN, denom) {
-    .Call(`_CoopGame_votingMicroarrayBanzhafTop`, special, control, topN, denom)
-}
-
-votingMicroarrayShapley <- function(special, control, players) {
-    .Call(`_CoopGame_votingMicroarrayShapley`, special, control, players)
-}
-
-votingMicroarrayShapleyTop <- function(special, control, topN) {
-    .Call(`_CoopGame_votingMicroarrayShapleyTop`, special, control, topN)
-}
-
-votingMicroarrayValue <- function(special, control, coal) {
-    .Call(`_CoopGame_votingMicroarrayValue`, special, control, coal)
-}
-
-votingMicroarrayPredict <- function(special, control, sample) {
-    .Call(`_CoopGame_votingMicroarrayPredict`, special, control, sample)
-}
-
 sumOfVotingBanzhaf <- function(weights, quotas, players, denom) {
     .Call(`_CoopGame_sumOfVotingBanzhaf`, weights, quotas, players, denom)
 }
