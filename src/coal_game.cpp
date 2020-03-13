@@ -191,20 +191,17 @@ vector<double> CoalGame::normalizeRawBanzhaf(const vector<ZZ> &sums) {
   return res;
 }
 
-vector<double> CoalGame::normalizeRawShapley(const vector<ZZ> &sums) {
+vector<double> CoalGame::normalizeRawShapley(const vector<ZZ> &sums, const ZZ & normalization) {
   vector<double> res(sums.size());
   for (size_t i = 0; i < sums.size(); ++i) {
-    res[i] = conv<double>(conv<RR>(sums[i]) / conv<RR>(factorial(players)));
+    res[i] = conv<double>(conv<RR>(sums[i]) / conv<RR>(factorial(players) * normalization));
   }
   return res;
 }
 
-vector<double> CoalGame::normalizeShapleyCounts(const vector<ZZ> &sums) {
-  vector<double> res(sums.size());
-  for (size_t i = 0; i < sums.size(); ++i) {
-    res[i] = conv<double>(conv<RR>(sums[i] * factorial(i) * factorial(players - 1 - i)) / conv<RR>(factorial(players)));
-  }
-  return res;
+
+vector<double> CoalGame::normalizeRawShapley(const vector<ZZ> &sums) {
+  return normalizeRawShapley(sums, ZZ(1));
 }
 
 void CoalGame::optimalCoalitionOfFixedSizeRec(int items, int start_item, int len, vector<int> &coal) {

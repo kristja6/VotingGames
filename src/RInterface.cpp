@@ -92,7 +92,7 @@ double sumOfVotingValue(const NumericMatrix & weights, const NumericVector & quo
 }
 
 // [[Rcpp::export]]
-NumericVector microarrayBanzhaf(const NumericMatrix & mtx, const IntegerVector & players, const String & denom) {
+NumericVector microarrayBanzhaf(const NumericMatrix & mtx, const String & denom) {
   auto m = matrixToVectorsInt(mtx);
   MicroarrayGame game(m);
   if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
@@ -101,7 +101,7 @@ NumericVector microarrayBanzhaf(const NumericMatrix & mtx, const IntegerVector &
 }
 
 // [[Rcpp::export]]
-NumericVector microarrayShapley(const NumericMatrix & mtx, const IntegerVector & players) {
+NumericVector microarrayShapley(const NumericMatrix & mtx) {
   MicroarrayGame game(matrixToVectorsInt(mtx));
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());

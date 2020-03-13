@@ -1,10 +1,8 @@
-microarrayGame <- function(special, control) {
+microarrayGame <- function(checks) {
   res <- structure(list(
-      "special" = special
-      , "control" = control
-      , "checks" = expressionsToFeaturesStd(special, control)
+      "checks" = checks
+    , "players" = ncol(checks)
     )
-    , "players" = nrow(special)
     , class = "microarrayGame")
   return(res)
 }
@@ -41,12 +39,10 @@ getPlayers <- function(game, players = c()) {
 }
 
 banzhaf.microarrayGame <- function(game, players = c(), denom = "swings") {
-  players = getPlayers(game, players)
-  return(microarrayBanzhaf(game$checks))
+  return(microarrayBanzhaf(game$checks, denom))
 }
 
 shapley.microarrayGame <- function(game, players = c()) {
-  players = getPlayers(game, players)
   return(microarrayShapley(game$checks))
 }
 

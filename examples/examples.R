@@ -18,4 +18,9 @@ shapleyTop(svg, 1)
 banzhaf(svg, denom = "subsets")
 banzhafTop(svg, 1)
 
+
 #### Microarray games ####
+checks = rbind(c(1, 0, 1, 1), c(0, 1, 0, 0))
+mg = microarrayGame(checks)
+shapley(mg)
+banzhaf(mg)

@@ -41,12 +41,12 @@ sumOfVotingValue <- function(weights, quotas, coal) {
     .Call(`_VotingGames_sumOfVotingValue`, weights, quotas, coal)
 }
 
-microarrayBanzhaf <- function(mtx, players, denom) {
-    .Call(`_VotingGames_microarrayBanzhaf`, mtx, players, denom)
+microarrayBanzhaf <- function(mtx, denom) {
+    .Call(`_VotingGames_microarrayBanzhaf`, mtx, denom)
 }
 
-microarrayShapley <- function(mtx, players) {
-    .Call(`_VotingGames_microarrayShapley`, mtx, players)
+microarrayShapley <- function(mtx) {
+    .Call(`_VotingGames_microarrayShapley`, mtx)
 }
 
 microarrayValue <- function(mtx, coal) {

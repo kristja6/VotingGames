@@ -62,7 +62,7 @@ protected:
 
   vector<double> normalizeRawBanzhaf(const vector<ZZ> &sums);
   vector<double> normalizeRawShapley(const vector<ZZ> &sums);
-  vector<double> normalizeShapleyCounts(const vector<ZZ> &sums);
+  vector<double> normalizeRawShapley(const vector<ZZ> &sums, const ZZ & normalization);
 
   vector<int> bestCoal;
   double bestValue;
