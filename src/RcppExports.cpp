@@ -139,6 +139,43 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// microarrayBanzhaf
+NumericVector microarrayBanzhaf(const NumericMatrix& mtx, const IntegerVector& players, const String& denom);
+RcppExport SEXP _VotingGames_microarrayBanzhaf(SEXP mtxSEXP, SEXP playersSEXP, SEXP denomSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mtx(mtxSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
+    rcpp_result_gen = Rcpp::wrap(microarrayBanzhaf(mtx, players, denom));
+    return rcpp_result_gen;
+END_RCPP
+}
+// microarrayShapley
+NumericVector microarrayShapley(const NumericMatrix& mtx, const IntegerVector& players);
+RcppExport SEXP _VotingGames_microarrayShapley(SEXP mtxSEXP, SEXP playersSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mtx(mtxSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
+    rcpp_result_gen = Rcpp::wrap(microarrayShapley(mtx, players));
+    return rcpp_result_gen;
+END_RCPP
+}
+// microarrayValue
+double microarrayValue(const NumericMatrix& mtx, const IntegerVector& coal);
+RcppExport SEXP _VotingGames_microarrayValue(SEXP mtxSEXP, SEXP coalSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mtx(mtxSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type coal(coalSEXP);
+    rcpp_result_gen = Rcpp::wrap(microarrayValue(mtx, coal));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_VotingGames_votingBanzhaf", (DL_FUNC) &_VotingGames_votingBanzhaf, 4},
@@ -151,6 +188,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_VotingGames_sumOfVotingBanzhafTop", (DL_FUNC) &_VotingGames_sumOfVotingBanzhafTop, 4},
     {"_VotingGames_sumOfVotingShapleyTop", (DL_FUNC) &_VotingGames_sumOfVotingShapleyTop, 3},
     {"_VotingGames_sumOfVotingValue", (DL_FUNC) &_VotingGames_sumOfVotingValue, 3},
+    {"_VotingGames_microarrayBanzhaf", (DL_FUNC) &_VotingGames_microarrayBanzhaf, 3},
+    {"_VotingGames_microarrayShapley", (DL_FUNC) &_VotingGames_microarrayShapley, 2},
+    {"_VotingGames_microarrayValue", (DL_FUNC) &_VotingGames_microarrayValue, 2},
     {NULL, NULL, 0}
 };
 

@@ -9,16 +9,6 @@ microarrayGame <- function(special, control) {
   return(res)
 }
 
-votingMicroarray <- function(special, control) {
-  res <- structure(list(
-    "special" = special
-    , "control" = control
-    , "players" = nrow(special)
-  )
-  , class = "votingMicroarray")
-  return(res)
-}
-
 votingGame <- function(weights, quota) {
   res <- structure(list(
     "weights" = weights
@@ -62,32 +52,6 @@ shapley.microarrayGame <- function(game, players = c()) {
 
 value.microarrayGame <- function(game, coalition) {
   return(microarrayValue(game$checks, coalition))
-}
-
-banzhaf.votingMicroarray <- function(game, players = c(), denom = "swings") {
-  players = getPlayers(game, players)
-  return(votingMicroarrayBanzhaf(game$special, game$control, players, denom))
-}
-
-shapley.votingMicroarray <- function(game, players = c()) {
-  players = getPlayers(game, players)
-  return(votingMicroarrayShapley(game$special, game$control))
-}
-
-banzhafTop.votingMicroarray <- function(game, topN, denom = "subsets") {
-  return(votingMicroarrayBanzhafTop(game$special, game$control, topN))
-}
-
-shapleyTop.votingMicroarray <- function(game, topN) {
-  return(votingMicroarrayShapleyTop(game$special, game$control, topN))
-}
-
-value.votingMicroarray <- function(game, coalition) {
-  return(votingMicroarrayValue(game$special, game$control, coalition))
-}
-
-predict.votingMicroarray <- function(game, expressions) {
-  return(votingMicroarrayPredict(game$special, game$control, expressions))
 }
 
 banzhaf.votingGame <- function(game, players = c(), denom = "swings") {

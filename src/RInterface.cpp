@@ -2,11 +2,12 @@
 #include "voting_game.h"
 #include "sum_of_voting.h"
 #include "RInterface.h"
+#include "microarray_game.h"
 
 using namespace Rcpp;
 using namespace std;
 
-vector<vector<int>> matrixToVectorsLong(const NumericMatrix & mtx) {
+vector<vector<int>> matrixToVectorsInt(const NumericMatrix & mtx) {
   vector<vector<int>> m(mtx.nrow(), vector<int>(mtx.ncol()));
   for (int i = 0; i < mtx.nrow(); ++i) {
     for (int j = 0; j < mtx.ncol(); ++j) {
@@ -56,7 +57,7 @@ double votingVal(const IntegerVector & weights, const int quota, const IntegerVe
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingBanzhaf(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & players, const String & denom) {
-  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
+  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
   if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
@@ -64,14 +65,14 @@ NumericVector sumOfVotingBanzhaf(const NumericMatrix & weights, const NumericVec
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingShapley(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & players) {
-  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
+  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingBanzhafTop(const NumericMatrix & weights, const NumericVector & quotas, const int topN, const String & denom) {
-  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
+  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
   if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhafTop(topN);
   return NumericVector(res.begin(), res.end());
@@ -79,14 +80,36 @@ NumericVector sumOfVotingBanzhafTop(const NumericMatrix & weights, const Numeric
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingShapleyTop(const NumericMatrix & weights, const NumericVector & quotas, const int topN) {
-  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
+  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
   auto res = game.shapleyTop(topN);
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 double sumOfVotingValue(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & coal) {
-  SumOfVoting game(matrixToVectorsLong(weights), vector<int>(quotas.begin(), quotas.end()));
+  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
+  return game.v(vector<int>(coal.begin(), coal.end()));
+}
+
+// [[Rcpp::export]]
+NumericVector microarrayBanzhaf(const NumericMatrix & mtx, const IntegerVector & players, const String & denom) {
+  auto m = matrixToVectorsInt(mtx);
+  MicroarrayGame game(m);
+  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
+  auto res = game.banzhaf();
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+NumericVector microarrayShapley(const NumericMatrix & mtx, const IntegerVector & players) {
+  MicroarrayGame game(matrixToVectorsInt(mtx));
+  auto res = game.shapley();
+  return NumericVector(res.begin(), res.end());
+}
+
+// [[Rcpp::export]]
+double microarrayValue(const NumericMatrix & mtx, const IntegerVector & coal) {
+  MicroarrayGame game(matrixToVectorsInt(mtx));
   return game.v(vector<int>(coal.begin(), coal.end()));
 }
 
