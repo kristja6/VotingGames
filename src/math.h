@@ -50,6 +50,7 @@ private:
 };
 
 ZZ factorial(int n);
+ZZ factorialNoCache(int n);
 
 ZZ nChooseK(int a, int b);
 

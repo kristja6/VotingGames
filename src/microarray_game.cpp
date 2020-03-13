@@ -52,8 +52,14 @@ vector<double> MicroarrayGame::shapley() {
     // sum over all sizes
     ZZ swings;
     ZZ cnk(1);
+    ZZ firstFact = factorialNoCache(check.size() - 1);
+    ZZ secondFact = factorialNoCache(players - check.size());
     for (int ad = 0; ad <= players - (int)check.size(); ++ ad) {
-      swings += cnk * factorial(check.size() + ad - 1) * factorial(players - check.size() - ad);
+      swings += cnk * firstFact * secondFact;
+
+      if (ad == players - (int)check.size()) break;
+      firstFact *= check.size() - 1 + (ad + 1);
+      secondFact /= players - check.size() - ad;
       cnk *= (players - (int)check.size() - ad);
       cnk /= (ad + 1);
     }

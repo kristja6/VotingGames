@@ -195,6 +195,14 @@ ZZ factorial(int n) {
   return factorial(n);
 }
 
+ZZ factorialNoCache(int n) {
+  ZZ res(1);
+  for (int i = 2; i <= n; ++ i) {
+    res *= i;
+  }
+  return res;
+}
+
 ZZ Polynomial2D::get(int row, int column) const {
   return coeff(data, row*columns + column);
 }
