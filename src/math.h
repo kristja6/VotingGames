@@ -51,6 +51,7 @@ private:
 
 ZZ factorial(int n);
 ZZ factorialNoCache(int n);
+ZZ factorialNoCacheDigits(int n, int bits);
 
 ZZ nChooseK(int a, int b);
 

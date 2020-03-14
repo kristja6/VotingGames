@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <numeric>
+#include <NTL/ZZ.h>
 #include "math.h"
 
 double logAdd(double u, double v) {
@@ -199,6 +200,16 @@ ZZ factorialNoCache(int n) {
   ZZ res(1);
   for (int i = 2; i <= n; ++ i) {
     res *= i;
+  }
+  return res;
+}
+
+ZZ factorialDigits(int n, int bits) {
+  ZZ res(1);
+  ZZ pw = power(ZZ(2), bits + 1);
+  for (int i = 2; i <= n; ++ i) {
+    res *= i;
+    res %= pw;
   }
   return res;
 }

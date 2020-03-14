@@ -2,6 +2,7 @@
 // Created by maty on 08/12/19.
 //
 #include <set>
+#include <NTL/RR.h>
 #include "microarray_game.h"
 #include "math.h"
 
@@ -46,7 +47,8 @@ vector<double> MicroarrayGame::banzhaf() {
 }
 
 vector<double> MicroarrayGame::shapley() {
-  vector<ZZ> sums(players);
+  vector<double> res(players);
+  RR factPlayers = conv<RR>(factorialNoCache(players));
 
   for (auto & check: checks) {
     // sum over all sizes
@@ -63,9 +65,10 @@ vector<double> MicroarrayGame::shapley() {
       cnk *= (players - (int)check.size() - ad);
       cnk /= (ad + 1);
     }
+    const auto sp = conv<double>(conv<RR>(swings) / factPlayers);
     for (auto & p: check) {
-      sums[p] += swings;
+      res[p] += sp;
     }
   }
-  return normalizeRawShapley(sums, ZZ(checks.size()));
+  return res;
 }
