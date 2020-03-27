@@ -43,32 +43,18 @@ vector<double> MicroarrayGame::banzhaf() {
       sums[p] += power(ZZ(2), (players - check.size()));
     }
   }
+  //setBanzhafDenominator(BANZHAF_DENOM_SUBSETS); // This is what they use in the relevant paper
   return normalizeRawBanzhaf(sums);
 }
 
 vector<double> MicroarrayGame::shapley() {
   vector<double> res(players);
-  RR factPlayers = conv<RR>(factorialNoCache(players));
-
-  for (auto & check: checks) {
-    // sum over all sizes
-    ZZ swings;
-    ZZ cnk(1);
-    ZZ firstFact = factorialNoCache(check.size() - 1);
-    ZZ secondFact = factorialNoCache(players - check.size());
-    for (int ad = 0; ad <= players - (int)check.size(); ++ ad) {
-      swings += cnk * firstFact * secondFact;
-
-      if (ad == players - (int)check.size()) break;
-      firstFact *= check.size() - 1 + (ad + 1);
-      secondFact /= players - check.size() - ad;
-      cnk *= (players - (int)check.size() - ad);
-      cnk /= (ad + 1);
-    }
-    const auto sp = conv<double>(conv<RR>(swings) / factPlayers);
-    for (auto & p: check) {
-      res[p] += sp;
+  for (const auto & check: checks) {
+    if (!check.size()) continue;
+    for (auto i: check) {
+      res[i] += 1.0 / check.size();
     }
   }
+  for (auto & i: res) i /= checks.size();
   return res;
 }

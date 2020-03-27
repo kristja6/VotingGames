@@ -27,7 +27,7 @@ double SumOfVoting::v(const vector<int> &coal) {
 vector<double> SumOfVoting::banzhaf() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
-    dbg << i << ' ' << flush;
+    dbg << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
     auto cur = gamesNonunique[i].banzhaf();
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];
@@ -40,7 +40,7 @@ vector<double> SumOfVoting::banzhaf() {
 vector<double> SumOfVoting::shapley() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
-    dbg << i << ' ' << flush; // TODO: probably remove in final version
+    dbg << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
     auto cur = gamesNonunique[i].shapley();
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];

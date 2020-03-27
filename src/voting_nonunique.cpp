@@ -36,6 +36,7 @@ rollingShapley(emptyTable()) {
     }
     turn ++;
   }
+
   for (size_t i = 0; i < uniqueWeights.size(); ++ i) {
     uniqueWeights[i] = res[i].second;
     weightCount[i] = res[i].first;
@@ -192,7 +193,7 @@ double VotingNonunique::shapley(int player) {
   addToTableInplace(tab, uniqueWeights[idx], weightCount[idx] - 1);
 
   ZZ swings = countSwingsTable(tab, uniqueWeights[idx]);
-  return shapleyCache[weights[player]] = normalizeRawShapley(vector<ZZ>{swings})[0];
+  return shapleyCache[weights[player]] = normalizeRawShapley(vector<ZZ>{swings}, factorial(nonzeroPlayers))[0];
 }
 
 vector<double> VotingNonunique::shapleyNewForEachPlayer() {
@@ -255,6 +256,11 @@ Polynomial2D VotingNonunique::tableWithOne(int weight, int count) {
 
 Polynomial2D VotingNonunique::tableWithOne(int weight, int count, int maxPlayers, int quota) {
   Polynomial2D res(min(weight * count + 1, (int)quota), min((int)count + 1, maxPlayers + 1));
+  if (weight == 0) { // this must be corrected when normalizing
+    Polynomial2D res(1, 1);
+    res.set(0, 0, 1);
+    return res;
+  }
   ZZ nck(1);
   for (int i = 0; i <= min((int)count, maxPlayers+1); ++i) {
     if (i*weight >= quota) break;
@@ -283,6 +289,10 @@ Polynomial2D VotingNonunique::mergeRecShapley(int st, int en) {
 
 vector<double> VotingNonunique::shapleyNewDp() {
   vector<int> p(players);
+  dbg << "weights: " << endl;
+  for (int i = 0; i < uniqueWeights.size(); ++ i) {
+    dbg << uniqueWeights[i] << ": " << weightCount[i] << endl;
+  }
   for (int i = 0; i < players; ++i) p[i] = i;
   return shapleyNewDp(p);
 }
@@ -317,14 +327,14 @@ vector<double> VotingNonunique::shapleyNewDp(const vector<int> & p) {
       for (int k = max(0, quota - weights[i]); k < quota; ++ k) {
         curCount += cpy[j][k];
       }
-      sums[weights[i]] += curCount * factorial(j) * factorial(players - j - 1);
+      sums[weights[i]] += curCount * factorial(j) * factorial(nonzeroPlayers - j - 1);
     }
   }
   vector<ZZ> res(players, ZZ(0));
   for (int i = 0; i < players; ++i) {
     res[i] = sums[weights[i]];
   }
-  return normalizeRawShapley(res);
+  return normalizeRawShapley(res, factorial(nonzeroPlayers));
 }
 
 vector<double> VotingNonunique::banzhafNewDp(const vector<int> & p) {

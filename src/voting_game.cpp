@@ -322,8 +322,8 @@ void VotingGame::precompMaxPlayers() {
     if (cumSum <= quota - 1) maxPlayers ++;
     if (cumSum <= quota - 1 + maxWeight) maxPlayersAll ++;
   }
-  maxPlayers = min(maxPlayers, players);
-  maxPlayersAll = min(maxPlayersAll, players);
+  maxPlayers = min(maxPlayers, nonzeroPlayers);
+  maxPlayersAll = min(maxPlayersAll, nonzeroPlayers);
 }
 
 const vector<int> & VotingGame::getWeights() const {
