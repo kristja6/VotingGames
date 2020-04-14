@@ -318,6 +318,8 @@ void VotingGame::precompMaxPlayers() {
   maxPlayers = 1;
   int cumSum = 0;
   for (size_t i = 0; i < wc.size(); ++ i) {
+    // skip zero players
+    if (wc[i] == 0) continue;
     cumSum += wc[i];
     if (cumSum <= quota - 1) maxPlayers ++;
     if (cumSum <= quota - 1 + maxWeight) maxPlayersAll ++;

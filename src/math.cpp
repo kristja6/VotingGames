@@ -196,12 +196,32 @@ ZZ factorial(int n) {
   return factorial(n);
 }
 
-ZZ factorialNoCache(int n) {
+/*ZZ factorialNoCache(int n) {
   ZZ res(1);
   for (int i = 2; i <= n; ++ i) {
     res *= i;
   }
   return res;
+}*/
+
+ZZ multiplySequence(vector<int> a) {
+  if (a.size() == 1) return ZZ(a.back());
+  else if (a.size() == 0) return ZZ(1);
+
+  vector<int> b;
+  vector<int> c;
+  for (int i = 0; i < a.size(); ++i) {
+    if (i%2 == 0) b.push_back(a[i]);
+    else c.push_back(a[i]);
+  }
+  return multiplySequence(b) * multiplySequence(c);
+}
+
+ZZ factorialNoCache(int n) {
+  if (n <= 1) return ZZ(1);
+  vector<int> seq(n - 1);
+  for (int i = 0; i < seq.size(); ++ i) seq[i] = i+2;
+  return multiplySequence(seq);
 }
 
 ZZ factorialDigits(int n, int bits) {

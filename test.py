@@ -25,6 +25,9 @@ files = [
     , "./inputs/voting/test1.in"
     , "./inputs/voting/seq6.in"
     , "./inputs/voting/seq20.in"
+    , "./inputs/final_voting/norm100.in"
+    , "./inputs/final_voting/seq100.in"
+    , "./inputs/final_voting/uni100.in"
     , "./inputs/voting/with_zero.in"]
 
 
