@@ -210,7 +210,7 @@ ZZ multiplySequence(vector<int> a) {
 
   vector<int> b;
   vector<int> c;
-  for (int i = 0; i < a.size(); ++i) {
+  for (int i = 0; i < (int)a.size(); ++i) {
     if (i%2 == 0) b.push_back(a[i]);
     else c.push_back(a[i]);
   }
@@ -220,7 +220,7 @@ ZZ multiplySequence(vector<int> a) {
 ZZ factorialNoCache(int n) {
   if (n <= 1) return ZZ(1);
   vector<int> seq(n - 1);
-  for (int i = 0; i < seq.size(); ++ i) seq[i] = i+2;
+  for (int i = 0; i < (int)seq.size(); ++ i) seq[i] = i+2;
   return multiplySequence(seq);
 }
 

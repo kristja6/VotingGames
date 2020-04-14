@@ -105,14 +105,6 @@ vector<double> VotingGame::shapley() {
   return VotingNonunique(weights, quota).shapley();
 }
 
-vector<double> VotingGame::shapleyNewForEach() {
-  vector<double> res(players);
-  for (int i = 0; i < players; ++ i) {
-    res[i] = shapley(i);
-  }
-  return res;
-}
-
 double VotingGame::shapley(int player) {
   Polynomial2D tab = mergeRecShapleyDense(0, player - 1, maxPlayers) * mergeRecShapleyDense(player + 1, players - 1, maxPlayers);
   tab.shrink(quota, maxPlayers+1);
@@ -272,15 +264,6 @@ Polynomial2D VotingGame::tableWithOne(int weight) {
   Polynomial2D res(weight + 1, 2);
   res.set(0, 0, 1);
   res.set(weight, 1, 1);
-  return res;
-}
-
-vector<double> VotingGame::shapleyNew() {
-  vector<double> res(players);
-  ZZ f = factorial(players);
-  for (int i = 0; i < players; ++i) {
-    res[i] = shapley(i);
-  }
   return res;
 }
 

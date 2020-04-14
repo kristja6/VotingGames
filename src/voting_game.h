@@ -22,8 +22,6 @@ class VotingGame : public CoalGame {
   // TIME: O(n^2*q), SPACE: O(nq)
   vector<double> shapleyUnoDp();
   // TODO: TIME
-  virtual vector<double> shapleyNew();
-  virtual vector<double> shapleyNewForEach();
 
   const vector<int> & getWeights() const;
   int getQuota() const;

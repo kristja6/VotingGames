@@ -50,20 +50,6 @@ void example3() {
   printVec(game.shapleyEnum());
 }
 
-void testInteractionIndex() {
-  cout << "Interaction index" << endl;
-  //VotingGame game(5, vector<int>{4, 8, 20, 32, 44}, 54);
-  VotingGame game(vector<int>{4, 4, 4, 4, 1, 1, 1, 1}, 8);
-  printVec(game.banzhaf());
-  for (int i = 0; i < game.players; ++i) {
-    for (int j = 0; j < game.players; ++j) {
-      std::set<int> subset = {i, j};
-      cout << i << ' ' << j << ": " << game.banzhafInteractionEnum(vector<int>(subset.begin(), subset.end())) << endl;
-    }
-  }
-  cout << endl;
-}
-
 int main(int argc, const char ** argv) {
   srand(time(0));
   Arguments args;
@@ -71,24 +57,12 @@ int main(int argc, const char ** argv) {
   auto instance = readVotingGameInstance();
 
   if (args.has("shapley")) {
-    if (args.has("opt")) {
-      if (args.has("new-only-convolution")) printVec(VotingNonunique(instance.first, instance.second).shapleyNew());
-      if (args.has("new-for-each")) printVec(VotingNonunique(instance.first, instance.second).shapleyNewForEachPlayer());
-      if (args.has("new-dp")) printVec(VotingNonunique(instance.first, instance.second).shapleyNewDp());
-    } else if (args.has("normal")) {
-      if (args.has("new")) printVec(VotingGame(instance.first, instance.second).shapleyNew());
-      if (args.has("new-for-each")) printVec(VotingGame(instance.first, instance.second).shapleyNewForEach());
-      if (args.has("uno")) printVec(VotingGame(instance.first, instance.second).shapleyUnoDp());
-    }
+    if (args.has("uno")) printVec(VotingGame(instance.first, instance.second).shapleyUnoDp());
+    else printVec(VotingNonunique(instance.first, instance.second).shapleyNewDp());
   } else if (args.has("banzhaf")) {
-    if (args.has("opt")) {
-      if (args.has("new-only-convolution")) printVec(VotingNonunique(instance.first, instance.second).banzhafNewOnlyConvolution());
-      if (args.has("new-with-deconvolution")) printVec(VotingNonunique(instance.first, instance.second).banzhafNewWithDeconvolution());
-      if (args.has("new-dp")) printVec(VotingNonunique(instance.first, instance.second).banzhafNewDp());
-    } else if (args.has("normal")) {
-      if (args.has("uno")) printVec(VotingGame(instance.first, instance.second).banzhafUnoDp());
-      if (args.has("naive")) printVec(VotingGame(instance.first, instance.second).banzhafNaiveDp());
-    }
+    if (args.has("uno")) printVec(VotingGame(instance.first, instance.second).banzhafUnoDp());
+    else if (args.has("naive")) printVec(VotingGame(instance.first, instance.second).banzhafNaiveDp());
+    else printVec(VotingNonunique(instance.first, instance.second).banzhafNewDp());
   }
 
   return 0;

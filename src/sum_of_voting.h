@@ -24,12 +24,9 @@ struct PlayerWeights {
   bool operator < (const PlayerWeights & o) const;
 };
 
-
 class SumOfVoting: public CoalGame {
 public:
   SumOfVoting(const vector<vector<int>> & weights, const vector<int> & quotas);
-  /*SumOfVoting(const vector<VotingNonunique> & games): CoalGame(games[0].players), gamesNonunique(games) {
-  }*/
   SumOfVoting(int players): CoalGame(players) {
   }
   virtual double v(const vector<int> & coal);

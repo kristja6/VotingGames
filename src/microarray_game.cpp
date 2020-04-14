@@ -43,7 +43,6 @@ vector<double> MicroarrayGame::banzhaf() {
       sums[p] += power(ZZ(2), (players - check.size()));
     }
   }
-  //setBanzhafDenominator(BANZHAF_DENOM_SUBSETS); // This is what they use in the relevant paper
   return normalizeRawBanzhaf(sums);
 }
 

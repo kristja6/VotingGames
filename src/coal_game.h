@@ -41,17 +41,8 @@ public:
   void banzhafEnumRec(int player, vector<int> & coal);
   vector<double> shapleyEnum();
   void shapleyEnumRec(int player, vector<int> & coal);
-  virtual double banzhafInteraction(vector<int> inputSubset);
-
-  // NOTE: currently normalized by the number of possible coalitions without inputSubset
-  double banzhafInteractionEnum(vector<int> inputSubset);
-  // interates over subsets of 2^players - input_subset
-  ZZ banzhafInteractionEnumRec1(int player, const std::set<int> & forbidden, vector<int> & curSubset, const vector<int> & inputSubset);
-  // iterates over subsets of the input subset
-  ZZ banzhafInteractionEnumRec2(int player, vector<int> &curSubset, const vector<int> &subset, int added = 0);
 
   virtual void setBanzhafDenominator(int denom);
-  virtual vector<int> optimalCoalitionOfFixedSize(int size);
 
   int players;
   int getPlayers() const;
@@ -66,9 +57,6 @@ protected:
 
   vector<int> bestCoal;
   double bestValue;
-
-  void optimalCoalitionOfFixedSizeRec(int items, int start_item, int len, vector<int> & coal);
-
   bool outputLog = 0;
 
 private:

@@ -27,44 +27,46 @@ double SumOfVoting::v(const vector<int> &coal) {
 vector<double> SumOfVoting::banzhaf() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
-    dbg << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
+    cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
     auto cur = gamesNonunique[i].banzhaf();
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];
     }
   }
-  dbg << endl;
+  cerr << endl;
   return res;
 }
 
 vector<double> SumOfVoting::shapley() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
-    dbg << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
+    cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
     auto cur = gamesNonunique[i].shapley();
     for (size_t j = 0; j < cur.size(); ++j) {
       res[j] += cur[j];
     }
   }
-  dbg << endl;
+  cerr << endl;
   return res;
 }
 
 double SumOfVoting::banzhaf(int player) {
   double res = 0;
   for (size_t i = 0; i < gamesUnique.size(); ++i) {
+    cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
     res += gamesUnique[i].banzhaf(player);
   }
+  cerr << endl;
   return res;
 }
 
 double SumOfVoting::shapley(int player) {
   double res = 0;
   for (size_t i = 0; i < gamesUnique.size(); ++i) {
-    dbg << i << ' ' << flush;
+    cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
     res += gamesNonunique[i].shapley(player);
   }
-  dbg << endl;
+  cerr << endl;
   return res;
 }
 
