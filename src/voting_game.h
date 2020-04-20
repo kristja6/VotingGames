@@ -18,46 +18,33 @@ public:
 
   double v(const vector<int> &coalition) override;
 
-  vector<double> shapley() override;
-  vector<double> banzhaf() override;
-  vector<double> banzhaf(const vector<int> &);
-  vector<double> shapley(const vector<int> &);
+  vector<double> shapley() override; // Computes the Shapley value of all players
+  vector<double> banzhaf() override; // Computes the Banzhaf index of all players
+  vector<double> shapley(const vector<int> &); // Computes the Shapley value only for the players in the input
+  vector<double> banzhaf(const vector<int> &); // Computes the Banzhaf index only for the players in the input
 
+  virtual vector<double> banzhafTop(int); // Computer the Shapley value only for the topN strongest players
+  virtual vector<double> shapleyTop(int); // Computer the Banzhaf index only for the topN strongest players
+
+  const vector<int> & getWeights() const { return weights; }
+
+private:
   vector<double> shapleyNewDp();
   vector<double> shapleyNewDp(const vector<int> &);
 
   vector<double> banzhafNewDp();
   vector<double> banzhafNewDp(const vector<int> &);
 
-  virtual vector<double> banzhafTop(int topN);
-  virtual vector<double> shapleyTop(int);
 
-  const vector<int> & getWeights() const { return weights; }
-
-private:
-
-  // Banzhaf methods
+  // For Banzhaf index
   ZZX emptyColumn();
   ZZX columnWithOne(int weight, int count);
-  ZZX columnWithOne(int weight, int count, int maxPlayers, int quota);
-  ZZX addToColumn(const ZZX & a, int weight, int count);
-  void addToColumnInplace(ZZX & a, int weight, int count);
-
-  void banzhafRec(int first, int last, ZZX pf);
-  ZZX mergeRecBanzhaf(int st, int en);
   ZZX mergeRecBanzhaf(int st, int en, int);
 
-  // Shapley methods
+  // For Shapley value
   Polynomial2D emptyTable();
   Polynomial2D tableWithOne(int weight, int count);
-  Polynomial2D tableWithOne(int weight, int count, int, int);
-  void addToTableInplace(Polynomial2D & a, int weight, int count);
-  void removeFromColumn(ZZX &a, int weight, int count);
-  ZZ countSwingsTable(const Polynomial2D & a, int weight);
-
-  Polynomial2D mergeRecShapley(int st, int en);
-  Polynomial2D mergeRecShapley(int st, int en, int maxPlayers, int quota);
-  void shapleyMergeRec(int first, int last, const Polynomial2D &pf);
+  Polynomial2D mergeRecShapley(int st, int en, int keepForPlayers, int keepForQuota);
 
   vector<int> getTopPlayers(int topN);
   void precompMaxPlayers();

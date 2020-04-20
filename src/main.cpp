@@ -83,10 +83,10 @@ int main(int argc, const char ** argv) {
 
   cout.precision(numeric_limits<double>::max_digits10);
   if (args.has(OPT_SHAPLEY)) {
-    printVec(VotingGame(instance.first, instance.second).shapleyNewDp());
+    printVec(VotingGame(instance.first, instance.second).shapley());
   }
   if (args.has(OPT_BANZHAF)) {
-    printVec(VotingGame(instance.first, instance.second).banzhafNewDp());
+    printVec(VotingGame(instance.first, instance.second).banzhaf());
   }
 
   return 0;

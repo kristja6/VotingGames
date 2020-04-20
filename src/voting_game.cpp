@@ -20,10 +20,6 @@ VotingGame::VotingGame(const vector<int> & weights, int quota) : CoalitionalGame
 
   precompMaxPlayers();
 
-
-
-
-
   auto w = weights;
   sort(w.begin(), w.end());
   // decrease unneeded resolution
@@ -65,10 +61,6 @@ ZZX VotingGame::emptyColumn() {
 }
 
 ZZX VotingGame::columnWithOne(int weight, int count) {
-  return columnWithOne(weight, count, maxPlayersAll, quota);
-}
-
-ZZX VotingGame::columnWithOne(int weight, int count, int maxPlayers, int quota) {
   ZZX res = emptyColumn();
   // n choose k
   ZZ nck(1);
@@ -99,50 +91,20 @@ double VotingGame::v(const vector<int> &coalition) {
   return sum >= quota;
 }
 
-ZZX VotingGame::addToColumn(const ZZX &a, int weight, int count) {
-  if (!count) return a;
-  ZZX res = a * columnWithOne(weight, count);
-  cutPolynom(res, quota);
-  return res;
-}
-
-void VotingGame::addToColumnInplace(ZZX &a, int weight, int count) {
-  a *= columnWithOne(weight, count);
-  cutPolynom(a, quota);
-}
-
-void VotingGame::removeFromColumn(ZZX &a, int weight, int count) {
-  a = reverse(a, a.rep.length() - 1);
-  ZZX t = columnWithOne(weight, count);
-  t = reverse(t, t.rep.length() - 1);
-  deconvolution(a, t);
-  a = reverse(a, a.rep.length() - 1);
-}
-
-ZZX VotingGame::mergeRecBanzhaf(int st, int en) {
-  return mergeRecBanzhaf(st, en, quota);
-}
-
-ZZX VotingGame::mergeRecBanzhaf(int st, int en, int quota) {
+ZZX VotingGame::mergeRecBanzhaf(int st, int en, int keepForQuota) {
   if (en < 0 || st >= players) return emptyColumn();
   if (st == en) {
     ZZX res = columnWithOne(uniqueWeights[st], weightCount[st]);
     return res;
   }
-  ZZX res = mergeRecBanzhaf(st, (st + en) / 2) * mergeRecBanzhaf((st + en) / 2 + 1, en);
-  cutPolynom(res, quota);
+  ZZX res = mergeRecBanzhaf(st, (st + en) / 2, keepForQuota) * mergeRecBanzhaf((st + en) / 2 + 1, en, keepForQuota);
+  cutPolynom(res, keepForQuota);
 
   return res;
 }
 
 vector<double> VotingGame::shapley() {
   return shapleyNewDp();
-}
-
-void VotingGame::addToTableInplace(Polynomial2D &a, int weight, int count) {
-  if (!weight || !count) return;
-  a *= tableWithOne(weight, count);
-  a.shrink(quota, maxPlayers+1);
 }
 
 Polynomial2D VotingGame::emptyTable() {
@@ -152,10 +114,6 @@ Polynomial2D VotingGame::emptyTable() {
 }
 
 Polynomial2D VotingGame::tableWithOne(int weight, int count) {
-  return tableWithOne(weight, count, maxPlayers, quota);
-}
-
-Polynomial2D VotingGame::tableWithOne(int weight, int count, int maxPlayers, int quota) {
   Polynomial2D res(min(weight * count + 1, (int)quota), min((int)count + 1, maxPlayers + 1));
   if (weight == 0) { // this must be corrected when normalizing
     Polynomial2D res(1, 1);
@@ -172,32 +130,16 @@ Polynomial2D VotingGame::tableWithOne(int weight, int count, int maxPlayers, int
   return res;
 }
 
-ZZ VotingGame::countSwingsTable(const Polynomial2D & a, int weight) {
-  ZZ res(0);
-  for (int i = 0; i < a.columns; ++i) {
-    ZZ cur(0);
-    for (int j = quota - weight; j < quota; ++j) {
-      cur += a.get(j, i);
-    }
-    res += cur * factorialCached(i) * factorialCached(players - i - 1);
-  }
-  return res;
-}
-
-Polynomial2D VotingGame::mergeRecShapley(int st, int en, int maxPlayers, int quota) {
+Polynomial2D VotingGame::mergeRecShapley(int st, int en, int keepForPlayers, int keepForQuota) {
   if (en < 0 || st > en) return emptyTable();
   if (st == en) {
     return tableWithOne(uniqueWeights[st], weightCount[st]);
   }
-  Polynomial2D a = mergeRecShapley(st, (st + en)/2, maxPlayers, quota);
-  Polynomial2D b = mergeRecShapley((st + en)/2 + 1, en, maxPlayers, quota);
+  Polynomial2D a = mergeRecShapley(st, (st + en)/2, keepForPlayers, keepForQuota);
+  Polynomial2D b = mergeRecShapley((st + en)/2 + 1, en, keepForPlayers, keepForQuota);
   a.efficientMul(b);
-  a.shrink(quota, maxPlayers+1);
+  a.shrink(keepForQuota, keepForPlayers + 1);
   return a;
-}
-
-Polynomial2D VotingGame::mergeRecShapley(int st, int en) {
-  return mergeRecShapley(st, en, maxPlayersAll, quota + maxWeight);
 }
 
 vector<double> VotingGame::shapleyNewDp() {
@@ -209,7 +151,7 @@ vector<double> VotingGame::shapleyNewDp() {
 vector<double> VotingGame::shapleyNewDp(const vector<int> & p) {
   unordered_map<int,double> sums;
   vector<vector<ZZ>> left = vector<vector<ZZ>>(maxPlayersAll, vector<ZZ>(quota + maxWeight, ZZ(0)));
-  Polynomial2D * temp = new Polynomial2D(mergeRecShapley(0, (int)uniqueWeights.size() - 1));
+  Polynomial2D * temp = new Polynomial2D(mergeRecShapley(0, (int)uniqueWeights.size() - 1, maxPlayersAll, quota + maxWeight));
   for (int i = 0; i < maxPlayersAll; ++i) {
     for (int j = 0; j < quota + maxWeight; ++j) {
       left[i][j] = temp->get(j, i);
