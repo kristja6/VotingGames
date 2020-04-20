@@ -2,7 +2,7 @@
 CC          := g++
 
 #The Target Binary Program
-TARGET      := coal-game
+TARGET      := voting-games
 
 #The Directories, Source, Includes, Objects, Binary and Resources
 SRCDIR      := src
@@ -27,7 +27,7 @@ SOURCES     := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS     := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 
 #Defauilt Make
-all: build test
+all: build
 
 build: resources $(TARGET)
 
@@ -51,6 +51,7 @@ directories:
 #Clean only Objecst
 clean:
 	@$(RM) -rf $(BUILDDIR)
+	rm -f src/*.o
 
 #Full Clean, Objects and Binaries
 cleaner: clean
@@ -76,5 +77,3 @@ $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
 #Non-File Targets
 .PHONY: all remake clean cleaner resources
 
-test: resources $(TARGET)
-	./test.py

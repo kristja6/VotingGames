@@ -6,7 +6,7 @@
 #define COOPGAME_VOTING_NONUNIQUE_H
 
 
-#include "coal_game.h"
+#include "coalitional_game.h"
 #include "voting_game.h"
 #include <NTL/ZZX.h>
 #include <unordered_map>

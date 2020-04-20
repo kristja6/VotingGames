@@ -17,11 +17,6 @@ void printVec(const vector<double> &a);
 void printVec(const vector<int> &a);
 void printVec(const vector<long long int> &a);
 void printMtx(const vector<vector<int>> &a);
-vector<int> inversePermutation(const vector<int> & p);
-double mean(const vector<double> & a);
-double sd(const vector<double> & a, double mean);
-double sd(const vector<double> & a);
-double median(vector<double> & a);
 
 vector<int> random_perm(int);
 vector<int> random_subset(int n);

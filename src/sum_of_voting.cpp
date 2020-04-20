@@ -7,7 +7,7 @@
 #include "sum_of_voting.h"
 #include "math.h"
 
-SumOfVoting::SumOfVoting(const vector<vector<int>> &weights, const vector<int> &quotas) : CoalGame(weights[0].size()) {
+SumOfVoting::SumOfVoting(const vector<vector<int>> &weights, const vector<int> &quotas) : CoalitionalGame(weights[0].size()) {
   assert(weights.size() == quotas.size());
   for (size_t i = 0; i < weights.size(); ++i) {
     gamesNonunique.push_back(VotingNonunique(weights[i], quotas[i]));

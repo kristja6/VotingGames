@@ -6,7 +6,7 @@
 #include <set>
 #include "math.h"
 #define BANZHAF_DENOM_SUBSETS 0
-#define BANZHAF_DENOM_WINNING 1
+#define BANZHAF_DENOM_WINNING 1 // for normalized banzhaf index
 #define BANZHAF_DENOM_NONE 2
 
 #define dbg cerr
@@ -15,11 +15,11 @@ using namespace std;
 using namespace NTL;
 
 // type of weights
-class CoalGame {
+class CoalitionalGame {
 public:
-  CoalGame() = default;
-  CoalGame(int players): players(players) {};
-  CoalGame(int players, const function<double(const vector<int> & players)> & fn):
+  CoalitionalGame() = default;
+  CoalitionalGame(int players): players(players) {};
+  CoalitionalGame(int players, const function<double(const vector<int> & players)> & fn):
     players(players), vFunc(fn) { };
 
   virtual double v(const vector<int> & coalition);
@@ -45,7 +45,6 @@ public:
   virtual void setBanzhafDenominator(int denom);
 
   int players;
-  int getPlayers() const;
 
 protected:
   int banzhafDenominator = BANZHAF_DENOM_WINNING; // TODO: use winning by defualt

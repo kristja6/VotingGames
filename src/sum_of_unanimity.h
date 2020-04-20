@@ -5,17 +5,17 @@
 #ifndef COAL_GAME_MICROARRAY_GAME_H
 #define COAL_GAME_MICROARRAY_GAME_H
 
-#include "coal_game.h"
+#include "coalitional_game.h"
 #include "math.h"
 
 
-class MicroarrayGame : public CoalGame {
+class SumOfUnanimity : public CoalitionalGame {
 public:
-  MicroarrayGame(const vector<std::set<int>> & checks): CoalGame(checks.size()), checks(checks) {
+  SumOfUnanimity(const vector<std::set<int>> & checks): CoalitionalGame(checks.size()), checks(checks) {
   }
   // create from a boolean matrix, where each check is a row, each column a player.
   // 1 means that the player is required in the check
-  MicroarrayGame(const vector<vector<int>> & mtx);
+  SumOfUnanimity(const vector<vector<int>> & mtx);
   virtual double v(const vector<int> & coalition);
 
   vector<double> banzhaf() override ;

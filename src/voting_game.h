@@ -1,10 +1,10 @@
 #ifndef __ZERO_ONE_GAME__
 #define __ZERO_ONE_GAME__
 
-#include "coal_game.h"
+#include "coalitional_game.h"
 #include "math.h"
 
-class VotingGame : public CoalGame {
+class VotingGame : public CoalitionalGame {
   public:
 
   VotingGame(const vector<int> &weights, int quota);

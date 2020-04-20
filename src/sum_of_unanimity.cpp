@@ -3,11 +3,11 @@
 //
 #include <set>
 #include <NTL/RR.h>
-#include "microarray_game.h"
+#include "sum_of_unanimity.h"
 #include "math.h"
 
-MicroarrayGame::MicroarrayGame(const vector<vector<int>> &mtx) :
-    CoalGame(mtx[0].size()), checks(vector<std::set<int>>(mtx.size())) {
+SumOfUnanimity::SumOfUnanimity(const vector<vector<int>> &mtx) :
+    CoalitionalGame(mtx[0].size()), checks(vector<std::set<int>>(mtx.size())) {
   for (size_t i = 0; i < mtx.size(); ++i) {
     for (size_t j = 0; j < mtx[i].size(); ++j) {
       if (mtx[i][j] == 1) checks[i].insert(j);
@@ -15,7 +15,7 @@ MicroarrayGame::MicroarrayGame(const vector<vector<int>> &mtx) :
   }
 }
 
-double MicroarrayGame::v(const vector<int> &coalition) {
+double SumOfUnanimity::v(const vector<int> &coalition) {
   if (checks.empty()) return 0;
   std::set<int> coal(coalition.begin(), coalition.end());
   double res = 0;
@@ -35,7 +35,7 @@ double MicroarrayGame::v(const vector<int> &coalition) {
   return res / checks.size();
 }
 
-vector<double> MicroarrayGame::banzhaf() {
+vector<double> SumOfUnanimity::banzhaf() {
   vector<ZZ> sums(players);
 
   for (auto & check: checks) {
@@ -49,7 +49,7 @@ vector<double> MicroarrayGame::banzhaf() {
   return res;
 }
 
-vector<double> MicroarrayGame::shapley() {
+vector<double> SumOfUnanimity::shapley() {
   vector<double> res(players);
   for (const auto & check: checks) {
     if (!check.size()) continue;

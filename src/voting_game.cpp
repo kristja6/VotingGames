@@ -7,7 +7,7 @@
 #include <algorithm>
 
 VotingGame::VotingGame(const vector<int> &weights, int quota) :
-    CoalGame(weights.size()), weights(weights), quota(quota) {
+    CoalitionalGame(weights.size()), weights(weights), quota(quota) {
   nonzeroPlayers = players;
   maxWeight = 0;
   for (int i = 0; i < players; ++ i) {

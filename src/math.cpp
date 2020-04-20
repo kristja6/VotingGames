@@ -53,12 +53,12 @@ void normToLog(vector<double> &a) {
 
 void printVec(const vector<double> &a) {
   for (auto i: a) cout << i << ' ';
-  cout << endl << endl;
+  cout << endl;
 }
 
 void printVec(const vector<int> &a) {
   for (auto i: a) cout << i << ' ';
-  cout << endl << endl;
+  cout << endl;
 }
 
 void printVec(const vector<long long int> &a) {
@@ -69,14 +69,6 @@ void printVec(const vector<long long int> &a) {
 void normalize(vector<double> &a, vector<double> &b) {
   logToNorm(a);
   logToNorm(b);
-}
-
-vector<int> inversePermutation(const vector<int> &p) {
-  vector<int> res(p.size());
-  for (size_t i = 0; i < p.size(); ++i) {
-    res[p[i]] = i;
-  }
-  return res;
 }
 
 void printMtx(const matrix &a) {
@@ -314,8 +306,4 @@ void Polynomial2D::efficientMul(Polynomial2D &a) {
   resize(nrows, ncolumns);
   a.resize(nrows, ncolumns);
   data *= a.data;
-}
-
-ZZ nChooseK(int a, int b) {
-  return (factorial(a) / factorial(b)) / factorial(a - b);
 }

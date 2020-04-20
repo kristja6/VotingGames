@@ -1,6 +1,7 @@
 #include <vector>
 #include <set>
-#include "coal_game.h"
+#include <fstream>
+#include "coalitional_game.h"
 #include "voting_game.h"
 #include "math.h"
 #include "voting_nonunique.h"
@@ -9,7 +10,7 @@
 void example1() {
   cout << "Monte carlo" << endl;
   const vector<int> w = vector<int>{4, 8, 20, 32, 44};
-  CoalGame game(5,  [w] (const vector<int> & players) {
+  CoalitionalGame game(5, [w] (const vector<int> & players) {
     int sum = 0;
     for (int player : players) {
       sum += w[player];
@@ -36,7 +37,7 @@ void example2() {
 void example3() {
   cout << "Enumeration" << endl;
   const vector<int> w = vector<int>{4, 8, 20, 32, 44};
-  CoalGame game(5,  [w] (const vector<int> & players) {
+  CoalitionalGame game(5, [w] (const vector<int> & players) {
     int sum = 0;
     for (int player : players) {
       sum += w[player];
@@ -50,19 +51,43 @@ void example3() {
   printVec(game.shapleyEnum());
 }
 
+void readingFileFailed() {
+  cout << "Error: reading from the file has failed" << endl;
+  exit(1);
+};
+
 int main(int argc, const char ** argv) {
   srand(time(0));
   Arguments args;
   args.ReadArguments(argc, argv);
-  auto instance = readVotingGameInstance();
 
-  if (args.has("shapley")) {
-    if (args.has("uno")) printVec(VotingGame(instance.first, instance.second).shapleyUnoDp());
-    else printVec(VotingNonunique(instance.first, instance.second).shapleyNewDp());
-  } else if (args.has("banzhaf")) {
-    if (args.has("uno")) printVec(VotingGame(instance.first, instance.second).banzhafUnoDp());
-    else if (args.has("naive")) printVec(VotingGame(instance.first, instance.second).banzhafNaiveDp());
-    else printVec(VotingNonunique(instance.first, instance.second).banzhafNewDp());
+  if (!args.has(OPT_SHAPLEY) && !args.has(OPT_BANZHAF)) {
+    args.printHelp();
+    return 1;
+  }
+
+  VotingGameInstance instance;
+  if (args.has(OPT_READ_FROM_STDIN)) instance = readVotingGameInstance(cin);
+  else {
+    if (args.inputFileName.empty()) {
+      readingFileFailed();
+    }
+    try {
+      ifstream in(args.inputFileName);
+      if (in.fail()) readingFileFailed();
+      instance = readVotingGameInstance(in);
+    } catch (...) {
+      readingFileFailed();
+    }
+  }
+
+
+  cout.precision(numeric_limits<double>::max_digits10);
+  if (args.has(OPT_SHAPLEY)) {
+    printVec(VotingNonunique(instance.first, instance.second).shapleyNewDp());
+  }
+  if (args.has(OPT_BANZHAF)) {
+    printVec(VotingNonunique(instance.first, instance.second).banzhafNewDp());
   }
 
   return 0;

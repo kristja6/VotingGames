@@ -2,7 +2,7 @@
 #include "voting_game.h"
 #include "sum_of_voting.h"
 #include "RInterface.h"
-#include "microarray_game.h"
+#include "sum_of_unanimity.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -94,7 +94,7 @@ double sumOfVotingValue(const NumericMatrix & weights, const NumericVector & quo
 // [[Rcpp::export]]
 NumericVector microarrayBanzhaf(const NumericMatrix & mtx, const String & denom) {
   auto m = matrixToVectorsInt(mtx);
-  MicroarrayGame game(m);
+  SumOfUnanimity game(m);
   if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
@@ -102,14 +102,14 @@ NumericVector microarrayBanzhaf(const NumericMatrix & mtx, const String & denom)
 
 // [[Rcpp::export]]
 NumericVector microarrayShapley(const NumericMatrix & mtx) {
-  MicroarrayGame game(matrixToVectorsInt(mtx));
+  SumOfUnanimity game(matrixToVectorsInt(mtx));
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 double microarrayValue(const NumericMatrix & mtx, const IntegerVector & coal) {
-  MicroarrayGame game(matrixToVectorsInt(mtx));
+  SumOfUnanimity game(matrixToVectorsInt(mtx));
   return game.v(vector<int>(coal.begin(), coal.end()));
 }
 

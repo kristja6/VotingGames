@@ -1,30 +1,30 @@
-#include "coal_game.h"
+#include "coalitional_game.h"
 #include <NTL/RR.h>
 #include <algorithm>
 #include <set>
 
 
-double CoalGame::v(const vector<int> &coalition) {
+double CoalitionalGame::v(const vector<int> &coalition) {
   return vFunc(coalition);
 }
 
-vector<double> CoalGame::shapley() {
+vector<double> CoalitionalGame::shapley() {
   return shapleyEnum();
 }
 
-double CoalGame::shapley(int player) {
+double CoalitionalGame::shapley(int player) {
   return shapley()[player];
 }
 
-vector<double> CoalGame::banzhaf() {
+vector<double> CoalitionalGame::banzhaf() {
   return banzhafEnum();
 }
 
-double CoalGame::banzhaf(int player) {
+double CoalitionalGame::banzhaf(int player) {
   return banzhaf()[player];
 }
 
-vector<double> CoalGame::shapleyMonteCarlo(int iters) {
+vector<double> CoalitionalGame::shapleyMonteCarlo(int iters) {
   vector<RR> sh(players);
   for (int it = 0; it < iters; ++ it) {
     vector<int> pi = random_perm(players);
@@ -41,7 +41,7 @@ vector<double> CoalGame::shapleyMonteCarlo(int iters) {
   return res;
 }
 
-vector<double> CoalGame::banzhafMonteCarlo(int iters) {
+vector<double> CoalitionalGame::banzhafMonteCarlo(int iters) {
   vector<ZZ> bz(players);
   vector<int> appears(players);
   double swingVotes = 0;
@@ -64,14 +64,14 @@ vector<double> CoalGame::banzhafMonteCarlo(int iters) {
   return normalizeRawBanzhaf(bz);
 }
 
-vector<double> CoalGame::banzhafEnum() {
+vector<double> CoalitionalGame::banzhafEnum() {
   sums = vector<ZZ>(players);
   vector<int> coal;
   banzhafEnumRec(0, coal);
   return normalizeRawBanzhaf(sums);
 }
 
-void CoalGame::banzhafEnumRec(int player, vector<int> &coal) {
+void CoalitionalGame::banzhafEnumRec(int player, vector<int> &coal) {
   if (player == players) {
     for (int i = (int)coal.size() - 1; i >= 0; --i) {
       const int pl = coal[i];
@@ -90,14 +90,14 @@ void CoalGame::banzhafEnumRec(int player, vector<int> &coal) {
   coal.pop_back();
 }
 
-vector<double> CoalGame::shapleyEnum() {
+vector<double> CoalitionalGame::shapleyEnum() {
   sums = vector<ZZ>(players);
   vector<int> coal;
   shapleyEnumRec(0, coal);
   return normalizeRawShapley(sums);
 }
 
-void CoalGame::shapleyEnumRec(int player, vector<int> &coal) {
+void CoalitionalGame::shapleyEnumRec(int player, vector<int> &coal) {
   if (player == players) {
     const double withAll = log(v(coal));
     for (int i = (int)coal.size() - 1; i >= 0; --i) {
@@ -118,11 +118,11 @@ void CoalGame::shapleyEnumRec(int player, vector<int> &coal) {
   coal.pop_back();
 }
 
-void CoalGame::setBanzhafDenominator(int denom) {
+void CoalitionalGame::setBanzhafDenominator(int denom) {
   banzhafDenominator = denom;
 }
 
-vector<double> CoalGame::normalizeRawBanzhaf(const vector<ZZ> &sums) {
+vector<double> CoalitionalGame::normalizeRawBanzhaf(const vector<ZZ> &sums) {
   vector<double> res(sums.size());
   if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
     ZZ swingVotes(0);
@@ -140,7 +140,7 @@ vector<double> CoalGame::normalizeRawBanzhaf(const vector<ZZ> &sums) {
   return res;
 }
 
-vector<double> CoalGame::normalizeRawShapley(const vector<ZZ> &sums, const ZZ & normalization) {
+vector<double> CoalitionalGame::normalizeRawShapley(const vector<ZZ> &sums, const ZZ & normalization) {
   vector<double> res(sums.size());
   for (size_t i = 0; i < sums.size(); ++i) {
     res[i] = conv<double>(conv<RR>(sums[i]) / conv<RR>(normalization));
@@ -149,6 +149,6 @@ vector<double> CoalGame::normalizeRawShapley(const vector<ZZ> &sums, const ZZ & 
 }
 
 
-vector<double> CoalGame::normalizeRawShapley(const vector<ZZ> &sums) {
+vector<double> CoalitionalGame::normalizeRawShapley(const vector<ZZ> &sums) {
   return normalizeRawShapley(sums, ZZ(factorial(players)));
 }
