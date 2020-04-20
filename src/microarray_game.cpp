@@ -40,10 +40,13 @@ vector<double> MicroarrayGame::banzhaf() {
 
   for (auto & check: checks) {
     for (auto & p: check) {
-      sums[p] += power(ZZ(2), (players - check.size()));
+      sums[p] += power(ZZ(2), (players - check.size() + 1));
     }
   }
-  return normalizeRawBanzhaf(sums);
+  setBanzhafDenominator(BANZHAF_DENOM_SUBSETS); // This is what they use in the relevant paper
+  auto res = normalizeRawBanzhaf(sums);
+  for (auto & i: res) i /= checks.size();
+  return res;
 }
 
 vector<double> MicroarrayGame::shapley() {

@@ -226,11 +226,6 @@ Polynomial2D VotingNonunique::mergeRecShapley(int st, int en) {
 
 vector<double> VotingNonunique::shapleyNewDp() {
   vector<int> p(players);
-  dbg << "weights: " << endl;
-  for (int i = 0; i < uniqueWeights.size(); ++ i) {
-    dbg << uniqueWeights[i] << ":" << weightCount[i] << ' ';
-  }
-  dbg << endl;
   for (int i = 0; i < players; ++i) p[i] = i;
   return shapleyNewDp(p);
 }
