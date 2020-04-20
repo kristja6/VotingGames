@@ -1,5 +1,4 @@
 #include <Rcpp.h>
-#include "voting_game.h"
 #include "sum_of_voting.h"
 #include "RInterface.h"
 #include "sum_of_unanimity.h"
@@ -20,7 +19,7 @@ vector<vector<int>> matrixToVectorsInt(const NumericMatrix & mtx) {
 // [[Rcpp::export]]
 NumericVector votingBanzhaf(const NumericVector & weights, const int quota, const IntegerVector & players, const String & denom) {
   vector<double> res;
-  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
+  VotingGame game(vector<int>(weights.begin(), weights.end()), quota);
   if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
@@ -28,7 +27,7 @@ NumericVector votingBanzhaf(const NumericVector & weights, const int quota, cons
 
 // [[Rcpp::export]]
 NumericVector votingShapley(const IntegerVector & weights, const int quota, const IntegerVector & players) {
-  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
+  VotingGame game(vector<int>(weights.begin(), weights.end()), quota);
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
 }
@@ -36,7 +35,7 @@ NumericVector votingShapley(const IntegerVector & weights, const int quota, cons
 // [[Rcpp::export]]
 NumericVector votingBanzhafTop(const NumericVector & weights, const int quota, const int topN, const String & denom) {
   vector<double> res;
-  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
+  VotingGame game(vector<int>(weights.begin(), weights.end()), quota);
   if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   res = game.banzhafTop(topN);
   return NumericVector(res.begin(), res.end());
@@ -44,14 +43,14 @@ NumericVector votingBanzhafTop(const NumericVector & weights, const int quota, c
 
 // [[Rcpp::export]]
 NumericVector votingShapleyTop(const IntegerVector & weights, const int quota, const int topN) {
-  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
+  VotingGame game(vector<int>(weights.begin(), weights.end()), quota);
   auto res = game.shapleyTop(topN);
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 double votingVal(const IntegerVector & weights, const int quota, const IntegerVector & coal) {
-  VotingNonunique game(vector<int>(weights.begin(), weights.end()), quota);
+  VotingGame game(vector<int>(weights.begin(), weights.end()), quota);
   return game.v(vector<int>(coal.begin(), coal.end()));
 }
 

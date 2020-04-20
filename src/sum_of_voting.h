@@ -7,7 +7,6 @@
 
 #include <vector>
 #include "voting_game.h"
-#include "voting_nonunique.h"
 
 using namespace std;
 
@@ -42,8 +41,7 @@ public:
   vector<int> getTopPlayers(const vector<vector<int>> & weights, int numberOfTopPlayers);
 
 protected:
-  vector<VotingNonunique> gamesNonunique;
-  vector<VotingGame> gamesUnique;
+  vector<VotingGame> gamesNonunique;
   vector<vector<int>> getWeights();
 };
 

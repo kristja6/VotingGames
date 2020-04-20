@@ -1,65 +1,84 @@
-#ifndef __ZERO_ONE_GAME__
-#define __ZERO_ONE_GAME__
+//
+// Created by maty on 07/02/20.
+//
+
+#ifndef COOPGAME_VOTING_NONUNIQUE_H
+#define COOPGAME_VOTING_NONUNIQUE_H
+
 
 #include "coalitional_game.h"
-#include "math.h"
+#include <NTL/ZZX.h>
+#include <unordered_map>
+
+using namespace NTL;
 
 class VotingGame : public CoalitionalGame {
-  public:
-
+public:
   VotingGame(const vector<int> &weights, int quota);
-  double v(const vector<int> & coalition) override;
 
-  virtual vector<double> banzhaf() override;
-  virtual double banzhaf(int player) override;
-  virtual vector<double> shapley() override;
-  virtual double shapley(int player);
+  double v(const vector<int> &coalition) override;
 
-  // TIME: O(n^3 * q), SPACE: O(n^2 + q)
-  vector<double> banzhafNaiveDp();
-  // TODO: TIME
-  vector<double> banzhafUnoDp();
-  // TIME: O(n^2*q), SPACE: O(nq)
-  vector<double> shapleyUnoDp();
-  // TODO: TIME
+  vector<double> shapley() override;
+  vector<double> banzhaf() override;
+  vector<double> banzhaf(const vector<int> &);
+  vector<double> shapley(const vector<int> &);
 
-  const vector<int> & getWeights() const;
-  int getQuota() const;
+  vector<double> shapleyNewDp();
+  vector<double> shapleyNewDp(const vector<int> &);
 
-protected:
+  vector<double> banzhafNewDp();
+  vector<double> banzhafNewDp(const vector<int> &);
+
+  virtual vector<double> banzhafTop(int topN);
+  virtual vector<double> shapleyTop(int);
+
+  const vector<int> & getWeights() const { return weights; }
+
+private:
+
   // Banzhaf methods
   ZZX emptyColumn();
-  void addToColumnInplace(ZZX &a, int weight);
-  ZZ countSwingsColumn(const ZZX & a, const ZZX & b, int weight);
-  void removeFromColumnInplace(ZZX &a, int weight);
-  ZZX columnWithOne(int weight);
-  ZZ countSwingsTable(const Polynomial2D & a, int weight);
-  vector<int> getTopPlayers(int topN);
+  ZZX columnWithOne(int weight, int count);
+  ZZX columnWithOne(int weight, int count, int maxPlayers, int quota);
+  ZZX addToColumn(const ZZX & a, int weight, int count);
+  void addToColumnInplace(ZZX & a, int weight, int count);
 
-  virtual ZZX mergeRecBanzhaf(int st, int en);
+  void banzhafRec(int first, int last, ZZX pf);
+  ZZX mergeRecBanzhaf(int st, int en);
+  ZZX mergeRecBanzhaf(int st, int en, int);
 
   // Shapley methods
   Polynomial2D emptyTable();
-  Polynomial2D tableWithOne(int weight);
-  vector<double> shapleyUnoDpHelper();
+  Polynomial2D tableWithOne(int weight, int count);
+  Polynomial2D tableWithOne(int weight, int count, int, int);
+  void addToTableInplace(Polynomial2D & a, int weight, int count);
+  void removeFromColumn(ZZX &a, int weight, int count);
+  ZZ countSwingsTable(const Polynomial2D & a, int weight);
 
-  Polynomial2D mergeRecShapleyDense(int st, int en, int depth = 1);
+  Polynomial2D mergeRecShapley(int st, int en);
+  Polynomial2D mergeRecShapley(int st, int en, int maxPlayers, int quota);
+  void shapleyMergeRec(int first, int last, const Polynomial2D &pf);
 
-  // Common methods
+  vector<int> getTopPlayers(int topN);
   void precompMaxPlayers();
-  int reduceDummyPlayers();
+
+  // information about the game
+  vector<int> uniqueWeights;
+  vector<int> weightCount;
 
   int maxPlayers;
   int maxPlayersAll;
   int nonzeroPlayers;
+
+  int quota;
+  vector<int> weights;
   int maxWeight;
 
-  // Defines the game
-  vector<int> weights;
-  int quota;
-
-
-private:
+  vector<ZZ> sums;
+  ZZ sum;
+  unordered_map<int,ZZ> weightToRes;
+  unordered_map<int,double> shapleyCache;
 };
 
-#endif
+
+#endif //COOPGAME_VOTING_NONUNIQUE_H

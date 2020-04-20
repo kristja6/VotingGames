@@ -2,9 +2,8 @@
 #include <set>
 #include <fstream>
 #include "coalitional_game.h"
-#include "voting_game.h"
 #include "math.h"
-#include "voting_nonunique.h"
+#include "voting_game.h"
 #include "arguments.h"
 
 void example1() {
@@ -84,10 +83,10 @@ int main(int argc, const char ** argv) {
 
   cout.precision(numeric_limits<double>::max_digits10);
   if (args.has(OPT_SHAPLEY)) {
-    printVec(VotingNonunique(instance.first, instance.second).shapleyNewDp());
+    printVec(VotingGame(instance.first, instance.second).shapleyNewDp());
   }
   if (args.has(OPT_BANZHAF)) {
-    printVec(VotingNonunique(instance.first, instance.second).banzhafNewDp());
+    printVec(VotingGame(instance.first, instance.second).banzhafNewDp());
   }
 
   return 0;

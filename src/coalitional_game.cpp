@@ -107,7 +107,7 @@ void CoalitionalGame::shapleyEnumRec(int player, vector<int> &coal) {
       coal.pop_back();
       incr -= v(coal);
       coal.push_back(pl);
-      sums[pl] += incr * factorial(coal.size() - 1) * factorial(players - coal.size());
+      sums[pl] += incr * factorialCached(coal.size() - 1) * factorialCached(players - coal.size());
     }
     sort(coal.begin(), coal.end());
     return;
@@ -150,5 +150,5 @@ vector<double> CoalitionalGame::normalizeRawShapley(const vector<ZZ> &sums, cons
 
 
 vector<double> CoalitionalGame::normalizeRawShapley(const vector<ZZ> &sums) {
-  return normalizeRawShapley(sums, ZZ(factorial(players)));
+  return normalizeRawShapley(sums, ZZ(factorialCached(players)));
 }

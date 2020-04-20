@@ -178,14 +178,14 @@ void cutPolynom(ZZX &c, int maxLength) {
 }
 
 vector<ZZ> factorialCache;
-ZZ factorial(int n) {
+ZZ factorialCached(int n) {
   assert(n >= 0);
   if (factorialCache.empty()) factorialCache.push_back(ZZ(1));
   if (n < (int)factorialCache.size()) return factorialCache[n];
   for (int i = factorialCache.size(); i <= n; ++ i) {
     factorialCache.push_back(factorialCache.back() * i);
   }
-  return factorial(n);
+  return factorialCached(n);
 }
 
 /*ZZ factorialNoCache(int n) {

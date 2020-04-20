@@ -44,7 +44,7 @@ private:
   void resize(int nrows, int ncolumns);
 };
 
-ZZ factorial(int n);
+ZZ factorialCached(int n);
 ZZ factorialNoCache(int n);
 ZZ factorialNoCacheDigits(int n, int bits);
 

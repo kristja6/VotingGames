@@ -10,8 +10,7 @@
 SumOfVoting::SumOfVoting(const vector<vector<int>> &weights, const vector<int> &quotas) : CoalitionalGame(weights[0].size()) {
   assert(weights.size() == quotas.size());
   for (size_t i = 0; i < weights.size(); ++i) {
-    gamesNonunique.push_back(VotingNonunique(weights[i], quotas[i]));
-    gamesUnique.push_back(VotingGame(weights[i], quotas[i]));
+    gamesNonunique.push_back(VotingGame(weights[i], quotas[i]));
   }
   players = weights[0].size();
 }
@@ -52,9 +51,9 @@ vector<double> SumOfVoting::shapley() {
 
 double SumOfVoting::banzhaf(int player) {
   double res = 0;
-  for (size_t i = 0; i < gamesUnique.size(); ++i) {
+  for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
-    res += gamesUnique[i].banzhaf(player);
+    res += gamesNonunique[i].banzhaf(vector<int>(1, player))[0];
   }
   cerr << endl;
   return res;
@@ -62,9 +61,9 @@ double SumOfVoting::banzhaf(int player) {
 
 double SumOfVoting::shapley(int player) {
   double res = 0;
-  for (size_t i = 0; i < gamesUnique.size(); ++i) {
+  for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
-    res += gamesNonunique[i].shapley(player);
+    res += gamesNonunique[i].shapley(vector<int>(1, player))[0];
   }
   cerr << endl;
   return res;
@@ -122,8 +121,7 @@ vector<vector<int>> SumOfVoting::getWeights() {
 
 void SumOfVoting::setBanzhafDenominator(int denom) {
   banzhafDenominator = denom;
-  for (int i = 0; i < gamesUnique.size(); ++ i) {
-    gamesUnique[i].setBanzhafDenominator(denom);
+  for (int i = 0; i < gamesNonunique.size(); ++ i) {
     gamesNonunique[i].setBanzhafDenominator(denom);
   }
 }
