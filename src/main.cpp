@@ -7,6 +7,7 @@
 #include "arguments.h"
 
 void example1() {
+  srand(time(0));
   cout << "Monte carlo" << endl;
   const vector<int> w = vector<int>{4, 8, 20, 32, 44};
   CoalitionalGame game(5, [w] (const vector<int> & players) {
@@ -26,7 +27,7 @@ void example1() {
 
 void example2() {
   cout << "DP" << endl;
-  VotingGame game(vector<int>{4, 8, 0, 20, 32, 0, 44, 1}, 54);
+  VotingGame game(vector<int>{4, 8, 20, 32, 44}, 54);
   cout << "Banzhaf: " << endl;
   printVec(game.banzhaf());
   cout << "Shapley: " << endl;
@@ -53,12 +54,16 @@ void example3() {
 void readingFileFailed() {
   cout << "Error: reading from the file has failed" << endl;
   exit(1);
-};
+}
 
 int main(int argc, const char ** argv) {
   srand(time(0));
   Arguments args;
   args.ReadArguments(argc, argv);
+
+  //example1();
+  //example2();
+  //example3();
 
   if (!args.has(OPT_SHAPLEY) && !args.has(OPT_BANZHAF)) {
     args.printHelp();

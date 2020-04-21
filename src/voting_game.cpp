@@ -29,7 +29,7 @@ VotingGame::VotingGame(const vector<int> & weights, int quota) : CoalitionalGame
       weightCount.push_back(1);
     } else weightCount.back() ++;
   }
-  // TODO: put into separate function
+
   // balance counts of weights by pairing small with large
   std::set<pair<int,int>> pr;
   for (size_t i = 0; i < uniqueWeights.size(); ++ i) {
@@ -225,7 +225,7 @@ vector<double> VotingGame::banzhafNewDp(const vector<int> & p) {
     sums[weights[i]] = curCount;
   }
   vector<ZZ> res(players, ZZ(-1));
-  for (int i = 0; i < p.size(); ++i) {
+  for (size_t i = 0; i < p.size(); ++i) {
     res[p[i]] = sums[weights[p[i]]];
   }
   return normalizeRawBanzhaf(res);
@@ -268,7 +268,7 @@ vector<int> VotingGame::getTopPlayers(int topN) {
   vector<pair<int, int>> weightIdx(players);
   for (int i = 0; i < players; ++i) weightIdx[i].first = -weights[i], weightIdx[i].second = i;
   sort(weightIdx.begin(), weightIdx.end());
-  while (p.size() < players && (p.size() < topN || weightIdx[p.size()] == weightIdx[p.size() - 1])) {
+  while ((int)p.size() < players && ((int)p.size() < topN || weightIdx[p.size()] == weightIdx[p.size() - 1])) {
     p.push_back(weightIdx[p.size()].second);
   }
   return p;

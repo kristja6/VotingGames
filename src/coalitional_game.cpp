@@ -35,7 +35,7 @@ vector<double> CoalitionalGame::shapleyMonteCarlo(int iters) {
       sh[pi[i]] += v(cur);
     }
   }
-  for (int i = 0; i < players; ++ i) sh[i] /= iters; // TODO: make double here
+  for (int i = 0; i < players; ++ i) sh[i] /= iters;
   vector<double> res(players);
   for (int i = 0; i < players; ++ i) res[i] = conv<double>(sh[i]);
   return res;
@@ -65,10 +65,16 @@ vector<double> CoalitionalGame::banzhafMonteCarlo(int iters) {
 }
 
 vector<double> CoalitionalGame::banzhafEnum() {
-  sums = vector<ZZ>(players);
+  sums = vector<double>(players);
   vector<int> coal;
   banzhafEnumRec(0, coal);
-  return normalizeRawBanzhaf(sums);
+  double norm = 0;
+  if (banzhafDenominator == BANZHAF_DENOM_SUBSETS) norm = pow(2, players - 1);
+  else if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
+    for (auto i: sums) norm += i;
+    for (auto & i: sums) i /= norm;
+  }
+  return sums;
 }
 
 void CoalitionalGame::banzhafEnumRec(int player, vector<int> &coal) {
@@ -78,12 +84,13 @@ void CoalitionalGame::banzhafEnumRec(int player, vector<int> &coal) {
       sums[pl] += v(coal);
       swap(coal[i], coal.back());
       coal.pop_back();
-      sums[pl] += v(coal);
+      sums[pl] -= v(coal);
       coal.push_back(pl);
     }
     sort(coal.begin(), coal.end());
     return;
   }
+
   banzhafEnumRec(player + 1, coal);
   coal.push_back(player);
   banzhafEnumRec(player + 1, coal);
@@ -91,15 +98,16 @@ void CoalitionalGame::banzhafEnumRec(int player, vector<int> &coal) {
 }
 
 vector<double> CoalitionalGame::shapleyEnum() {
-  sums = vector<ZZ>(players);
+  sums = vector<double>(players);
   vector<int> coal;
   shapleyEnumRec(0, coal);
-  return normalizeRawShapley(sums);
+  for (auto & i: sums) i /= conv<double>(factorialCached(players));
+  return sums;
 }
 
 void CoalitionalGame::shapleyEnumRec(int player, vector<int> &coal) {
   if (player == players) {
-    const double withAll = log(v(coal));
+    const double withAll = v(coal);
     for (int i = (int)coal.size() - 1; i >= 0; --i) {
       const int pl = coal[i];
       double incr = withAll;
@@ -107,7 +115,7 @@ void CoalitionalGame::shapleyEnumRec(int player, vector<int> &coal) {
       coal.pop_back();
       incr -= v(coal);
       coal.push_back(pl);
-      sums[pl] += incr * factorialCached(coal.size() - 1) * factorialCached(players - coal.size());
+      sums[pl] += incr * conv<double>(factorialCached(coal.size() - 1) * factorialCached(players - coal.size()));
     }
     sort(coal.begin(), coal.end());
     return;

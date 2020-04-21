@@ -164,8 +164,6 @@ void deconvolution(ZZX &c, const ZZX &b) {
   c <<= (b.rep.length() - 1);
   c = c/b;
   //ZZX res;
-  //HomDivide(c, c, b); // TODO: why is not this the default?
-  //HomPseudoDiv(c, c, b); // TODO: why is not this the default?
   //c = res;
   c.normalize();
 }
@@ -270,7 +268,7 @@ Polynomial2D &Polynomial2D::operator*=(Polynomial2D a) {
   return *this;
 }
 
-void Polynomial2D::cutRows(int r) { //TODO: is this correct?
+void Polynomial2D::cutRows(int r) {
   if (rows > r) {
     rows = r;
     cutPolynom(data, rows * columns);

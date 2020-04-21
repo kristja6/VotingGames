@@ -47,8 +47,7 @@ public:
   int players;
 
 protected:
-  int banzhafDenominator = BANZHAF_DENOM_WINNING; // TODO: use winning by defualt
-  //int banzhafDenominator = BANZHAF_DENOM_SUBSETS;
+  int banzhafDenominator = BANZHAF_DENOM_WINNING;
 
   vector<double> normalizeRawBanzhaf(const vector<ZZ> &sums);
   vector<double> normalizeRawShapley(const vector<ZZ> &sums);
@@ -60,7 +59,7 @@ protected:
 
 private:
   function<double(const vector<int> & players)> vFunc;
-  vector<ZZ> sums;
+  vector<double> sums;
 
 };
 

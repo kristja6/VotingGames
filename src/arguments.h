@@ -14,7 +14,6 @@ using namespace std;
 #define OPT_SHAPLEY "s"
 #define OPT_BANZHAF "b"
 #define OPT_READ_FROM_STDIN "i"
-#define OPT_READ_FROM_FILE "f"
 
 typedef pair<vector<int>, int> VotingGameInstance;
 

@@ -17,7 +17,7 @@ struct PlayerWeights {
   PlayerWeights(const PlayerWeights &) = default;
   PlayerWeights & operator = (const PlayerWeights &) = default;
 
-  vector<int> weights; // TODO: optimize this with a reference
+  vector<int> weights;
   int idx;
 
   bool operator < (const PlayerWeights & o) const;

@@ -71,7 +71,7 @@ double SumOfVoting::shapley(int player) {
 
 vector<double> SumOfVoting::shapleyTop(int topN) {
   auto pl = getTopPlayers(getWeights(), topN);
-  vector<double> res(players, -1); // TODO: this is messy
+  vector<double> res(players, -1);
   for (auto i: pl) res[i] = 0;
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     auto cur = gamesNonunique[i].shapley(pl);
@@ -84,7 +84,7 @@ vector<double> SumOfVoting::shapleyTop(int topN) {
 
 vector<double> SumOfVoting::banzhafTop(int topN) {
   auto pl = getTopPlayers(getWeights(), topN);
-  vector<double> res(players, -1); // TODO: this is messy
+  vector<double> res(players, -1);
   for (auto i: pl) res[i] = 0;
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     auto cur = gamesNonunique[i].banzhaf(pl);
@@ -121,7 +121,7 @@ vector<vector<int>> SumOfVoting::getWeights() {
 
 void SumOfVoting::setBanzhafDenominator(int denom) {
   banzhafDenominator = denom;
-  for (int i = 0; i < gamesNonunique.size(); ++ i) {
+  for (size_t i = 0; i < gamesNonunique.size(); ++ i) {
     gamesNonunique[i].setBanzhafDenominator(denom);
   }
 }
