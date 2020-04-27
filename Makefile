@@ -77,3 +77,6 @@ $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
 #Non-File Targets
 .PHONY: all remake clean cleaner resources
 
+install: build
+	R CMD build ./
+	R CMD INSTALL VotingGames_1.0.tar.gz

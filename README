@@ -11,3 +11,7 @@ make install
 
 Installs the R package and builds executable binary file ./bin/coal-game.
 Run ./bin/coal-game to see help on its usage.
+
+# Examples
+
+See the examples provided in the folder 'examples'
