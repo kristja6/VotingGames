@@ -21,9 +21,7 @@ void printMtx(const vector<vector<int>> &a);
 vector<int> random_perm(int);
 vector<int> random_subset(int n);
 
-void deconvolution(ZZX & c, const ZZX & b);
 void cutPolynom(ZZX & c, int maxLength);
-
 
 struct Polynomial2D {
   Polynomial2D(int rows, int columns): rows(rows), columns(columns) {
@@ -46,8 +44,5 @@ private:
 
 ZZ factorialCached(int n);
 ZZ factorialNoCache(int n);
-ZZ factorialNoCacheDigits(int n, int bits);
-
-ZZ nChooseK(int a, int b);
 
 #endif //COAL_GAME_MATH_H

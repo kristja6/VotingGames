@@ -28,12 +28,13 @@ public:
 
   const vector<int> & getWeights() const { return weights; }
 
+  vector<int> getTopPlayers(int topN); // get the strongest players
 private:
-  vector<double> shapleyNewDp();
-  vector<double> shapleyNewDp(const vector<int> &);
+  vector<double> shapleyNewDp(); // the new algorithm
+  vector<double> shapleyNewDp(const vector<int> &); // the new algorithm with just a subset of players
 
-  vector<double> banzhafNewDp();
-  vector<double> banzhafNewDp(const vector<int> &);
+  vector<double> banzhafNewDp(); // the new algorithm
+  vector<double> banzhafNewDp(const vector<int> &); // the new algorithm with just a subset of players
 
 
   // For Banzhaf index
@@ -46,7 +47,6 @@ private:
   Polynomial2D tableWithOne(int weight, int count);
   Polynomial2D mergeRecShapley(int st, int en, int keepForPlayers, int keepForQuota);
 
-  vector<int> getTopPlayers(int topN);
   void precompMaxPlayers();
 
   // information about the game
@@ -60,11 +60,6 @@ private:
   int quota;
   vector<int> weights;
   int maxWeight;
-
-  vector<ZZ> sums;
-  ZZ sum;
-  unordered_map<int,ZZ> weightToRes;
-  unordered_map<int,double> shapleyCache;
 };
 
 

@@ -22,7 +22,7 @@ VotingGame::VotingGame(const vector<int> & weights, int quota) : CoalitionalGame
 
   auto w = weights;
   sort(w.begin(), w.end());
-  // decrease unneeded resolution
+
   for (size_t i = 0; i < w.size(); ++i) {
     if (uniqueWeights.empty() || uniqueWeights.back() != w[i]) {
       uniqueWeights.push_back(w[i]);
@@ -54,6 +54,12 @@ VotingGame::VotingGame(const vector<int> & weights, int quota) : CoalitionalGame
   }
 }
 
+double VotingGame::v(const vector<int> &coalition) {
+  int sum = 0;
+  for (int i: coalition) sum += weights[i];
+  return sum >= quota;
+}
+
 ZZX VotingGame::emptyColumn() {
   ZZX res;
   SetCoeff(res, 0, 1);
@@ -83,12 +89,6 @@ vector<double> VotingGame::shapley(const vector<int> & p) {
 
 vector<double> VotingGame::banzhaf(const vector<int> & p) {
   return banzhafNewDp(p);
-}
-
-double VotingGame::v(const vector<int> &coalition) {
-  int sum = 0;
-  for (int i: coalition) sum += weights[i];
-  return sum >= quota;
 }
 
 ZZX VotingGame::mergeRecBanzhaf(int st, int en, int keepForQuota) {
@@ -151,7 +151,7 @@ vector<double> VotingGame::shapleyNewDp() {
 vector<double> VotingGame::shapleyNewDp(const vector<int> & p) {
   unordered_map<int,double> sums;
   vector<vector<ZZ>> left = vector<vector<ZZ>>(maxPlayersAll, vector<ZZ>(quota + maxWeight, ZZ(0)));
-  Polynomial2D * temp = new Polynomial2D(mergeRecShapley(0, (int)uniqueWeights.size() - 1, maxPlayersAll, quota + maxWeight));
+  auto * temp = new Polynomial2D(mergeRecShapley(0, (int)uniqueWeights.size() - 1, maxPlayersAll, quota + maxWeight));
   for (int i = 0; i < maxPlayersAll; ++i) {
     for (int j = 0; j < quota + maxWeight; ++j) {
       left[i][j] = temp->get(j, i);

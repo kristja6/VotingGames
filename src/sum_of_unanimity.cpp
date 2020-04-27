@@ -43,7 +43,6 @@ vector<double> SumOfUnanimity::banzhaf() {
       sums[p] += power(ZZ(2), (players - check.size() + 1));
     }
   }
-  setBanzhafDenominator(BANZHAF_DENOM_SUBSETS); // This is what they use in the relevant paper
   auto res = normalizeRawBanzhaf(sums);
   for (auto & i: res) i /= checks.size();
   return res;

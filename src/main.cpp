@@ -1,5 +1,4 @@
 #include <vector>
-#include <set>
 #include <fstream>
 #include "coalitional_game.h"
 #include "math.h"
@@ -18,7 +17,6 @@ void example1() {
     if (sum >= 54) return 1;
     else return 0;
   });
-  //vector<double> res = game.shapleyMonteCarlo(100000);
   cout << "Banzhaf: " << endl;
   printVec(game.banzhafMonteCarlo(100000));
   cout << "Shapley: " << endl;

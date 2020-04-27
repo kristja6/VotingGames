@@ -72,8 +72,8 @@ vector<double> CoalitionalGame::banzhafEnum() {
   if (banzhafDenominator == BANZHAF_DENOM_SUBSETS) norm = pow(2, players - 1);
   else if (banzhafDenominator == BANZHAF_DENOM_WINNING) {
     for (auto i: sums) norm += i;
-    for (auto & i: sums) i /= norm;
   }
+  for (auto & i: sums) i /= norm;
   return sums;
 }
 
