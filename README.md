@@ -5,6 +5,13 @@ Additionaly, it provides methods to compute the power indices of sums of weighte
 
 # Installation
 
+The package requires libntl and libgmp.
+If you do not have those and your system uses apt, you can install them with
+```
+sudo apt install libgmp-dev libntl-dev
+```
+
+After that, build the package by running.
 ```
 make install
 ```
