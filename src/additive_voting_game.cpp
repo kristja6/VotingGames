@@ -4,10 +4,10 @@
 
 #include <assert.h>
 #include <algorithm>
-#include "sum_of_voting.h"
+#include "additive_voting_game.h"
 #include "math.h"
 
-SumOfVoting::SumOfVoting(const vector<vector<int>> &weights, const vector<int> &quotas) : CoalitionalGame(weights[0].size()) {
+AdditiveVotingGame::AdditiveVotingGame(const vector<vector<int>> &weights, const vector<int> &quotas) : CoalitionalGame(weights[0].size()) {
   assert(weights.size() == quotas.size());
   for (size_t i = 0; i < weights.size(); ++i) {
     gamesNonunique.push_back(VotingGame(weights[i], quotas[i]));
@@ -15,7 +15,7 @@ SumOfVoting::SumOfVoting(const vector<vector<int>> &weights, const vector<int> &
   players = weights[0].size();
 }
 
-double SumOfVoting::v(const vector<int> &coal) {
+double AdditiveVotingGame::v(const vector<int> &coal) {
   double res = 0;
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     res += gamesNonunique[i].v(coal);
@@ -23,8 +23,8 @@ double SumOfVoting::v(const vector<int> &coal) {
   return res;
 }
 
-vector<double> SumOfVoting::banzhaf() {
-    setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
+vector<double> AdditiveVotingGame::banzhaf() {
+  setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   vector<double> res(players, 0);
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
@@ -37,7 +37,7 @@ vector<double> SumOfVoting::banzhaf() {
   return res;
 }
 
-vector<double> SumOfVoting::shapley() {
+vector<double> AdditiveVotingGame::shapley() {
   vector<double> res(players, 0);
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
@@ -50,7 +50,7 @@ vector<double> SumOfVoting::shapley() {
   return res;
 }
 
-double SumOfVoting::banzhaf(int player) {
+double AdditiveVotingGame::banzhaf(int player) {
   double res = 0;
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
@@ -60,7 +60,7 @@ double SumOfVoting::banzhaf(int player) {
   return res;
 }
 
-double SumOfVoting::shapley(int player) {
+double AdditiveVotingGame::shapley(int player) {
   double res = 0;
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;
@@ -70,7 +70,7 @@ double SumOfVoting::shapley(int player) {
   return res;
 }
 
-vector<double> SumOfVoting::shapleyTop(int topN) {
+vector<double> AdditiveVotingGame::shapleyTop(int topN) {
   auto pl = getTopPlayers(getWeights(), topN);
   vector<double> res(players, -1);
   for (auto i: pl) res[i] = 0;
@@ -83,7 +83,7 @@ vector<double> SumOfVoting::shapleyTop(int topN) {
   return res;
 }
 
-vector<double> SumOfVoting::banzhafTop(int topN) {
+vector<double> AdditiveVotingGame::banzhafTop(int topN) {
   auto pl = getTopPlayers(getWeights(), topN);
   vector<double> res(players, -1);
   for (auto i: pl) res[i] = 0;
@@ -96,7 +96,7 @@ vector<double> SumOfVoting::banzhafTop(int topN) {
   return res;
 }
 
-vector<int> SumOfVoting::getTopPlayers(const vector<vector<int>> &weights, int numberOfTopPlayers) {
+vector<int> AdditiveVotingGame::getTopPlayers(const vector<vector<int>> &weights, int numberOfTopPlayers) {
   vector<PlayerWeights> pl;
   for (size_t i = 0; i < weights.size(); ++i) {
     pl.push_back(PlayerWeights(weights[i], i));
@@ -110,7 +110,7 @@ vector<int> SumOfVoting::getTopPlayers(const vector<vector<int>> &weights, int n
   return res;
 }
 
-vector<vector<int>> SumOfVoting::getWeights() {
+vector<vector<int>> AdditiveVotingGame::getWeights() {
   vector<vector<int>> weights(players, vector<int>(gamesNonunique.size()));
   for (int i = 0; i < players; ++i) {
     for (size_t j = 0; j < gamesNonunique.size(); ++j) {
@@ -120,7 +120,7 @@ vector<vector<int>> SumOfVoting::getWeights() {
   return weights;
 }
 
-void SumOfVoting::setBanzhafDenominator(int denom) {
+void AdditiveVotingGame::setBanzhafDenominator(int denom) {
   banzhafDenominator = denom;
   for (size_t i = 0; i < gamesNonunique.size(); ++ i) {
     gamesNonunique[i].setBanzhafDenominator(denom);

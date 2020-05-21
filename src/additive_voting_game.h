@@ -23,10 +23,10 @@ struct PlayerWeights {
   bool operator < (const PlayerWeights & o) const;
 };
 
-class SumOfVoting: public CoalitionalGame {
+class AdditiveVotingGame: public CoalitionalGame {
 public:
-  SumOfVoting(const vector<vector<int>> & weights, const vector<int> & quotas);
-  SumOfVoting(int players): CoalitionalGame(players) {
+  AdditiveVotingGame(const vector<vector<int>> & weights, const vector<int> & quotas);
+  AdditiveVotingGame(int players): CoalitionalGame(players) {
   }
   virtual double v(const vector<int> & coal);
   vector<double> banzhaf() override;

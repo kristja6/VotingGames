@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "sum_of_voting.h"
+#include "additive_voting_game.h"
 #include "RInterface.h"
 #include "sum_of_unanimity.h"
 
@@ -56,35 +56,35 @@ double votingVal(const IntegerVector & weights, const int quota, const IntegerVe
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingBanzhaf(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & players) {
-  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
+  AdditiveVotingGame game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingShapley(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & players) {
-  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
+  AdditiveVotingGame game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
   auto res = game.shapley();
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingBanzhafTop(const NumericMatrix & weights, const NumericVector & quotas, const int topN) {
-  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
+  AdditiveVotingGame game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
   auto res = game.banzhafTop(topN);
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 NumericVector sumOfVotingShapleyTop(const NumericMatrix & weights, const NumericVector & quotas, const int topN) {
-  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
+  AdditiveVotingGame game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
   auto res = game.shapleyTop(topN);
   return NumericVector(res.begin(), res.end());
 }
 
 // [[Rcpp::export]]
 double sumOfVotingValue(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & coal) {
-  SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
+  AdditiveVotingGame game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
   return game.v(vector<int>(coal.begin(), coal.end()));
 }
 
