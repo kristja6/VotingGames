@@ -13,7 +13,7 @@
   shapley(game, players)
 }
 \arguments{
-\item{game}{A coalitional game created by one of the functions (see TODO)}
+\item{game}{A coalitional game}
 \item{players}{A vector of indices of players for which we want the Shapley value computed. The rest will be set to -infinity. Index of the first player is 0.}
 }
 \examples{

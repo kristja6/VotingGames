@@ -5,7 +5,9 @@
   Creates a weighted voting game.
 }
 \description{
-  Weighted voting game is a ... (TODO)
+  Weighted voting game defined by assignment of a weight to each player and a quota.
+  The value of a coalition is 1 if the total weight of the coalition is at least the quota.
+  Otherwise it is zero.
 }
 \usage{
   votingGame(weights, quota)
