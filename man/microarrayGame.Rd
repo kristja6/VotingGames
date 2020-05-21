@@ -5,18 +5,18 @@
   Create a microarray game
 }
 \description{
-  Microarray as described by Moretti and other in [...] (TODO)
-  (TODO: zjistit jak ze to vlastne funguje)
+  Microarray as described by Moretti and other.
 }
 \usage{
-  votingGame(weights, quota)
+  microarrayGame(checks)
 }
 \arguments{
-\item{weights}{A vector of integer weights for each player}
-\item{quota}{Quota which must be surpassed for a motion to pass}
+\item{checks}{Set of players in each check. Alternatively, it can be understood as the set of players defining each individual unanimity game.}
 }
 \examples{
 \dontrun{
-game = votingGame(c(4, 12, 14, 22, 25), 30)
+  checks = rbind(c(1, 0, 1, 1), c(0, 1, 0, 0))
+  game = microarrayGame(checks)
+  shapley(game)
 }
 }

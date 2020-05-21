@@ -36,14 +36,17 @@ double SumOfUnanimity::v(const vector<int> &coalition) {
 }
 
 vector<double> SumOfUnanimity::banzhaf() {
-  vector<ZZ> sums(players);
-
+  vector<double> res(players);
+  setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   for (auto & check: checks) {
+    vector<ZZ> sums(players);
     for (auto & p: check) {
-      sums[p] += power(ZZ(2), (players - check.size() + 1));
+      //sums[p] += power(ZZ(2), (players - check.size() + 1));
+      sums[p] += power(ZZ(2), (players - check.size()));
     }
+    auto r = normalizeRawBanzhaf(sums);
+    for (int i = 0; i < players; ++ i) res[i] += r[i];
   }
-  auto res = normalizeRawBanzhaf(sums);
   for (auto & i: res) i /= checks.size();
   return res;
 }

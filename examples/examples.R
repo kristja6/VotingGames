@@ -7,9 +7,8 @@ quota = 55
 wvg = votingGame(weights, quota)
 
 shapley(wvg)
-shapleyTop(wvg, 4)
-banzhaf(wvg)
-banzhafTop(wvg, 4)
+banzhaf(wvg, denom = "subsets")
+banzhaf(wvg, denom = "swings")
 
 
 #### Sum of voting games ####
@@ -22,12 +21,11 @@ quotas = c(7, 5, 4) # quota for each of the voting games
 svg = sumOfVotingGames(rbind(game1, game2, game3), quotas)
 
 shapley(svg)
-shapleyTop(svg, 1)
-banzhaf(svg, denom = "subsets")
-banzhafTop(svg, 1)
+banzhaf(svg)
 
 
 #### Microarray games ####
+#checks = rbind(c(1, 0, 1, 1), c(0, 1, 0, 0))
 checks = rbind(c(1, 0, 1, 1), c(0, 1, 0, 0))
 
 mg = microarrayGame(checks)

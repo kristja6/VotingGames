@@ -12,7 +12,7 @@
   banzhafTop(game, topN)
 }
 \arguments{
-\item{game}{A coalitional game created by one of the functions (see TODO)}
+\item{game}{A coalitional game}
 \item{topN}{Number of top players for which we want the Shapley value}
 }
 \examples{

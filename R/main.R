@@ -38,8 +38,8 @@ getPlayers <- function(game, players = c()) {
   else return(players)
 }
 
-banzhaf.microarrayGame <- function(game, players = c(), denom = "swings") {
-  return(microarrayBanzhaf(game$checks, denom))
+banzhaf.microarrayGame <- function(game, players = c()) {
+  return(microarrayBanzhaf(game$checks))
 }
 
 shapley.microarrayGame <- function(game, players = c()) {
@@ -72,9 +72,9 @@ value.votingGame <- function(game, coalition) {
   return(votingVal(game$weights, game$quota, coalition))
 }
 
-banzhaf.sumOfVotingGames <- function(game, players = c(), denom = "swings") {
+banzhaf.sumOfVotingGames <- function(game, players = c()) {
   players = getPlayers(game, players)
-  return(sumOfVotingBanzhaf(game$weights, game$quotas, players, denom))
+  return(sumOfVotingBanzhaf(game$weights, game$quotas, players))
 }
 
 shapley.sumOfVotingGames <- function(game, players = c()) {
@@ -82,8 +82,8 @@ shapley.sumOfVotingGames <- function(game, players = c()) {
   return(sumOfVotingShapley(game$weights, game$quotas, players))
 }
 
-banzhafTop.sumOfVotingGames <- function(game, topN, denom = "subsets") {
-  return(sumOfVotingBanzhafTop(game$weights, game$quotas, topN, denom))
+banzhafTop.sumOfVotingGames <- function(game, topN) {
+  return(sumOfVotingBanzhafTop(game$weights, game$quotas, topN))
 }
 
 shapleyTop.sumOfVotingGames <- function(game, topN) {

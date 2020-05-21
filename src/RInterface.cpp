@@ -55,9 +55,8 @@ double votingVal(const IntegerVector & weights, const int quota, const IntegerVe
 }
 
 // [[Rcpp::export]]
-NumericVector sumOfVotingBanzhaf(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & players, const String & denom) {
+NumericVector sumOfVotingBanzhaf(const NumericMatrix & weights, const NumericVector & quotas, const IntegerVector & players) {
   SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
-  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }
@@ -70,9 +69,8 @@ NumericVector sumOfVotingShapley(const NumericMatrix & weights, const NumericVec
 }
 
 // [[Rcpp::export]]
-NumericVector sumOfVotingBanzhafTop(const NumericMatrix & weights, const NumericVector & quotas, const int topN, const String & denom) {
+NumericVector sumOfVotingBanzhafTop(const NumericMatrix & weights, const NumericVector & quotas, const int topN) {
   SumOfVoting game(matrixToVectorsInt(weights), vector<int>(quotas.begin(), quotas.end()));
-  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhafTop(topN);
   return NumericVector(res.begin(), res.end());
 }
@@ -91,10 +89,9 @@ double sumOfVotingValue(const NumericMatrix & weights, const NumericVector & quo
 }
 
 // [[Rcpp::export]]
-NumericVector microarrayBanzhaf(const NumericMatrix & mtx, const String & denom) {
+NumericVector microarrayBanzhaf(const NumericMatrix & mtx) {
   auto m = matrixToVectorsInt(mtx);
   SumOfUnanimity game(m);
-  if (denom == SUBSETS_NAME) game.setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   auto res = game.banzhaf();
   return NumericVector(res.begin(), res.end());
 }

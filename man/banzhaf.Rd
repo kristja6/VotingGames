@@ -14,9 +14,10 @@
   banzhaf(game, players, denom)
 }
 \arguments{
-\item{game}{A coalitional game created by one of the functions (see TODO)}
+\item{game}{A coalitional game}
 \item{players}{A vector of indices of players for which we want the Banzhaf index computed. The rest will be set to -infinity. Index of the first player is 0.}
-\item{denom}{Must equal to 'swings' or 'subsets'.
+\item{denom}{Option only for voting games. Must equal to 'swings' or 'subsets'.
+  For other games, only the denominator 'subsets' is default and the only option.
 Banzhaf index is essentially the number of swinging coalitions normalized by a denominator common for all players.
 The default one is the total number of swings over all players (swings).
 The alternative is the number of subsets of all players, that is 2^players.

@@ -24,6 +24,7 @@ double SumOfVoting::v(const vector<int> &coal) {
 }
 
 vector<double> SumOfVoting::banzhaf() {
+    setBanzhafDenominator(BANZHAF_DENOM_SUBSETS);
   vector<double> res(players, 0);
   for (size_t i = 0; i < gamesNonunique.size(); ++i) {
     cerr << (double)(10000*i / gamesNonunique.size()) / 100.0 << "% " << flush;

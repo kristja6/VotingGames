@@ -11,12 +11,15 @@
   value(game, coalition)
 }
 \arguments{
-\item{game}{A coalitional game created by one of the functions (see TODO)}
-\item{players}{A vector of indices of players for which we want the Banzhaf index computed. The rest will be set to -infinity. Index of the first player is 0.}
+\item{game}{A coalitional game}
+\item{coalition}{A vector of indices of players}
 }
 \examples{
 \dontrun{
-game = votingGame(c(4, 12, 14, 22, 25), 30)
-value(game, c(0, 3))
+  weights = c(4, 5, 6, 14, 16, 17, 25, 26, 35, 36)
+  quota = 55
+
+  wvg = votingGame(weights, quota)
+  value(wvg, c(0, 3, 4, 5, 8))
 }
 }

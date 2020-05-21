@@ -21,16 +21,16 @@ votingVal <- function(weights, quota, coal) {
     .Call(`_VotingGames_votingVal`, weights, quota, coal)
 }
 
-sumOfVotingBanzhaf <- function(weights, quotas, players, denom) {
-    .Call(`_VotingGames_sumOfVotingBanzhaf`, weights, quotas, players, denom)
+sumOfVotingBanzhaf <- function(weights, quotas, players) {
+    .Call(`_VotingGames_sumOfVotingBanzhaf`, weights, quotas, players)
 }
 
 sumOfVotingShapley <- function(weights, quotas, players) {
     .Call(`_VotingGames_sumOfVotingShapley`, weights, quotas, players)
 }
 
-sumOfVotingBanzhafTop <- function(weights, quotas, topN, denom) {
-    .Call(`_VotingGames_sumOfVotingBanzhafTop`, weights, quotas, topN, denom)
+sumOfVotingBanzhafTop <- function(weights, quotas, topN) {
+    .Call(`_VotingGames_sumOfVotingBanzhafTop`, weights, quotas, topN)
 }
 
 sumOfVotingShapleyTop <- function(weights, quotas, topN) {
@@ -41,8 +41,8 @@ sumOfVotingValue <- function(weights, quotas, coal) {
     .Call(`_VotingGames_sumOfVotingValue`, weights, quotas, coal)
 }
 
-microarrayBanzhaf <- function(mtx, denom) {
-    .Call(`_VotingGames_microarrayBanzhaf`, mtx, denom)
+microarrayBanzhaf <- function(mtx) {
+    .Call(`_VotingGames_microarrayBanzhaf`, mtx)
 }
 
 microarrayShapley <- function(mtx) {

@@ -20,7 +20,6 @@ Matyáš Křišťan
 Maintainer: Matyáš Křišťan <matyas.kristan@gmail.com>
 }
 \references{
-  TODO Link to the thesis.
 }
 \keyword{ coalitional games banzhaf shapley }
 \seealso{

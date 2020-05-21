@@ -73,16 +73,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // sumOfVotingBanzhaf
-NumericVector sumOfVotingBanzhaf(const NumericMatrix& weights, const NumericVector& quotas, const IntegerVector& players, const String& denom);
-RcppExport SEXP _VotingGames_sumOfVotingBanzhaf(SEXP weightsSEXP, SEXP quotasSEXP, SEXP playersSEXP, SEXP denomSEXP) {
+NumericVector sumOfVotingBanzhaf(const NumericMatrix& weights, const NumericVector& quotas, const IntegerVector& players);
+RcppExport SEXP _VotingGames_sumOfVotingBanzhaf(SEXP weightsSEXP, SEXP quotasSEXP, SEXP playersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type quotas(quotasSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type players(playersSEXP);
-    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
-    rcpp_result_gen = Rcpp::wrap(sumOfVotingBanzhaf(weights, quotas, players, denom));
+    rcpp_result_gen = Rcpp::wrap(sumOfVotingBanzhaf(weights, quotas, players));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -100,16 +99,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // sumOfVotingBanzhafTop
-NumericVector sumOfVotingBanzhafTop(const NumericMatrix& weights, const NumericVector& quotas, const int topN, const String& denom);
-RcppExport SEXP _VotingGames_sumOfVotingBanzhafTop(SEXP weightsSEXP, SEXP quotasSEXP, SEXP topNSEXP, SEXP denomSEXP) {
+NumericVector sumOfVotingBanzhafTop(const NumericMatrix& weights, const NumericVector& quotas, const int topN);
+RcppExport SEXP _VotingGames_sumOfVotingBanzhafTop(SEXP weightsSEXP, SEXP quotasSEXP, SEXP topNSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type quotas(quotasSEXP);
     Rcpp::traits::input_parameter< const int >::type topN(topNSEXP);
-    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
-    rcpp_result_gen = Rcpp::wrap(sumOfVotingBanzhafTop(weights, quotas, topN, denom));
+    rcpp_result_gen = Rcpp::wrap(sumOfVotingBanzhafTop(weights, quotas, topN));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -140,14 +138,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // microarrayBanzhaf
-NumericVector microarrayBanzhaf(const NumericMatrix& mtx, const String& denom);
-RcppExport SEXP _VotingGames_microarrayBanzhaf(SEXP mtxSEXP, SEXP denomSEXP) {
+NumericVector microarrayBanzhaf(const NumericMatrix& mtx);
+RcppExport SEXP _VotingGames_microarrayBanzhaf(SEXP mtxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type mtx(mtxSEXP);
-    Rcpp::traits::input_parameter< const String& >::type denom(denomSEXP);
-    rcpp_result_gen = Rcpp::wrap(microarrayBanzhaf(mtx, denom));
+    rcpp_result_gen = Rcpp::wrap(microarrayBanzhaf(mtx));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -181,12 +178,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_VotingGames_votingBanzhafTop", (DL_FUNC) &_VotingGames_votingBanzhafTop, 4},
     {"_VotingGames_votingShapleyTop", (DL_FUNC) &_VotingGames_votingShapleyTop, 3},
     {"_VotingGames_votingVal", (DL_FUNC) &_VotingGames_votingVal, 3},
-    {"_VotingGames_sumOfVotingBanzhaf", (DL_FUNC) &_VotingGames_sumOfVotingBanzhaf, 4},
+    {"_VotingGames_sumOfVotingBanzhaf", (DL_FUNC) &_VotingGames_sumOfVotingBanzhaf, 3},
     {"_VotingGames_sumOfVotingShapley", (DL_FUNC) &_VotingGames_sumOfVotingShapley, 3},
-    {"_VotingGames_sumOfVotingBanzhafTop", (DL_FUNC) &_VotingGames_sumOfVotingBanzhafTop, 4},
+    {"_VotingGames_sumOfVotingBanzhafTop", (DL_FUNC) &_VotingGames_sumOfVotingBanzhafTop, 3},
     {"_VotingGames_sumOfVotingShapleyTop", (DL_FUNC) &_VotingGames_sumOfVotingShapleyTop, 3},
     {"_VotingGames_sumOfVotingValue", (DL_FUNC) &_VotingGames_sumOfVotingValue, 3},
-    {"_VotingGames_microarrayBanzhaf", (DL_FUNC) &_VotingGames_microarrayBanzhaf, 2},
+    {"_VotingGames_microarrayBanzhaf", (DL_FUNC) &_VotingGames_microarrayBanzhaf, 1},
     {"_VotingGames_microarrayShapley", (DL_FUNC) &_VotingGames_microarrayShapley, 1},
     {"_VotingGames_microarrayValue", (DL_FUNC) &_VotingGames_microarrayValue, 2},
     {NULL, NULL, 0}
