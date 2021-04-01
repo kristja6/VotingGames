@@ -27,12 +27,6 @@ sumOfVotingGames <- function(weights, quotas) {
   return(res)
 }
 
-banzhaf <- function(x, players = c(), denom = "swings") UseMethod("banzhaf")
-shapley <- function(x, players = c()) UseMethod("shapley")
-banzhafTop <- function(x, topN) UseMethod("banzhafTop")
-shapleyTop <- function(x, topN) UseMethod("shapleyTop")
-value <- function(x, coalition) UseMethod("value")
-
 getPlayers <- function(game, players = c()) {
   if (length(players) == 0) return(1:game$players)
   else return(players)
@@ -93,3 +87,9 @@ shapleyTop.sumOfVotingGames <- function(game, topN) {
 value.sumOfVotingGames <- function(game, coalition) {
   return(sumOfVotingValue(game$weights, game$quotas, coalition))
 }
+
+banzhaf <- function(x, players = c(), denom = "swings") UseMethod("banzhaf")
+shapley <- function(x, players = c()) UseMethod("shapley")
+banzhafTop <- function(x, topN) UseMethod("banzhafTop")
+shapleyTop <- function(x, topN) UseMethod("shapleyTop")
+value <- function(x, coalition) UseMethod("value")

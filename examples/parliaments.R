@@ -1,4 +1,5 @@
 library(VotingGames)
+source("../R/main.R")
 # European parliament by parties
 EUParliamentByParties = data.frame(
   parties = c("EEP", "S&D", "RE", "ID", "Greens-EFA", "ECR", "GUE/NGL", rep("NI", 29)),
